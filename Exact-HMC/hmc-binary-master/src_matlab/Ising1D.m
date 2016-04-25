@@ -21,7 +21,7 @@
                 obj.d = d;    %linear dimension of the 1D grid
                 obj.beta=1/T;
                 
-                obj.M = sparse(obj.d,obj.d);
+                obj.M = zeros(obj.d,obj.d);
                 obj.Neis = zeros(obj.d,2);                
                 
                     for j=1:d                            
