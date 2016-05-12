@@ -4,7 +4,7 @@
      
         properties(SetObservable = true)
         % These properties are public by default
-           dim;
+           d;
            beta;
            mlp=-Inf;   
            M;
@@ -18,15 +18,15 @@
             function obj = Ising1D(d,temp)
             % class constructor            
             
-                obj.dim = d;    %linear dimension of the 1D grid
-                obj.beta=1/temp;     
-                obj.M = zeros(obj.d,obj.d);
-                obj.Neis = zeros(obj.d,2); 
+                obj.d = d;    %linear dimension of the 1D grid
+                obj.beta=1/temp;
                 
+                obj.M = zeros(obj.d,obj.d);
+                obj.Neis = zeros(obj.d,2);                
                 
                     for j=1:d                            
                         nei = neighbors(j);
-                        obj.Neis(j,:) = nei; 
+                        obj.Neis(j,:) = nei;                            
                         obj.M(j, nei) =-1;                
                     end                                
                     obj.M = obj.beta*obj.M/2;    % the factor of 1/2 is because pairs are counted twice                

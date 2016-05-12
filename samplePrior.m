@@ -12,3 +12,4 @@ sample_prior = unidrnd(2, d, 1) - 2;
 y = sample_prior >= 0;
 sample_prior(y) = 1;
 
+

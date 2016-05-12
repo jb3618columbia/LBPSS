@@ -1,4 +1,4 @@
-function [Zs, log_likes, energies] = HMC_binary(f, T,L, initial_point)
+function [Zs, log_likes, energies] = HMC_binary_2D(f, T,L)
 
 
 % Implementation of the Gaussian augmented-variable HMC sampler introduced in the NIPS 2013 paper 
@@ -18,10 +18,9 @@ function [Zs, log_likes, energies] = HMC_binary(f, T,L, initial_point)
 
 
 d = f.dim;
-
 % initial_X = abs(normrnd(0,1,d,1));
 
-initial_X = initial_point;
+initial_X = ones(d,1);
 log_likes = zeros(L,1);
 energies  = zeros(L,1);
 

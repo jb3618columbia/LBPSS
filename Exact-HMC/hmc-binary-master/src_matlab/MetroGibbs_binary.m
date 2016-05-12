@@ -4,7 +4,7 @@ d = f.d;
 
 % K is the number of binary flip proposals between recorded d-dimensional samples 
 
-if length(varargin) >0
+if length(varargin) > 0
     K = varargin{1};
 else
     K = d;

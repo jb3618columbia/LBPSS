@@ -1,4 +1,4 @@
-function [ xx, cur_log_like, curr_fn_evals ] = dss_step_InOut( xx, prior, f, cur_log_like)
+function [ xx, cur_log_like, curr_fn_evals ] = dss_step_InOut( xx, prior, f, cur_log_like, clique_size)
 % Implements stepping-in, stepping-out for slicesampling on a line
 
 %  Inputs:
@@ -53,11 +53,13 @@ for i=1:1:dim-1
     phi = t-theta;
     positive = phi >=0;
     negative = phi < 0;
-    
-    curr_fn_evals = curr_fn_evals + 2;
-    
+        
     xx_prop = xx.*positive + z.*negative;
     cur_log_like = logp(f,xx_prop);
+    
+    if xx(i) ~= z(i)
+        curr_fn_evals = curr_fn_evals + clique_size;
+    end
     
     if cur_log_like < hh
         theta=theta-w;

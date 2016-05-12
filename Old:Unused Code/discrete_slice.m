@@ -1,4 +1,4 @@
-function [xx, cur_log_like, curr_fn_evals] = discrete_slice( xx, prior, f, cur_log_like, angle_range )
+function [xx, cur_log_like, curr_fn_evals] = discrete_slice( xx, prior, f, cur_log_like, angle_range, k )
 %  [xx, cur_log)lik] = discrete_slice(xx, prior, log_lik_fn, cur_log_like)
 %  Optionally angle range can be specified too
 
@@ -69,9 +69,9 @@ while true
     negative = phi < 0;
     
     xx_prop = xx.*positive + z.*negative;
-    coordinate_change = sum(xx_prop == xx); 
+    coordinate_change = sum(xx_prop ~= xx); 
     cur_log_like = logp(f,xx_prop);
-    curr_fn_evals = curr_fn_evals + 2*coordinate_change;
+    curr_fn_evals = curr_fn_evals + k*coordinate_change;
     
     if cur_log_like > hh
 %         theta
