@@ -9,7 +9,6 @@ function [ samples, dist, loglik, number_fn_evals, sample_index ] = ussSampler(f
 % samples - d x number_samples matrix; each column is a sample
 
 % Initialize 
-d = f.dim;
 fn_evals = 0;
 samples(:,1) = initial_point;
 dist(:,1) = emp_dist(initial_point);
@@ -18,7 +17,7 @@ loglik(1, 1) = cur_log_like;
 sample_index = 2;
 
 while fn_evals < number_fn_evals
-    
+   
     if mod(sample_index, 1000) == 0
         sample_index
     end

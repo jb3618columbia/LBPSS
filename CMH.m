@@ -16,7 +16,7 @@ S = initial_point;  % Initial point
 samples(:,1)=S;    
 log_likes(1,1) = f.logp(S);
 L = number_fn_evals/(clique_size*K);           % Since every fn_eval is O(2), this denotes the total number of samples
-% indices = randsample(d,L*K,true);
+indices = randsample(d,L*K,true);
 
 for i=2:L
    
@@ -25,8 +25,8 @@ for i=2:L
     end
     for k = 1:K
         
-%         j=indices((i-2)*K+k);
-        j = unidrnd(d,1);
+        j=indices((i-2)*K+k);
+%         j = unidrnd(d,1);
         qi = exp(-S(j)*f.logp_change(S,j));
         
         if rand() < min(1,qi)
