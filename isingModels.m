@@ -5,12 +5,12 @@
 
 % clear
 % Parameters
-d=100; 
-temp=1*pi;
+d=5; 
+temp=2*pi;
 is1 = Ising1D_new(d,temp);  % Create 1D Ising Object 
 % is1 = Ising1D_rand_weight(d,temp); 
 clique_size=2; %Clique size 
-number_samples = 1500;
+number_samples = 1;
 num_examples = 1;
 % initial_point = sign(normrnd(0,1,d,1));
 initial_point = ones(d,1);
@@ -21,7 +21,7 @@ ana_gibbs_on_off = true;
 exact_hmc_on_off = true;
 uss_stepinout_on_off = false;
 uniform_SS_on_off = false;
-CMH_on_off = true;
+CMH_on_off = false;
 
 ground_truth = false;
 lbpSS_on_off = false;
@@ -33,9 +33,9 @@ lbpSS_on_off = false;
 if ground_truth == 1
     display('Getting samples to approximate grund truth')
     t = 1.5; T=t*pi;
-    num_samp_truth = 10000;
+    num_samp_truth = 50000;
     [samples_true, loglik_true, energy_true] = HMC_binary(is1,T,num_samp_truth, initial_point);
-%     dist_truth = emp_dist(samples_true);
+    dist_truth = emp_dist(samples_true);
 %     fn_evlas = 10000*2*d;
 %     [samples_true, loglik_ana, fn_evals_ana, nu_samples_ana]= ussSampler(is1, d, 0, 1, fn_evlas);
 %     dist_truth = emp_dist(samples_true);
@@ -62,9 +62,9 @@ error_cmh = zeros(num_examples, number_samples/N -1);
 
 
 
-for p=1:num_examples
+for q=1:num_examples
     
-    p
+    q
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Exact-HMC
@@ -157,16 +157,16 @@ for p=1:num_examples
 
     for j=2:number_samples/N
         
-        error_ana(p,j-1) = sum(abs(dist_truth - emp_dist(samples_ana(:,2:round(j*N*r_a-1)))));
-        error_ana_dist(p,j-1) = sum(abs(dist_truth - mean(cat(1,dist_ana(:,2:round(j*N*r_a-1))),2)));
-        error_ana_gibbs(p,j-1) = sum(abs(dist_truth - emp_dist(samples_ana_gibbs(:,2:round(j*N*r_a_g-1)))));
+        error_ana(q,j-1) = sum(abs(dist_truth - emp_dist(samples_ana(:,2:round(j*N*r_a-1)))));
+        error_ana_dist(q,j-1) = sum(abs(dist_truth - mean(cat(1,dist_ana(:,2:round(j*N*r_a-1))),2)));
+        error_ana_gibbs(q,j-1) = sum(abs(dist_truth - emp_dist(samples_ana_gibbs(:,2:round(j*N*r_a_g-1)))));
         if info_on_off ==1
-            error_ana_gibbs_dist(p,j-1) = sum(abs(dist_truth - mean(cat(1,dist_ana_gibbs(:,2:round(j*N*r_a_g-1))),2)));
+            error_ana_gibbs_dist(q,j-1) = sum(abs(dist_truth - mean(cat(1,dist_ana_gibbs(:,2:round(j*N*r_a_g-1))),2)));
         end
 %         error_uss(p,j-1) = sum(abs(dist_truth - emp_dist(samples_uss_line(:,1:floor(j*N*r_u)-10))));
 %         error_uss_inout(p,j-1) = sum(abs(dist_truth - emp_dist(samples_stepinout(1:round(j*N*r_u_inout)))));
-        error_hmc(p,j-1) = sum(abs(dist_truth - emp_dist(samples_hmc(:,2:j*N-1))));
-        error_cmh(p,j-1) = sum(abs(dist_truth - emp_dist(samples_CMH(:,2:round(j*N*r_cmh-1)))));
+        error_hmc(q,j-1) = sum(abs(dist_truth - emp_dist(samples_hmc(:,2:j*N-1))));
+        error_cmh(q,j-1) = sum(abs(dist_truth - emp_dist(samples_CMH(:,2:round(j*N*r_cmh-1)))));
         
     end
     

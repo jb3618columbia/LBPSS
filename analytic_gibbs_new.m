@@ -17,7 +17,6 @@ i=2;
 
 
 while fn_evals <= number_fn_evals
-   
     xx = samples(:, i-1);  % Current point
     k=randperm(d);
     prob_vec = zeros(2*d,1);
@@ -25,8 +24,9 @@ while fn_evals <= number_fn_evals
     dist_est = zeros(d,2*d);
     dist_est(:,1) = xx > 0; 
     p = 2;
+    j=1;
     
-    for j=1:d
+    for c=1:(2*d)-1 
         
         xx(k(j)) = -xx(k(j));
         fn_evals = fn_evals + clique_size;
@@ -38,20 +38,8 @@ while fn_evals <= number_fn_evals
             dist_est(:,p) = xx > 0;
         end
         p = p + 1;
-    end
-    
-    for j=1:d-1
+        j = mod(c,d) + 1;
         
-        xx(k(j)) = -xx(k(j));
-        fn_evals = fn_evals + clique_size;
-        % Efficient way to compute log likeiloohs of the propsoed point
-        % cur_log_like = cur_log_like + sign(xx(k(j)))*f.logp_change(xx,k(j));
-         prob_vec(p,1) = f.logp(xx);   % Inefficient
-        
-        if info_on_off ==1
-            dist_est(:,p) = xx > 0;
-        end
-        p = p + 1;
     end
     
     max_val = max(prob_vec);
@@ -62,7 +50,7 @@ while fn_evals <= number_fn_evals
         dist(:,i) = dist_est*prob_vec;   % getting the weighted average
     end
     
-    fn_evals = fn_evals + log(d);     % Extra log d for sampling from a dicrete distribution
+%     fn_evals = fn_evals + log(d);     % Extra log d for sampling from a dicrete distribution
     index = discretesample(prob_vec,1);
     
     if index == 1

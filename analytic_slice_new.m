@@ -43,36 +43,22 @@ while fn_evals <= number_fn_evals
     p = 2;
     hh = log(rand) + cur_log_like;
     k=randperm(d);
-
-    for j=1:d
-        
+    j=1;
+    
+    for c=1:(2*d)-1
        xx(k(j)) = -xx(k(j));
        fn_evals = fn_evals + clique_size;
        % Efficient way to compute log likeiloohs of the propsoed point 
-       cur_log_like = cur_log_like + sign(xx(k(j)))*f.logp_change(xx,k(j));
-%        cur_log_like = f.logp(xx);  % Inefficient 
+%        cur_log_like = cur_log_like + sign(xx(k(j)))*f.logp_change(xx,k(j));
+       cur_log_like = f.logp(xx);  % Inefficient 
        
        if cur_log_like > hh
            acc_samples(:,p) = xx;
            p = p + 1;
        end
-        
+       j = mod(c,d) + 1;
     end
     
-    for j=1:d-1
-       
-       xx(k(j)) = -xx(k(j));
-       fn_evals = fn_evals + clique_size;
-       % Efficient way to compute log likeiloohs of the propsoed point 
-       cur_log_like = cur_log_like + sign(xx(k(j)))*f.logp_change(xx,k(j)); 
-%        cur_log_like = f.logp(xx);   % Inefficient
-       
-       if cur_log_like > hh
-           acc_samples(:,p) = xx;
-           p = p + 1;
-       end     
-        
-    end
     acc_samples( :, all(~acc_samples,1) ) = [];
     index = unidrnd(p-1);   
     samples(:,i) = acc_samples(:,index);

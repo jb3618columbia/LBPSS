@@ -1,6 +1,7 @@
 classdef Ising1D_new < handle  % inherit from handle so that we can pass by reference
 
-        % this class implements a 1d Ising model with zero magnetic field. 
+        % this class implements a 1d Ising model with zero magnetic field.
+        % bias terms have been added to encourage multimodality 
      
         properties(SetObservable = true)
         % These properties are public by default
@@ -10,6 +11,7 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
            mlp=-Inf;   
            M;
            Neis;
+           bias;
         end
         
              
@@ -26,12 +28,14 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
                 obj.Neis = zeros(obj.d,2); 
                 
                 
-                    for j=1:d                            
-                        nei = neighbors(j);
-                        obj.Neis(j,:) = nei; 
-                        obj.M(j,nei) = -1; 
-                    end    
-                    obj.M = obj.beta*obj.M/2;    % the factor of 1/2 is because pairs are counted twice                
+                for j=1:d
+                    nei = neighbors(j);
+                    obj.Neis(j,:) = nei;
+                    obj.M(j,nei) = -1;
+                    % obj.bias(1,j) = 0.3*normrnd(0,1);
+                    obj.bias(1,j) = 0;
+                end
+                obj.M = obj.beta*obj.M/2;    % the factor of 1/2 is because pairs are counted twice
 
                 function nei = neighbors(j)
                     if j == 1
@@ -52,7 +56,7 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
             % H = -log P(S) = S'*obj.M*S 
             
              function lp = logp(obj,S)                             
-                lp = -S'*obj.M*S;
+                lp = obj.bias*S - S'*obj.M*S;
                 if lp > obj.mlp
                     obj.mlp = lp;
                 end                
@@ -64,7 +68,7 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
                  % S(j) == +1 and S(j) == -1     
                  % For fixed weights
                  nei = obj.Neis(j,:);
-                 lpc = 2*obj.beta*sum(S(nei));
+                 lpc = 2*obj.bias(j) + 2*obj.beta*sum(S(nei));
                                  
              end
              
