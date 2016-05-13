@@ -32,7 +32,6 @@ samples(:,1)=initial_point;
 dist(:,1) = emp_dist(initial_point);                           
 log_likes(1,1) = f.logp(initial_point);
 cur_log_like = f.logp(initial_point);
-
 fn_evals = 0;
 i=2;
 

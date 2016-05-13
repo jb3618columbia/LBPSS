@@ -6,18 +6,18 @@
 % clear
 % Parameters
 d=100; 
-temp=5*pi;
+temp=1*pi;
 is1 = Ising1D_new(d,temp);  % Create 1D Ising Object 
 % is1 = Ising1D_rand_weight(d,temp); 
 clique_size=2; %Clique size 
-number_samples = 500;
+number_samples = 1500;
 num_examples = 1;
 % initial_point = sign(normrnd(0,1,d,1));
 initial_point = ones(d,1);
 
 % Algorithms:
 ana_on_off = true;
-ana_gibbs_on_off = false;
+ana_gibbs_on_off = true;
 exact_hmc_on_off = true;
 uss_stepinout_on_off = false;
 uniform_SS_on_off = false;
@@ -103,7 +103,8 @@ for p=1:num_examples
     if ana_on_off == 1
         tic
         disp('Analytic Slice Sampling')
-        %         [samples_ana, dist_ana, loglik_ana, fn_evals_ana, nu_samples_ana]= ussSampler(is1, 0, 1, fn_evlas_hmc, clique_size, initial_point);
+        % [samples_ana, dist_ana, loglik_ana, fn_evals_ana, nu_samples_ana]= ussSampler(is1, 0, 1, fn_evlas_hmc, clique_size, initial_point);
+        % More efficient way of doing slice sampling on a circle
         [samples_ana, dist_ana, loglik_ana, nu_samples_ana]= analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);
         r_a = nu_samples_ana/number_samples;
         mauss_ana = mean(samples_ana,1);
@@ -144,7 +145,7 @@ for p=1:num_examples
         tic
         disp('Analytic Gibbs Sampling')
         info_on_off = 1;
-        [samples_ana_gibbs, dist_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs]= analytic_gibbs( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point);
+        [samples_ana_gibbs, dist_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs] = analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point);
         r_a_g = nu_samples_ana_gibbs/number_samples;
         mauss_ana_gibbs = mean(samples_ana_gibbs,1);
         toc
@@ -158,10 +159,10 @@ for p=1:num_examples
         
         error_ana(p,j-1) = sum(abs(dist_truth - emp_dist(samples_ana(:,2:round(j*N*r_a-1)))));
         error_ana_dist(p,j-1) = sum(abs(dist_truth - mean(cat(1,dist_ana(:,2:round(j*N*r_a-1))),2)));
-%         error_ana_gibbs(p,j-1) = sum(abs(dist_truth - emp_dist(samples_ana_gibbs(:,2:round(j*N*r_a_g-1)))));
-%         if info_on_off ==1
-%             error_ana_gibbs_dist(p,j-1) = sum(abs(dist_truth - mean(cat(1,dist_ana_gibbs(:,2:round(j*N*r_a_g-1))),2)));
-%         end
+        error_ana_gibbs(p,j-1) = sum(abs(dist_truth - emp_dist(samples_ana_gibbs(:,2:round(j*N*r_a_g-1)))));
+        if info_on_off ==1
+            error_ana_gibbs_dist(p,j-1) = sum(abs(dist_truth - mean(cat(1,dist_ana_gibbs(:,2:round(j*N*r_a_g-1))),2)));
+        end
 %         error_uss(p,j-1) = sum(abs(dist_truth - emp_dist(samples_uss_line(:,1:floor(j*N*r_u)-10))));
 %         error_uss_inout(p,j-1) = sum(abs(dist_truth - emp_dist(samples_stepinout(1:round(j*N*r_u_inout)))));
         error_hmc(p,j-1) = sum(abs(dist_truth - emp_dist(samples_hmc(:,2:j*N-1))));
@@ -191,10 +192,10 @@ plot(mean(error_ana,1),'b')
 hold on
 plot(mean(error_ana_dist,1),'m')
 hold on
-% plot(mean(error_ana_gibbs,1),'g')
-% hold on
-% plot(mean(error_ana_gibbs_dist,1),'c')
-% hold on
+plot(mean(error_ana_gibbs,1),'g')
+hold on
+plot(mean(error_ana_gibbs_dist,1),'c')
+hold on
 % plot(mean(error_uss,1),'c')
 % hold on
 % plot(error_uss_inout,'g')
