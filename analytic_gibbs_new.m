@@ -49,6 +49,7 @@ while fn_evals <= number_fn_evals
     if info_on_off == 1
         dist(:,i) = dist_est*prob_vec;   % getting the weighted average
     end
+    m = dist(:,i);
     
 %     fn_evals = fn_evals + log(d);     % Extra log d for sampling from a dicrete distribution
     index = discretesample(prob_vec,1);

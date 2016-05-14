@@ -5,26 +5,26 @@
 
 % clear
 % Parameters
-d=5; 
+d=4; 
 temp=2*pi;
 is1 = Ising1D_new(d,temp);  % Create 1D Ising Object 
 % is1 = Ising1D_rand_weight(d,temp); 
 clique_size=2; %Clique size 
-number_samples = 1;
+number_samples = 4000;
 num_examples = 1;
-% initial_point = sign(normrnd(0,1,d,1));
-initial_point = ones(d,1);
+initial_point = sign(normrnd(0,1,d,1));
+% initial_point = ones(d,1);
 
 % Algorithms:
+truth = true;
+ground_truth = false;
 ana_on_off = true;
-ana_gibbs_on_off = true;
+ana_gibbs_on_off =  true;
 exact_hmc_on_off = true;
 uss_stepinout_on_off = false;
 uniform_SS_on_off = false;
-CMH_on_off = false;
+CMH_on_off = true;
 
-ground_truth = false;
-lbpSS_on_off = false;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -32,16 +32,48 @@ lbpSS_on_off = false;
 %%%%%%%%%%%%%%%%%%%%%%%%
 if ground_truth == 1
     display('Getting samples to approximate grund truth')
-    t = 1.5; T=t*pi;
-    num_samp_truth = 50000;
-    [samples_true, loglik_true, energy_true] = HMC_binary(is1,T,num_samp_truth, initial_point);
-    dist_truth = emp_dist(samples_true);
-%     fn_evlas = 10000*2*d;
-%     [samples_true, loglik_ana, fn_evals_ana, nu_samples_ana]= ussSampler(is1, d, 0, 1, fn_evlas);
-%     dist_truth = emp_dist(samples_true);
-%     
+    num_samp_truth = 100000;
+    fn_evlas = clique_size*d*num_samp_truth;
+    [samples_true, ~, ~] = CMH(is1, fn_evlas, clique_size, initial_point);
+    dist_truth = emp_dist(samples_true);     
+    
+    [samples_true_1, ~, ~, ~]= analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);
+    dist_truth_1 = emp_dist(samples_true_1); 
+%     t = 1.5; T=t*pi;
+%     num_samp_truth = 50000;
+%     [samples_true, loglik_true, energy_true] = HMC_binary(is1,T,num_samp_truth, initial_point);
+      
 end
-dist_truth = 0.5*ones(d,1);
+% dist_truth = 0.5*ones(d,1);
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% True Node Marginals
+%%%%%%%%%%%%%%%%%%%%%%%
+if truth == 1
+d=20;
+weight = zeros(1,2^d);
+for j=0:2^d-1 
+    if mod(j,10000)==0
+        j
+    end
+    yy = (2*de2bi(j,d) - 1)';
+    weight(1,j+1) = is1.logp(yy);
+end
+weight = exp(weight)/sum(exp(weight));
+
+dist_truth = zeros(d,1);
+for j=0:2^d-1 
+    if mod(j,10000)==0
+        j
+    end
+    yy = (2*de2bi(j,d) - 1)';
+    dist_truth = dist_truth + weight(1,j+1)*(yy >0);
+    
+end
+
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Comparing Samplers
@@ -55,10 +87,7 @@ error_ana_gibbs_dist = zeros(num_examples, number_samples/N -1);
 error_uss = zeros(num_examples, number_samples/N-1);
 error_uss_inout = zeros(num_examples, number_samples/N-1);
 error_hmc = zeros(num_examples, number_samples/N -1);
-error_bps = zeros(num_examples, number_samples/N -1);
 error_cmh = zeros(num_examples, number_samples/N -1);
-
-
 
 
 
@@ -80,21 +109,6 @@ for q=1:num_examples
         toc
     end
         
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Uniform Slice Sampling
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    if uniform_SS_on_off == 1
-        tic
-        disp('Uniform Slice Sampling')
-        [samples_uss_line, dist_uss, loglik_uss, fn_evals_uss, nu_samples_uss] = ussSampler(is1, 1, 0, fn_evlas_hmc, clique_size);
-        r_u = nu_samples_uss/number_samples;
-        mauss = mean(samples_uss_line,1);
-        toc
-        %     slice sampling on a circle
-        %     [samples_uss_ess, loglik_uss_ess, fn_evals_uss_ess]= ussSampler(is1, number_samples, d, number_chains,0);
-        %     mauss_ess = mean(samples_uss_ess,1);
-    end
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Analytic Slice Sampling
@@ -109,18 +123,6 @@ for q=1:num_examples
         r_a = nu_samples_ana/number_samples;
         mauss_ana = mean(samples_ana,1);
         toc
-    end
-    
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Uniform Slice Sampling with Stepping In, Stepping Out
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    if uss_stepinout_on_off == 1
-        disp('Uniform Slice Sampling with Stepping In and Stepping Out')
-        [samples_stepinout, loglik_uss_stepinout, fn_evals_uss_stepinout, nu_samples_inout]= uss_step_InOut(is1, d, fn_evlas_hmc, clique_size);
-        mauss_stepinout = mean(samples_stepinout,1);
-        r_u_inout = nu_samples_inout/number_samples;
     end
     
     
@@ -340,4 +342,30 @@ plot(log_lik_CMH(1:end),'k')
 % box on
 
 
-
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Uniform Slice Sampling
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    if uniform_SS_on_off == 1
+        tic
+        disp('Uniform Slice Sampling')
+        [samples_uss_line, dist_uss, loglik_uss, fn_evals_uss, nu_samples_uss] = ussSampler(is1, 1, 0, fn_evlas_hmc, clique_size);
+        r_u = nu_samples_uss/number_samples;
+        mauss = mean(samples_uss_line,1);
+        toc
+        %     slice sampling on a circle
+        %     [samples_uss_ess, loglik_uss_ess, fn_evals_uss_ess]= ussSampler(is1, number_samples, d, number_chains,0);
+        %     mauss_ess = mean(samples_uss_ess,1);
+    end
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Uniform Slice Sampling with Stepping In, Stepping Out
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    if uss_stepinout_on_off == 1
+        disp('Uniform Slice Sampling with Stepping In and Stepping Out')
+        [samples_stepinout, loglik_uss_stepinout, fn_evals_uss_stepinout, nu_samples_inout]= uss_step_InOut(is1, d, fn_evlas_hmc, clique_size);
+        mauss_stepinout = mean(samples_stepinout,1);
+        r_u_inout = nu_samples_inout/number_samples;
+    end

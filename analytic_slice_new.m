@@ -58,7 +58,6 @@ while fn_evals <= number_fn_evals
        end
        j = mod(c,d) + 1;
     end
-    
     acc_samples( :, all(~acc_samples,1) ) = [];
     index = unidrnd(p-1);   
     samples(:,i) = acc_samples(:,index);

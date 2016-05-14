@@ -32,11 +32,11 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
                     nei = neighbors(j);
                     obj.Neis(j,:) = nei;
                     obj.M(j,nei) = -1;
-                    % obj.bias(1,j) = 0.3*normrnd(0,1);
-                    obj.bias(1,j) = 0;
+                    obj.bias(1,j) = -5*rand;
+%                     obj.bias(1,j) = 0;
                 end
                 obj.M = obj.beta*obj.M/2;    % the factor of 1/2 is because pairs are counted twice
-
+                obj.bias = obj.beta*obj.bias;
                 function nei = neighbors(j)
                     if j == 1
                         nei = [d, 2];
@@ -56,7 +56,7 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
             % H = -log P(S) = S'*obj.M*S 
             
              function lp = logp(obj,S)                             
-                lp = obj.bias*S - S'*obj.M*S;
+                lp = - obj.bias*S - S'*obj.M*S;
                 if lp > obj.mlp
                     obj.mlp = lp;
                 end                
