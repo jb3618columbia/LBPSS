@@ -5,9 +5,9 @@
 
 % clear
 % Parameters
-d=20;
+d=10;
 temp_vec=[5*pi];
-scale_vec = [12];
+scale_vec = [2];
 
 for u=1:1:length(temp_vec)
     
@@ -19,7 +19,7 @@ for u=1:1:length(temp_vec)
         is1 = Ising1D_new(d,temp, scale);  % Create 1D Ising Object
         % is1 = Ising1D_rand_weight(d,temp);
         clique_size=2; %Clique size
-        number_samples = 1000;
+        number_samples = 5000;
         num_examples = 1;
         initial_point = sign(normrnd(0,1,d,1));
         % initial_point = ones(d,1);
@@ -84,7 +84,7 @@ for u=1:1:length(temp_vec)
         % Comparing Samplers
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        N=50; % Check error after every N equivalent iterations
+        N=200; % Check error after every N equivalent iterations
         error_ana = zeros(num_examples, number_samples/N -1);
         error_ana_dist = zeros(num_examples, number_samples/N -1);
         error_ana_gibbs = zeros(num_examples, number_samples/N -1);
@@ -93,6 +93,15 @@ for u=1:1:length(temp_vec)
         error_uss_inout = zeros(num_examples, number_samples/N-1);
         error_hmc = zeros(num_examples, number_samples/N -1);
         error_cmh = zeros(num_examples, number_samples/N -1);
+        
+        error_ana_1 = zeros(num_examples, number_samples/N -1);
+        error_ana_dist_1 = zeros(num_examples, number_samples/N -1);
+        error_ana_gibbs_1 = zeros(num_examples, number_samples/N -1);
+        error_ana_gibbs_dist_1 = zeros(num_examples, number_samples/N -1);
+        error_uss_1 = zeros(num_examples, number_samples/N-1);
+        error_uss_inout_1 = zeros(num_examples, number_samples/N-1);
+        error_hmc_1 = zeros(num_examples, number_samples/N -1);
+        error_cmh_1 = zeros(num_examples, number_samples/N -1);
         
         
         
@@ -162,33 +171,33 @@ for u=1:1:length(temp_vec)
             % Getting Errors
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
-%             for j=5:number_samples/N
-%                 
-%                 error_ana(q,j-1) = sum(abs(dist_truth - emp_dist(samples_ana(:,200:round(j*N*r_a-1)))));
-%                 error_ana_dist(q,j-1) = sum(abs(dist_truth - mean(cat(1,dist_ana(:,200:round(j*N*r_a-1))),2)));
-%                 error_ana_gibbs(q,j-1) = sum(abs(dist_truth - emp_dist(samples_ana_gibbs(:,200:round(j*N*r_a_g-1)))));
-%                 if info_on_off ==1
-%                     error_ana_gibbs_dist(q,j-1) = sum(abs(dist_truth - mean(cat(1,dist_ana_gibbs(:,200:round(j*N*r_a_g-1))),2)));
-%                 end
-%                 %         error_uss(p,j-1) = sum(abs(dist_truth - emp_dist(samples_uss_line(:,1:floor(j*N*r_u)-10))));
-%                 %         error_uss_inout(p,j-1) = sum(abs(dist_truth - emp_dist(samples_stepinout(1:round(j*N*r_u_inout)))));
-%                 error_hmc(q,j-1) = sum(abs(dist_truth - emp_dist(samples_hmc(:,200:j*N-1))));
-%                 error_cmh(q,j-1) = sum(abs(dist_truth - emp_dist(samples_CMH(:,200:round(j*N*r_cmh-1)))));
-%                 
-%             end
-            
-            for j=5:number_samples/N
+            for j=2:number_samples/N
                 
-                error_ana(q,j-1) = max(abs(dist_truth - emp_dist(samples_ana(:,200:round(j*N*r_a-1)))));
-                error_ana_dist(q,j-1) = max(abs(dist_truth - mean(cat(1,dist_ana(:,200:round(j*N*r_a-1))),2)));
-                error_ana_gibbs(q,j-1) = max(abs(dist_truth - emp_dist(samples_ana_gibbs(:,200:round(j*N*r_a_g-1)))));
+                error_ana(q,j-1) = sum(abs(dist_truth - emp_dist(samples_ana(:,2:round(j*N*r_a-1)))));
+                error_ana_dist(q,j-1) = sum(abs(dist_truth - mean(cat(1,dist_ana(:,2:round(j*N*r_a-1))),2)));
+                error_ana_gibbs(q,j-1) = sum(abs(dist_truth - emp_dist(samples_ana_gibbs(:,2:round(j*N*r_a_g-1)))));
                 if info_on_off ==1
-                    error_ana_gibbs_dist(q,j-1) = max(abs(dist_truth - mean(cat(1,dist_ana_gibbs(:,200:round(j*N*r_a_g-1))),2)));
+                    error_ana_gibbs_dist(q,j-1) = sum(abs(dist_truth - mean(cat(1,dist_ana_gibbs(:,2:round(j*N*r_a_g-1))),2)));
                 end
                 %         error_uss(p,j-1) = sum(abs(dist_truth - emp_dist(samples_uss_line(:,1:floor(j*N*r_u)-10))));
                 %         error_uss_inout(p,j-1) = sum(abs(dist_truth - emp_dist(samples_stepinout(1:round(j*N*r_u_inout)))));
-                error_hmc(q,j-1) = max(abs(dist_truth - emp_dist(samples_hmc(:,200:j*N-1))));
-                error_cmh(q,j-1) = max(abs(dist_truth - emp_dist(samples_CMH(:,200:round(j*N*r_cmh-1)))));
+                error_hmc(q,j-1) = sum(abs(dist_truth - emp_dist(samples_hmc(:,2:j*N-1))));
+                error_cmh(q,j-1) = sum(abs(dist_truth - emp_dist(samples_CMH(:,2:round(j*N*r_cmh-1)))));
+                
+            end
+            
+            for j=2:number_samples/N
+                
+                error_ana_1(q,j-1) = max(abs(dist_truth - emp_dist(samples_ana(:,2:round(j*N*r_a-1)))));
+                error_ana_dist_1(q,j-1) = max(abs(dist_truth - mean(cat(1,dist_ana(:,2:round(j*N*r_a-1))),2)));
+                error_ana_gibbs_1(q,j-1) = max(abs(dist_truth - emp_dist(samples_ana_gibbs(:,2:round(j*N*r_a_g-1)))));
+                if info_on_off ==1
+                    error_ana_gibbs_dist_1(q,j-1) = max(abs(dist_truth - mean(cat(1,dist_ana_gibbs(:,2:round(j*N*r_a_g-1))),2)));
+                end
+                %         error_uss(p,j-1) = sum(abs(dist_truth - emp_dist(samples_uss_line(:,1:floor(j*N*r_u)-10))));
+                %         error_uss_inout(p,j-1) = sum(abs(dist_truth - emp_dist(samples_stepinout(1:round(j*N*r_u_inout)))));
+                error_hmc_1(q,j-1) = max(abs(dist_truth - emp_dist(samples_hmc(:,2:j*N-1))));
+                error_cmh_1(q,j-1) = max(abs(dist_truth - emp_dist(samples_CMH(:,2:round(j*N*r_cmh-1)))));
                 
             end
             
@@ -223,39 +232,50 @@ for u=1:1:length(temp_vec)
 %         hold on
         plot(mean(error_ana_gibbs_dist,1),'g')
         hold on
-        % plot(mean(error_uss,1),'c')
-        % hold on
-        % plot(error_uss_inout,'g')
-        % hold on
-        % plot(mean(error_bps,1),'g')
-        % hold on
         plot(mean(error_hmc,1),'r')
         hold on
         plot(mean(error_cmh,1),'k')
         h=legend('Recycled Slice', 'RB Gibbs', 'HMC', 'CMH');
         set(h, 'Fontsize', 22)
         xlabel('Iterations', 'fontsize', 24)
-        ylabel('Error (Node Marginals)', 'fontsize', 24)
+        ylabel('Total Error (Marginals)', 'fontsize', 24)
         str=sprintf('Bias scale = %d', scale);
+        title(str, 'fontsize', 24)
+        str1=sprintf('Temp = %d', 'Bias scale = %d', temp, scale);
+        saveas(gcf, str1, 'png')
+        
+        figure
+        plot(mean(error_ana_dist_1,1),'b')
+        hold on
+        plot(mean(error_ana_gibbs_dist_1,1),'g')
+        hold on
+        plot(mean(error_hmc_1,1),'r')
+        hold on
+        plot(mean(error_cmh_1,1),'k')
+        h=legend('Recycled Slice', 'RB Gibbs', 'HMC', 'CMH');
+        set(h, 'Fontsize', 22)
+        xlabel('Iterations', 'fontsize', 24)
+        ylabel('Max Error (Marginals)', 'fontsize', 24)
         title(str,'fontsize', 24)
-        saveas(gcf, str, 'png')
+        str2 = sprintf('Max Temp = %d', 'Bias scale = %d', temp, scale);
+        saveas(gcf, str2, 'png')
 
         
         %% Log - likelihoods
         
-        figure
-        plot(loglik_ana(1:end),'b')
-        hold on
-        plot(loglik_ana_gibbs(1:end),'g')
-        hold on
-        plot(1:r_a:number_samples*r_a, loglik_hmc(1:end),'r')
-        hold on
-        % plot(1:r_cmh:number_samples*r_cmh, loglik_hmc(1:end),'r')
-        % hold on
-        plot(log_lik_CMH(1:end),'k')
-        str1=sprintf('Logp:temp = %d, scale = %d', temp, scale);
-        title(str1)
-        saveas(gcf, str1, 'png')
+%         figure
+%         plot(loglik_ana(1:end),'b')
+%         hold on
+%         plot(loglik_ana_gibbs(1:end),'g')
+%         hold on
+%         plot(1:r_a:number_samples*r_a, loglik_hmc(1:end),'r')
+%         hold on
+%         % plot(1:r_cmh:number_samples*r_cmh, loglik_hmc(1:end),'r')
+%         % hold on
+%         plot(log_lik_CMH(1:end),'k')
+%         str2=sprintf('Logp:temp = %d, scale = %d', temp, scale);
+%         title(str2)
+%         saveas(gcf, str2, 'png')
         
         
     end
