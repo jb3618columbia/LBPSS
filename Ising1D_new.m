@@ -18,7 +18,7 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
         methods
         % These methods are public by default. 
         
-            function obj = Ising1D_new(d,temp)
+            function obj = Ising1D_new(d,temp, scale)
             % class constructor            
             
                 obj.d = d;    %linear dimension of the 1D grid
@@ -32,7 +32,7 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
                     nei = neighbors(j);
                     obj.Neis(j,:) = nei;
                     obj.M(j,nei) = -1;
-                    obj.bias(1,j) = -5*rand;
+                    obj.bias(1,j) = -scale*rand;
 %                     obj.bias(1,j) = 0;
                 end
                 obj.M = obj.beta*obj.M/2;    % the factor of 1/2 is because pairs are counted twice
@@ -68,7 +68,7 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
                  % S(j) == +1 and S(j) == -1     
                  % For fixed weights
                  nei = obj.Neis(j,:);
-                 lpc = 2*obj.bias(j) + 2*obj.beta*sum(S(nei));
+                 lpc = -2*obj.bias(j) + 2*obj.beta*sum(S(nei));
                                  
              end
              
