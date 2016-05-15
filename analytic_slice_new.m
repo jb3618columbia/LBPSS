@@ -1,4 +1,4 @@
-function [ samples, dist, log_likes, i ] = analytic_slice_new( f, number_fn_evals, clique_size, initial_point )
+function [ samples, dist, log_likes, i, tv ] = analytic_slice_new( f, number_fn_evals, clique_size, initial_point, true_dist )
 
 % This sampler analytically finds all the coordinate flips that are above a
 % certain threshold level and then uniformly samples one among them
@@ -35,11 +35,15 @@ cur_log_like = f.logp(initial_point);
 fn_evals = 0;
 i=2;
 
+est_dist = zeros(1,2^d);    % for computing the total variation
+
 while fn_evals <= number_fn_evals
-   
     xx = samples(:, i-1);  % Current point
     acc_samples = zeros(d,2*d);
+    log_acc_samples = zeros(1,2*d);
     acc_samples(:,1) = xx;
+    log_acc_samples(1,1) = cur_log_like;
+    
     p = 2;
     hh = log(rand) + cur_log_like;
     k=randperm(d);
@@ -54,11 +58,21 @@ while fn_evals <= number_fn_evals
        
        if cur_log_like > hh
            acc_samples(:,p) = xx;
+           log_acc_samples(1,p) = cur_log_like;
            p = p + 1;
        end
        j = mod(c,d) + 1;
     end
     acc_samples( :, all(~acc_samples,1) ) = [];
+    log_acc_samples = log_acc_samples(log_acc_samples~=0);
+    
+    % Computing the total variation
+%     for m=1:p-1
+%         yy = (acc_samples(:,m) +1)/2;
+%         yy_1 = bi2de(yy');
+%         est_dist(1,yy_1+1) = log_acc_samples(1,m)/(p-1);
+%     end
+    
     index = unidrnd(p-1);   
     samples(:,i) = acc_samples(:,index);
     dist(:,i) = emp_dist(acc_samples(:,1:end));
@@ -68,3 +82,6 @@ while fn_evals <= number_fn_evals
     i = i + 1;
 end
 
+est_dist = exp(est_dist)/sum(exp(est_dist));
+tv = sum(abs(true_dist - est_dist));
+end

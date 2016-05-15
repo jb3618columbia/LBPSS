@@ -55,7 +55,6 @@ Xs(:,1)=initial_X;
 i=2;
 while (i <= L)
     if (mod(i,1000) ==0)
-        i
     end
 
 stop=0;   

@@ -19,8 +19,8 @@ for u=1:1:length(temp_vec)
         is1 = Ising1D_new(d,temp, scale);  % Create 1D Ising Object
         % is1 = Ising1D_rand_weight(d,temp);
         clique_size=2; %Clique size
-        number_samples = 5000;
-        num_examples = 1;
+        number_samples = 4000;
+        num_examples = 20;
         initial_point = sign(normrnd(0,1,d,1));
         % initial_point = ones(d,1);
         
@@ -65,9 +65,10 @@ for u=1:1:length(temp_vec)
                 if mod(j,10000)==0
                 end
                 yy = (2*de2bi(j,d) - 1)';
-                weight(1,j+1) = is1.logp(yy);
+                weight(1,j+1) = is1.logp(yy);  
             end
             weight = exp(weight)/sum(exp(weight));
+            % vector of probabilities of 2^d points, used for tv also 
             
             dist_truth = zeros(d,1);
             for j=0:2^d-1
@@ -79,6 +80,8 @@ for u=1:1:length(temp_vec)
             end
             
         end
+        
+        dist_LBP = get_LBP_marginals( is1.bias , is1.M);
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Comparing Samplers
@@ -102,6 +105,13 @@ for u=1:1:length(temp_vec)
         error_uss_inout_1 = zeros(num_examples, number_samples/N-1);
         error_hmc_1 = zeros(num_examples, number_samples/N -1);
         error_cmh_1 = zeros(num_examples, number_samples/N -1);
+        
+%         error_ana_2 = zeros(num_examples, 1);
+%         error_ana_dist_2 = zeros(num_examples, 1);
+%         error_ana_gibbs_2 = zeros(num_examples, 1);
+%         error_ana_gibbs_dist_2 = zeros(num_examples, 1);
+%         error_hmc_2 = zeros(num_examples, 1);
+%         error_cmh_2 = zeros(num_examples, 1);
         
         
         
@@ -133,7 +143,7 @@ for u=1:1:length(temp_vec)
                 disp('Analytic Slice Sampling')
                 % [samples_ana, dist_ana, loglik_ana, fn_evals_ana, nu_samples_ana]= ussSampler(is1, 0, 1, fn_evlas_hmc, clique_size, initial_point);
                 % More efficient way of doing slice sampling on a circle
-                [samples_ana, dist_ana, loglik_ana, nu_samples_ana]= analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);
+                [samples_ana, dist_ana, loglik_ana, nu_samples_ana, tv_ana]= analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point, weight);
                 r_a = nu_samples_ana/number_samples;
                 mauss_ana = mean(samples_ana,1);
                 toc
@@ -161,7 +171,7 @@ for u=1:1:length(temp_vec)
                 tic
                 disp('Analytic Gibbs Sampling')
                 info_on_off = 1;
-                [samples_ana_gibbs, dist_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs] = analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point);
+                [samples_ana_gibbs, dist_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs, tv_ana_gibbs] = analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, weight);
                 r_a_g = nu_samples_ana_gibbs/number_samples;
                 mauss_ana_gibbs = mean(samples_ana_gibbs,1);
                 toc
@@ -170,22 +180,23 @@ for u=1:1:length(temp_vec)
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Getting Errors
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            
+            % RMSE
             for j=2:number_samples/N
                 
-                error_ana(q,j-1) = sum(abs(dist_truth - emp_dist(samples_ana(:,2:round(j*N*r_a-1)))));
-                error_ana_dist(q,j-1) = sum(abs(dist_truth - mean(cat(1,dist_ana(:,2:round(j*N*r_a-1))),2)));
-                error_ana_gibbs(q,j-1) = sum(abs(dist_truth - emp_dist(samples_ana_gibbs(:,2:round(j*N*r_a_g-1)))));
+                error_ana(q,j-1) = sqrt(mean(   (dist_truth - emp_dist(samples_ana(:,2:round(j*N*r_a-1)))) .^2));
+                error_ana_dist(q,j-1) = sqrt(mean(   (dist_truth - mean(cat(1,dist_ana(:,2:round(j*N*r_a-1))),2))   .^2));
+                error_ana_gibbs(q,j-1) = sqrt(mean(   (dist_truth - emp_dist(samples_ana_gibbs(:,2:round(j*N*r_a_g-1))))  .^2));
                 if info_on_off ==1
-                    error_ana_gibbs_dist(q,j-1) = sum(abs(dist_truth - mean(cat(1,dist_ana_gibbs(:,2:round(j*N*r_a_g-1))),2)));
+                    error_ana_gibbs_dist(q,j-1) = sqrt(mean(  (dist_truth - mean(cat(1,dist_ana_gibbs(:,2:round(j*N*r_a_g-1))),2))  .^2));
                 end
                 %         error_uss(p,j-1) = sum(abs(dist_truth - emp_dist(samples_uss_line(:,1:floor(j*N*r_u)-10))));
                 %         error_uss_inout(p,j-1) = sum(abs(dist_truth - emp_dist(samples_stepinout(1:round(j*N*r_u_inout)))));
-                error_hmc(q,j-1) = sum(abs(dist_truth - emp_dist(samples_hmc(:,2:j*N-1))));
-                error_cmh(q,j-1) = sum(abs(dist_truth - emp_dist(samples_CMH(:,2:round(j*N*r_cmh-1)))));
+                error_hmc(q,j-1) =sqrt(mean(   (dist_truth - emp_dist(samples_hmc(:,2:j*N-1)))  .^2));
+                error_cmh(q,j-1) = sqrt(mean(  (dist_truth - emp_dist(samples_CMH(:,2:round(j*N*r_cmh-1))))  .^2));
                 
             end
             
+            % Max Error
             for j=2:number_samples/N
                 
                 error_ana_1(q,j-1) = max(abs(dist_truth - emp_dist(samples_ana(:,2:round(j*N*r_a-1)))));
@@ -200,6 +211,15 @@ for u=1:1:length(temp_vec)
                 error_cmh_1(q,j-1) = max(abs(dist_truth - emp_dist(samples_CMH(:,2:round(j*N*r_cmh-1)))));
                 
             end
+            
+%             % Total Variation
+%                 error_ana_2(q,1) = total_var(is1, samples_ana, loglik_ana, weight);
+%                 error_ana_dist_2(q,1) = tv_ana;
+%                 error_ana_gibbs_2(q,1) = total_var(is1, samples_ana_gibbs, loglik_ana_gibbs', weight);
+%                 error_ana_gibbs_dist_2(q,1) = tv_ana_gibbs;
+%                 error_hmc_2(q,1) = total_var(is1, samples_hmc, loglik_hmc', weight);
+%                 error_cmh_2(q,1) = total_var(is1, samples_CMH, log_lik_CMH, weight);
+                            
             
         end
         
@@ -221,7 +241,17 @@ for u=1:1:length(temp_vec)
         % Plotting relavant quantities
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        %% Node Marginal Errors
+        % total Variation
+        
+%         display(['TV: Slice = ', num2str(mean(error_ana_2))])
+%         display(['TV: Recycled Slice = ', num2str(mean(error_ana_dist_2))])
+%         display(['TV: Gibbs = ', num2str(mean(error_ana_gibbs_2))])
+%         display(['TV: RB Gibbs = ', num2str(mean(error_ana_gibbs_dist_2))])
+%         display(['TV: HMC = ', num2str(mean(error_hmc_2))])
+%         display(['TV: CMH = ', num2str(mean(error_cmh_2))])
+
+    
+        % Node Marginal Errors
         
         figure
 %         plot(mean(error_ana,1),'b')
@@ -238,11 +268,11 @@ for u=1:1:length(temp_vec)
         h=legend('Recycled Slice', 'RB Gibbs', 'HMC', 'CMH');
         set(h, 'Fontsize', 22)
         xlabel('Iterations', 'fontsize', 24)
-        ylabel('Total Error (Marginals)', 'fontsize', 24)
+        ylabel('RMSE (Marginals)', 'fontsize', 24)
         str=sprintf('Bias scale = %d', scale);
         title(str, 'fontsize', 24)
-        filename = sprintf('Total Error Temp%d', temp);
-        saveas(gcf, filename, 'png')
+        filename = sprintf('Total Error Temp: %d and Scele: %d', temp, scale);
+        saveas(gcf, filename, 'fig')
         
         figure
         plot(mean(error_ana_dist_1,1),'b')
@@ -257,11 +287,11 @@ for u=1:1:length(temp_vec)
         xlabel('Iterations', 'fontsize', 24)
         ylabel('Max Error (Marginals)', 'fontsize', 24)
         title(str,'fontsize', 24)
-        filename = sprintf('Max Error Temp%d', temp);
-        saveas(gcf, filename, 'png')
+        filename = sprintf('Max Error Temp: %d and Scele: %d', temp, scale);
+        saveas(gcf, 'filename.fig')
 
         
-        %% Log - likelihoods
+        % Log - likelihoods
         
 %         figure
 %         plot(loglik_ana(1:end),'b')

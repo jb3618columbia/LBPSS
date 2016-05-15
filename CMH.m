@@ -21,7 +21,6 @@ indices = randsample(d,L*K,true);
 for i=2:L
    
     if mod(i,1000) == 0
-        i
     end
     for k = 1:K
         
