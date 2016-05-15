@@ -5,9 +5,9 @@
 
 % clear
 % Parameters
-d=10;
-temp_vec=[5*pi];
-scale_vec = [2];
+d=20;
+temp_vec=[10*pi, -10*pi];
+scale_vec = [1,2,4,6,8];
 
 for u=1:1:length(temp_vec)
     
@@ -241,8 +241,8 @@ for u=1:1:length(temp_vec)
         ylabel('Total Error (Marginals)', 'fontsize', 24)
         str=sprintf('Bias scale = %d', scale);
         title(str, 'fontsize', 24)
-        str1=sprintf('Temp = %d', 'Bias scale = %d', temp, scale);
-        saveas(gcf, str1, 'png')
+        filename = sprintf('Total Error Temp%d', temp);
+        saveas(gcf, filename, 'png')
         
         figure
         plot(mean(error_ana_dist_1,1),'b')
@@ -257,8 +257,8 @@ for u=1:1:length(temp_vec)
         xlabel('Iterations', 'fontsize', 24)
         ylabel('Max Error (Marginals)', 'fontsize', 24)
         title(str,'fontsize', 24)
-        str2 = sprintf('Max Temp = %d', 'Bias scale = %d', temp, scale);
-        saveas(gcf, str2, 'png')
+        filename = sprintf('Max Error Temp%d', temp);
+        saveas(gcf, filename, 'png')
 
         
         %% Log - likelihoods
