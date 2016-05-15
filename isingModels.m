@@ -5,9 +5,9 @@
 
 % clear
 % Parameters
-d=20;
-temp_vec=[10*pi, -10*pi];
-scale_vec = [1,2,4,6,8];
+d=10;
+temp_vec=[10*pi];
+scale_vec = [1];
 
 for u=1:1:length(temp_vec)
     
@@ -20,7 +20,7 @@ for u=1:1:length(temp_vec)
         % is1 = Ising1D_rand_weight(d,temp);
         clique_size=2; %Clique size
         number_samples = 4000;
-        num_examples = 20;
+        num_examples = 1;
         initial_point = sign(normrnd(0,1,d,1));
         % initial_point = ones(d,1);
         
@@ -80,9 +80,7 @@ for u=1:1:length(temp_vec)
             end
             
         end
-        
-        dist_LBP = get_LBP_marginals( is1.bias , is1.M);
-        
+                
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Comparing Samplers
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,19 +104,8 @@ for u=1:1:length(temp_vec)
         error_hmc_1 = zeros(num_examples, number_samples/N -1);
         error_cmh_1 = zeros(num_examples, number_samples/N -1);
         
-%         error_ana_2 = zeros(num_examples, 1);
-%         error_ana_dist_2 = zeros(num_examples, 1);
-%         error_ana_gibbs_2 = zeros(num_examples, 1);
-%         error_ana_gibbs_dist_2 = zeros(num_examples, 1);
-%         error_hmc_2 = zeros(num_examples, 1);
-%         error_cmh_2 = zeros(num_examples, 1);
-        
-        
-        
         for q=1:num_examples
-            
             q
-            
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Exact-HMC
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,7 +120,6 @@ for u=1:1:length(temp_vec)
                 toc
             end
             
-            
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Analytic Slice Sampling
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,7 +129,7 @@ for u=1:1:length(temp_vec)
                 disp('Analytic Slice Sampling')
                 % [samples_ana, dist_ana, loglik_ana, fn_evals_ana, nu_samples_ana]= ussSampler(is1, 0, 1, fn_evlas_hmc, clique_size, initial_point);
                 % More efficient way of doing slice sampling on a circle
-                [samples_ana, dist_ana, loglik_ana, nu_samples_ana, tv_ana]= analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point, weight);
+                [samples_ana, dist_ana, loglik_ana, nu_samples_ana]= analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);
                 r_a = nu_samples_ana/number_samples;
                 mauss_ana = mean(samples_ana,1);
                 toc
@@ -171,7 +157,7 @@ for u=1:1:length(temp_vec)
                 tic
                 disp('Analytic Gibbs Sampling')
                 info_on_off = 1;
-                [samples_ana_gibbs, dist_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs, tv_ana_gibbs] = analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, weight);
+                [samples_ana_gibbs, dist_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs] = analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point);
                 r_a_g = nu_samples_ana_gibbs/number_samples;
                 mauss_ana_gibbs = mean(samples_ana_gibbs,1);
                 toc
@@ -211,55 +197,22 @@ for u=1:1:length(temp_vec)
                 error_cmh_1(q,j-1) = max(abs(dist_truth - emp_dist(samples_CMH(:,2:round(j*N*r_cmh-1)))));
                 
             end
-            
-%             % Total Variation
-%                 error_ana_2(q,1) = total_var(is1, samples_ana, loglik_ana, weight);
-%                 error_ana_dist_2(q,1) = tv_ana;
-%                 error_ana_gibbs_2(q,1) = total_var(is1, samples_ana_gibbs, loglik_ana_gibbs', weight);
-%                 error_ana_gibbs_dist_2(q,1) = tv_ana_gibbs;
-%                 error_hmc_2(q,1) = total_var(is1, samples_hmc, loglik_hmc', weight);
-%                 error_cmh_2(q,1) = total_var(is1, samples_CMH, log_lik_CMH, weight);
-                            
-            
+       
         end
-        
-        
-        % figure
-        % plot(mauss_ana(1:end),'b')
-        % hold on
-        % plot(1:r_a:number_samples*r_a, mah(1:end),'r')
-        % hold on
-        % plot(1:r_a:number_samples*r_a, mabps(1:end), 'k')
-        % title('Magnetization');
-        % legend('Analytic','HMC', 'BPS')
-        % xlabel('Iterations')
-        % grid
-        % box on
-        
+       
        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Plotting relavant quantities
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        % total Variation
-        
-%         display(['TV: Slice = ', num2str(mean(error_ana_2))])
-%         display(['TV: Recycled Slice = ', num2str(mean(error_ana_dist_2))])
-%         display(['TV: Gibbs = ', num2str(mean(error_ana_gibbs_2))])
-%         display(['TV: RB Gibbs = ', num2str(mean(error_ana_gibbs_dist_2))])
-%         display(['TV: HMC = ', num2str(mean(error_hmc_2))])
-%         display(['TV: CMH = ', num2str(mean(error_cmh_2))])
-
-    
         % Node Marginal Errors
-        
         figure
-%         plot(mean(error_ana,1),'b')
-%         hold on
+        %         plot(mean(error_ana,1),'b')
+        %         hold on
         plot(mean(error_ana_dist,1),'b')
         hold on
-%         plot(mean(error_ana_gibbs,1),'g')
-%         hold on
+        %         plot(mean(error_ana_gibbs,1),'g')
+        %         hold on
         plot(mean(error_ana_gibbs_dist,1),'g')
         hold on
         plot(mean(error_hmc,1),'r')
@@ -271,8 +224,9 @@ for u=1:1:length(temp_vec)
         ylabel('RMSE (Marginals)', 'fontsize', 24)
         str=sprintf('Bias scale = %d', scale);
         title(str, 'fontsize', 24)
-        filename = sprintf('Total Error Temp: %d and Scele: %d', temp, scale);
-        saveas(gcf, filename, 'fig')
+        set(gcf,'units','points','position',[10,10,800,800])
+        filename = sprintf('Total Error Temp: %d and Scele: %d.fig', temp, scale);
+        savefig(gcf,filename)
         
         figure
         plot(mean(error_ana_dist_1,1),'b')
@@ -287,8 +241,9 @@ for u=1:1:length(temp_vec)
         xlabel('Iterations', 'fontsize', 24)
         ylabel('Max Error (Marginals)', 'fontsize', 24)
         title(str,'fontsize', 24)
-        filename = sprintf('Max Error Temp: %d and Scele: %d', temp, scale);
-        saveas(gcf, 'filename.fig')
+        set(gcf,'units','points','position',[10,10,800,800])
+        filename = sprintf('Max Error Temp: %d and Scele: %d.fig', temp, scale);
+        savefig(gcf,filename)
 
         
         % Log - likelihoods
