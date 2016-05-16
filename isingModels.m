@@ -19,7 +19,7 @@ for u=1:1:length(temp_vec)
         is1 = Ising1D_new(d,temp, scale);  % Create 1D Ising Object
         % is1 = Ising1D_rand_weight(d,temp);
         clique_size=2; %Clique size
-        number_samples = 4000;
+        number_samples = 400;
         num_examples = 1;
         initial_point = sign(normrnd(0,1,d,1));
         % initial_point = ones(d,1);
@@ -225,8 +225,9 @@ for u=1:1:length(temp_vec)
         str=sprintf('Bias scale = %d', scale);
         title(str, 'fontsize', 24)
         set(gcf,'units','points','position',[10,10,800,800])
-        filename = sprintf('Total Error Temp: %d and Scele: %d.fig', temp, scale);
-        savefig(gcf,filename)
+        name = strcat('RMSE Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
+        path = '/Users/Jalaj/Documents/Github - LBPSS/New Outputs';
+        savefig(gcf, fullfile(path, name))
         
         figure
         plot(mean(error_ana_dist_1,1),'b')
@@ -242,8 +243,9 @@ for u=1:1:length(temp_vec)
         ylabel('Max Error (Marginals)', 'fontsize', 24)
         title(str,'fontsize', 24)
         set(gcf,'units','points','position',[10,10,800,800])
-        filename = sprintf('Max Error Temp: %d and Scele: %d.fig', temp, scale);
-        savefig(gcf,filename)
+        name = strcat(' Max Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
+        path = '/Users/Jalaj/Documents/Github - LBPSS/New Outputs';
+        savefig(gcf, fullfile(path, name))
 
         
         % Log - likelihoods
