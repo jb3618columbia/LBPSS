@@ -66,7 +66,7 @@ while fn_evals <= number_fn_evals
        end
     end
     samples(:, i) = point;
-    log_likes(i,1) = f.logp(xx);
+    log_likes(i,1) = f.logp(point);
     i = i + 1;
 
 end
