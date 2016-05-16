@@ -19,8 +19,8 @@ for u=1:1:length(temp_vec)
         is1 = Ising1D_new(d,temp, scale);  % Create 1D Ising Object
         % is1 = Ising1D_rand_weight(d,temp);
         clique_size=2; %Clique size
-        number_samples = 400;
-        num_examples = 1;
+        number_samples = 4000;
+        num_examples = 2;
         initial_point = sign(normrnd(0,1,d,1));
         % initial_point = ones(d,1);
         
@@ -143,7 +143,7 @@ for u=1:1:length(temp_vec)
                 disp('Analytic Slice Sampling')
                 % [samples_ana, dist_ana, loglik_ana, fn_evals_ana, nu_samples_ana]= ussSampler(is1, 0, 1, fn_evlas_hmc, clique_size, initial_point);
                 % More efficient way of doing slice sampling on a circle
-                [samples_ana, dist_ana, loglik_ana, nu_samples_ana, tv_ana]= analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point, weight);
+                [samples_ana, dist_ana, loglik_ana, nu_samples_ana]= LBP_analytic_gibbs( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP);%2*(dist_LBP>0.5)-1%analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%
                 r_a = nu_samples_ana/number_samples;
                 mauss_ana = mean(samples_ana,1);
                 toc
@@ -171,7 +171,7 @@ for u=1:1:length(temp_vec)
                 tic
                 disp('Analytic Gibbs Sampling')
                 info_on_off = 1;
-                [samples_ana_gibbs, dist_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs, tv_ana_gibbs] = analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, weight);
+                [samples_ana_gibbs, dist_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs] = analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point);
                 r_a_g = nu_samples_ana_gibbs/number_samples;
                 mauss_ana_gibbs = mean(samples_ana_gibbs,1);
                 toc
