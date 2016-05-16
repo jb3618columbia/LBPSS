@@ -1,4 +1,4 @@
-function [ samples, dist, log_likes, i ] = LBP_analytic_gibbs( f, number_fn_evals, clique_size, info_on_off, initial_point, marginals )
+function [ samples, dist, log_likes, i ] = Interpolated_analytic_gibbs( f, number_fn_evals, clique_size, info_on_off, initial_point, marginals )
 %UNTITLED6 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -25,12 +25,11 @@ while fn_evals <= number_fn_evals
     p = 2;
     j=1;
     z = 2*(rand(d,1) < marginals) - 1;
+    flip_or_not = 2*(xx == z)-1;
     
     for c=1:(2*d)-1 
         
-        if xx(k(j)) ~= z(k(j))
-            xx(k(j)) = -xx(k(j));
-        end
+        xx(k(j)) = flip_or_not(k(j))*xx(k(j));
         fn_evals = fn_evals + clique_size;
         % Efficient way to compute log likeiloohs of the propsoed point
         % cur_log_like = cur_log_like + sign(xx(k(j)))*f.logp_change(xx,k(j));
@@ -55,25 +54,21 @@ while fn_evals <= number_fn_evals
 %     fn_evals = fn_evals + log(d);     % Extra log d for sampling from a dicrete distribution
     index = discretesample(prob_vec,1);
     
-    % Find next point
-    xx = samples(:, i-1);  % Current point
-    if index ~= 1
-        p = 2;
-        j=1;
-        for c=1:(2*d)-1 
-            if xx(k(j)) ~= z(k(j))
-                xx(k(j)) = -xx(k(j));
-            end
-            if p == index
-                break;
-            end
-            p = p + 1;
-            j = mod(c,d) + 1;
-
-        end
+    if index == 1
+       point = samples(:, i-1);
+    elseif index > d + 1
+       point = flip_or_not.*samples(:, i-1);
+       for j=1:index - (d+1)
+           point(k(j)) = flip_or_not(k(j))*point(k(j));
+       end
+    else
+       point = samples(:, i-1);
+       for j=1:index - 1
+           point(k(j)) = flip_or_not(k(j))*point(k(j));
+       end
     end
-    samples(:, i) = xx;
-    log_likes(i,1) = f.logp(samples(:, i));
+    samples(:, i) = point;
+    log_likes(i,1) = f.logp(xx);
     i = i + 1;
 
 end
