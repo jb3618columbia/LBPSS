@@ -29,8 +29,6 @@ for u=1:1:length(temp_vec)
         ana_on_off = true;
         ana_gibbs_on_off =  true;
         exact_hmc_on_off = true;
-        uss_stepinout_on_off = false;
-        uniform_SS_on_off = false;
         CMH_on_off = true;
         info_on_off = true;
         
