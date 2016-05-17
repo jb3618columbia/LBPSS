@@ -19,7 +19,7 @@ while fn_evals <= number_fn_evals
     xx = samples(:, i-1);  % Current point
     k=randperm(d);
     prob_vec = zeros(2*d,1);
-    prob_vec(1,1) = f.logp(xx);
+    prob_vec(1,1) = f.logp(xx) - (xx==1)'*log(marginals) - (xx==-1)'*log(1-marginals);
     dist_est = zeros(d,2*d);
     dist_est(:,1) = xx > 0;
     p = 2;
@@ -68,7 +68,7 @@ while fn_evals <= number_fn_evals
        end
     end
     samples(:, i) = point;
-    log_likes(i,1) = f.logp(xx);
+    log_likes(i,1) = f.logp(point);
     i = i + 1;
 
 end

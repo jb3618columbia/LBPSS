@@ -6,8 +6,8 @@
 % clear
 % Parameters
 d=10;
-temp_vec=[1];%, -10*pi];
-scale_vec = [0];%,2,4,6,8];
+temp_vec=[20];%, -10*pi];
+scale_vec = [2];%,2,4,6,8];
 
 for u=1:1:length(temp_vec)
     
@@ -144,7 +144,8 @@ for u=1:1:length(temp_vec)
                 disp('Analytic Slice Sampling')
                 % [samples_ana, dist_ana, loglik_ana, fn_evals_ana, nu_samples_ana]= ussSampler(is1, 0, 1, fn_evlas_hmc, clique_size, initial_point);
                 % More efficient way of doing slice sampling on a circle
-                [samples_ana, dist_ana, loglik_ana, nu_samples_ana]= Stretched_analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP);%2*(dist_LBP>0.5)-1%analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%
+                [samples_ana, dist_ana, loglik_ana, nu_samples_ana]= Stretched_analytic_slice_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP);%2*(dist_LBP>0.5)-1%analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%
+                
                 r_a = nu_samples_ana/number_samples;
                 mauss_ana = mean(samples_ana,1);
                 toc
@@ -159,6 +160,7 @@ for u=1:1:length(temp_vec)
                 tic
                 disp('Coordinate MH')
                 [samples_CMH, log_lik_CMH, nu_samples_cmh] = CMH(is1, fn_evlas_hmc, clique_size, initial_point);
+                %[samples_CMH, log_lik_CMH, nu_samples_cmh] = CMH_LBP(is1,  fn_evlas_hmc, clique_size, initial_point, dist_LBP);
                 r_cmh = nu_samples_cmh/number_samples;
                 macmh = mean(samples_CMH,1);
                 toc
