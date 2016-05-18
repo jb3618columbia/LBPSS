@@ -3,7 +3,7 @@
 % d=10;  % for 1D Ising models
 d=16;   % for 2D Ising models, this creates a sqrt(d) X sqrt(d) lattice
 temp_vec=[10*pi];
-scale_vec = [10];
+scale_vec = [1,3,5,7,10,20,50];
 data_matrix = zeros(6, length(scale_vec)); % for heat map
 
     
@@ -16,8 +16,8 @@ for u=1:1:length(temp_vec)
         % clique_size=2; %Clique size
         is1 = Ising2D(sqrt(d),temp, scale);  % Create 2D Ising Object
         clique_size=2; %Clique size
-        number_samples = 4000;
-        num_examples = 1;
+        number_samples = 5000;
+        num_examples = 20;
         initial_point = sign(normrnd(0,1,d,1));
         
         % Algorithms:
@@ -218,7 +218,7 @@ for u=1:1:length(temp_vec)
     title('RMSE (Marginals)');
     ax = gca;
     ax.YTickLabel = {'HMC','CMH','AAS','AAS LBP','AAG', 'AAG LBP'};
-    ax.XTickLabel = {'', '1', '', '2','','3'};
+    ax.XTickLabel = {'', '1', '', '3','','5' '', '7','','10', '', '20','','50'};
     h=colorbar;
 
 end
