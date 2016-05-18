@@ -10,29 +10,31 @@ classdef Ising2D < handle  % inherit from handle so that we can pass by referenc
            mlp=-Inf;   
            M;
            Neis;
+           bias;
         end
         
              
         methods
         % These methods are public by default. 
         
-        function obj = Ising2D(d,temp)
+        function obj = Ising2D(d,temp, scale)
             % class constructor
             
             obj.d = d;    %linear dimension of the 1D grid
             obj.beta=1/temp;
             obj.dim = d*d;
-            obj.M = zeros(obj.d*obj.d,obj.d*obj.d);
-            obj.Neis = zeros(obj.d*obj.d,4);
-            
+            obj.M = zeros(obj.dim,obj.dim);
+            obj.Neis = zeros(obj.dim,4);
+            obj.bias = zeros(1,obj.dim);            
             
             for j=1:d*d
                 nei = neighbors(j);
                 obj.Neis(j,:) = nei;
                 obj.M(j, nei) =-1;
+                obj.bias(1,j) = -scale*rand;
             end
             obj.M = obj.beta*obj.M/2;
-            
+            obj.bias = obj.beta*obj.bias;
             function nei = neighbors(j)
                 if j == 1
                     nei = [2, d+1, d, d*(d-1)+1];
@@ -57,16 +59,13 @@ classdef Ising2D < handle  % inherit from handle so that we can pass by referenc
                 end
             end
         end
-            
-            
-                
-            
+    
             % Conventions:
             % S is a signs vector  (+1,-1)
             % H = -log P(S) = S'*obj.M*S 
             
              function lp = logp(obj,S)                             
-                lp = -S'*obj.M*S;
+                lp = - obj.bias*S -S'*obj.M*S;
                 if lp > obj.mlp
                     obj.mlp = lp;
                 end                
@@ -77,15 +76,10 @@ classdef Ising2D < handle  % inherit from handle so that we can pass by referenc
                  % returns the difference in the log probability when 
                  % S(j) == +1 and S(j) == -1     
                  nei = obj.Neis(j,:);
-                 lpc = 2*obj.beta*sum(S(nei));               
+                 lpc = -2*obj.bias(j) + 2*obj.beta*sum(S(nei));               
                      
              end
-             
-             
- 
-             
+
         end
-        
-        
-        
+    
 end

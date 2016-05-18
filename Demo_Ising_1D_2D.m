@@ -1,17 +1,22 @@
-% Implementation of Different Algorithms for 1D Ising Models
+% Implementation of Different Algorithms for 1D and 2D Ising Models
 % Parameters
-d=10;
+% d=10;  % for 1D Ising models
+d=16;   % for 2D Ising models, this creates a sqrt(d) X sqrt(d) lattice
 temp_vec=[10*pi];
-scale_vec = [2];
+scale_vec = [10];
+data_matrix = zeros(6, length(scale_vec)); % for heat map
 
+    
 for u=1:1:length(temp_vec)
     temp = temp_vec(u);
     
     for v=1:1:length(scale_vec);
         scale = scale_vec(v);
-        is1 = Ising1D_new(d,temp, scale);  % Create 1D Ising Object
+        % is1 = Ising1D_new(d,temp, scale);  % Create 1D Ising Object
+        % clique_size=2; %Clique size
+        is1 = Ising2D(sqrt(d),temp, scale);  % Create 2D Ising Object
         clique_size=2; %Clique size
-        number_samples = 5250;
+        number_samples = 4000;
         num_examples = 1;
         initial_point = sign(normrnd(0,1,d,1));
         
@@ -25,7 +30,6 @@ for u=1:1:length(temp_vec)
         % With LBP
         ana_lbp_on_off = true;
         ana_lbp_gibbs_on_off = true;
-        CMH_lbp_on_off = true;
         
         %%%%%%%%%%%%%%%%%%%%%%%
         % True Node Marginals
@@ -58,7 +62,6 @@ for u=1:1:length(temp_vec)
         error_cmh = zeros(num_examples, number_samples/N);
         error_ana_gibbs_lbp = zeros(num_examples, number_samples/N);
         error_ana_lbp = zeros(num_examples, number_samples/N);
-        error_cmh_lbp = zeros(num_examples, number_samples/N);
 
         for q=1:num_examples
             q
@@ -106,19 +109,7 @@ for u=1:1:length(temp_vec)
                 r_cmh = nu_samples_cmh/number_samples;
                 toc
             end
-            
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % Coordiante MH with LBP
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if CMH_lbp_on_off == 1
-                tic
-                disp('Coordinate MH with LBP')
-                [samples_CMH_lbp, log_lik_CMH_lbp, nu_samples_cmh_lbp] = CMH_LBP(is1,  fn_evlas_hmc, clique_size, initial_point, dist_LBP);
-                r_cmh_lbp = nu_samples_cmh_lbp/number_samples;
-                toc
-            end
-        
-            
+
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Analytic Gibbs Sampling
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,7 +141,6 @@ for u=1:1:length(temp_vec)
             error_hmc(q,1) =sqrt(mean(   (dist_truth - emp_dist(initial_point))  .^2));
             error_cmh(q,1) = sqrt(mean(  (dist_truth - emp_dist(initial_point))  .^2));
             
-            error_cmh_lbp(q,1) = sqrt(mean(  (dist_truth - emp_dist(initial_point))  .^2));
             error_ana_lbp(q,1) = sqrt(mean(  (dist_truth - emp_dist(initial_point))  .^2));
             error_ana_gibbs_lbp(q,1) = sqrt(mean(  (dist_truth - emp_dist(initial_point))  .^2));
             
@@ -161,43 +151,76 @@ for u=1:1:length(temp_vec)
                 error_hmc(q,j) =sqrt(mean(   (dist_truth - emp_dist(samples_hmc(:,2:j*N-1)))  .^2));
                 error_cmh(q,j) = sqrt(mean(  (dist_truth - emp_dist(samples_CMH(:,2:round(j*N*r_cmh-1))))  .^2));
                 
-                error_cmh_lbp(q,j) = sqrt(mean(  (dist_truth - emp_dist(samples_CMH_lbp(:,2:round(j*N*r_cmh-1))))  .^2));
                 error_ana_lbp(q,j) = sqrt(mean(   (dist_truth - mean(cat(1,dist_ana_lbp(:,2:round(j*N*r_a-1))),2))   .^2));
                 error_ana_gibbs_lbp(q,j) = sqrt(mean(  (dist_truth - mean(cat(1,dist_ana_gibbs_lbp(:,2:round(j*N*r_a_g-1))),2))  .^2));
-                
             end
             
-
         end
         
+        % For Heat Maps
+         data_matrix(1, v) = mean(error_hmc(:,number_samples/N));
+         data_matrix(2, v) = mean(error_cmh(:,number_samples/N));
+         data_matrix(3, v) = mean(error_ana(:,number_samples/N));
+         data_matrix(4, v) = mean(error_ana_lbp(:,number_samples/N));
+         data_matrix(5, v) = mean(error_ana_gibbs(:,number_samples/N));
+         data_matrix(6, v) = mean(error_ana_gibbs_lbp(:,number_samples/N));
+        
         % Node Marginal Errors
-        figure
-        semilogy(0:length(error_ana)-1, mean(error_ana,1), 'Color', [152,78,163]/255);
-        hold on
-        semilogy(0:length(error_ana_gibbs)-1, mean(error_ana_gibbs,1), 'Color', [77,175,74]/255);
-        hold on
-        semilogy(0:length(error_hmc)-1, mean(error_hmc,1), 'Color', [228,26,28]/255);
-        hold on
-        semilogy(0:length(error_cmh)-1, mean(error_cmh,1),'Color', [55,126,184]/255);
-        hold on
-        semilogy(0:length(error_cmh_lbp)-1, mean(error_cmh_lbp,1), '--', 'Color', [55,126,184]/255);
-        hold on
-        semilogy(0:length(error_ana_lbp)-1, mean(error_ana_lbp,1), '--', 'Color', [152,78,163]/255);
-        hold on
-        semilogy(0:length(error_ana_gibbs_lbp)-1, mean(error_ana_gibbs_lbp,1),'--', 'Color', [77,175,74]/255);
-        h=legend('RBS', 'RBG', 'HMC', 'CMH', 'CMH LBP', 'RBS LBP', 'RBG LBP');
-        set(h);
-        xlabel('Function Evaluations');
-        ylabel('RMSE (Marginals)');
-        str=sprintf('Bias scale = %d', scale);
-        title(str);
-        set(gcf,'units','points','position',[10,10,800,800]);
-        name = strcat('RMSE Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
-        path = '/Users/Jalaj/Documents/Github - LBPSS/New Outputs';
-        savefig(gcf, fullfile(path, name))
+%         figure
+%         semilogy(0:length(error_ana)-1, mean(error_ana,1), 'Color', [152,78,163]/255);
+%         hold on
+%         semilogy(0:length(error_ana_gibbs)-1, mean(error_ana_gibbs,1), 'Color', [77,175,74]/255);
+%         hold on
+%         semilogy(0:length(error_hmc)-1, mean(error_hmc,1), 'Color', [228,26,28]/255);
+%         hold on
+%         semilogy(0:length(error_cmh)-1, mean(error_cmh,1),'Color', [55,126,184]/255);
+%         hold on
+%         semilogy(0:length(error_ana_lbp)-1, mean(error_ana_lbp,1), '--', 'Color', [152,78,163]/255);
+%         hold on
+%         semilogy(0:length(error_ana_gibbs_lbp)-1, mean(error_ana_gibbs_lbp,1),'--', 'Color', [77,175,74]/255);
+%         h=legend('AAS', 'AAG', 'HMC', 'CMH','AAS LBP', 'AAG LBP');
+%         set(h);
+%         xlabel('Function Evaluations');
+%         ylabel('RMSE (Marginals)');
+%         str=sprintf('Bias scale = %d', scale);
+%         title(str);
+%         set(gcf,'units','points','position',[10,10,800,800]);
+%         name = strcat('RMSE Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
+%         path = '/Users/Jalaj/Documents/Github - LBPSS/New Outputs';
+%         savefig(gcf, fullfile(path, name))
+        
+        
+%         figure
+%         plot(loglik_ana(1:end),'b')
+%         hold on
+%         plot(loglik_ana_lbp(1:end),'m') 
+%         hold on 
+%         plot(loglik_ana_gibbs(1:end),'g')
+%         hold on
+%         plot(loglik_ana_gibbs_lbp(1:end),'c')
+%         hold on
+%         plot(1:r_a:number_samples*r_a, loglik_hmc(1:end),'r')
+%         hold on
+%         plot(log_lik_CMH(1:end),'k')
+%         str2=sprintf('Logp:temp = %d, scale = %d', temp, scale);
+%         title(str2)
+%         saveas(gcf, str2, 'png')
+
+         
+         
         
     end
     
+    colormap('hot')
+    imagesc(data_matrix);
+    xlabel('Bias');
+    ylabel('Algorithms')
+    title('RMSE (Marginals)');
+    ax = gca;
+    ax.YTickLabel = {'HMC','CMH','AAS','AAS LBP','AAG', 'AAG LBP'};
+    ax.XTickLabel = {'', '1', '', '2','','3'};
+    h=colorbar;
+
 end
             
         

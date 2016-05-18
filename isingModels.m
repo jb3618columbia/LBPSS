@@ -1,7 +1,6 @@
 % Implementation of Different Algorithms for Ising Models
 % Models:
 % 1) 1D Ising Models
-% 2) 2D Ising Models
 
 % clear
 % Parameters
