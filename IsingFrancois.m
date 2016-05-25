@@ -226,11 +226,11 @@ for u=1:1:length(temp_vec)
         
         
         % figure
-        % plot(mauss_ana(1:end),'b')
+        % semilogy(mauss_ana(1:end),'b')
         % hold on
-        % plot(1:r_a:number_samples*r_a, mah(1:end),'r')
+        % semilogy(1:r_a:number_samples*r_a, mah(1:end),'r')
         % hold on
-        % plot(1:r_a:number_samples*r_a, mabps(1:end), 'k')
+        % semilogy(1:r_a:number_samples*r_a, mabps(1:end), 'k')
         % title('Magnetization');
         % legend('Analytic','HMC', 'BPS')
         % xlabel('Iterations')
@@ -239,7 +239,7 @@ for u=1:1:length(temp_vec)
         
        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Plotting relavant quantities
+        % semilogyting relavant quantities
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         % total Variation
@@ -255,39 +255,39 @@ for u=1:1:length(temp_vec)
         % Node Marginal Errors
         
         figure
-%         plot(mean(error_ana,1),'b')
+%         semilogy(mean(error_ana,1),'b')
 %         hold on
-        plot(mean(error_ana_dist,1),'b')
+        semilogy(mean(error_ana_dist,1),'b')
         hold on
-%         plot(mean(error_ana_gibbs,1),'g')
+%         semilogy(mean(error_ana_gibbs,1),'g')
 %         hold on
-        plot(mean(error_ana_gibbs_dist,1),'g')
+        semilogy(mean(error_ana_gibbs_dist,1),'g')
         hold on
-        plot(mean(error_hmc,1),'r')
+        semilogy(mean(error_hmc,1),'r')
         hold on
-        plot(mean(error_cmh,1),'k')
+        semilogy(mean(error_cmh,1),'k')
         h=legend('Recycled Slice', 'RB Gibbs', 'HMC', 'CMH');
-        set(h, 'Fontsize', 22)
-        xlabel('Iterations', 'fontsize', 24)
-        ylabel('RMSE (Marginals)', 'fontsize', 24)
+        %set(h, 'Fontsize', 22)
+        xlabel('Iterations')%, 'fontsize', 24)
+        ylabel('RMSE (Marginals)')%, 'fontsize', 24)
         str=sprintf('Bias scale = %d', scale);
-        title(str, 'fontsize', 24)
+        title(str)%, 'fontsize', 24)
         filename = sprintf('Total Error Temp: %d and Scele: %d', temp, scale);
         saveas(gcf, filename, 'png')
         
         figure
-        plot(mean(error_ana_dist_1,1),'b')
+        semilogy(mean(error_ana_dist_1,1),'b')
         hold on
-        plot(mean(error_ana_gibbs_dist_1,1),'g')
+        semilogy(mean(error_ana_gibbs_dist_1,1),'g')
         hold on
-        plot(mean(error_hmc_1,1),'r')
+        semilogy(mean(error_hmc_1,1),'r')
         hold on
-        plot(mean(error_cmh_1,1),'k')
+        semilogy(mean(error_cmh_1,1),'k')
         h=legend('Recycled Slice', 'RB Gibbs', 'HMC', 'CMH');
-        set(h, 'Fontsize', 22)
-        xlabel('Iterations', 'fontsize', 24)
-        ylabel('Max Error (Marginals)', 'fontsize', 24)
-        title(str,'fontsize', 24)
+        %set(h, 'Fontsize', 22)
+        xlabel('Iterations')%, 'fontsize', 24)
+        ylabel('Max Error (Marginals)')%, 'fontsize', 24)
+        title(str)%,'fontsize', 24)
         filename = sprintf('Max Error Temp: %d and Scele: %d', temp, scale);
         saveas(gcf, filename, 'png')
 
@@ -295,15 +295,15 @@ for u=1:1:length(temp_vec)
         % Log - likelihoods
         
         figure
-        plot(loglik_ana(1:end),'b')
+        semilogy(loglik_ana(1:end),'b')
         hold on
-        plot(loglik_ana_gibbs(1:end),'g')
+        semilogy(loglik_ana_gibbs(1:end),'g')
         hold on
-        plot(1:r_a:number_samples*r_a, loglik_hmc(1:end),'r')
+        semilogy(1:r_a:number_samples*r_a, loglik_hmc(1:end),'r')
         hold on
-        % plot(1:r_cmh:number_samples*r_cmh, loglik_hmc(1:end),'r')
+        % semilogy(1:r_cmh:number_samples*r_cmh, loglik_hmc(1:end),'r')
         % hold on
-        plot(log_lik_CMH(1:end),'k')
+        semilogy(log_lik_CMH(1:end),'k')
         str2=sprintf('Logp:temp = %d, scale = %d', temp, scale);
         title(str2)
         saveas(gcf, str2, 'png')
@@ -313,7 +313,7 @@ for u=1:1:length(temp_vec)
     
 end
 
-%% Plotting Magnetism
+%% semilogyting Magnetism
 % if fn_evals_uss_stepinout < fn_evals_uss
 %
 %     display('Stepping-In/Out works faster')
@@ -329,12 +329,12 @@ end
 % end
 
 % % If stepping in stepping out works well
-% subplot(111)
+% subsemilogy(111)
 % hold on
-% plot(mauss_stepinout(1:end), 'k')
-% plot(1:round(sc_ratio_stepinout):number_samples, mauss(1:ceil(number_samples/round(sc_ratio_stepinout))), 'b')
-% plot(1:round(sc_ratio):number_samples, mah(1:ceil(number_samples/round(sc_ratio))), 'r')
-% % plot (mah(1:end), 'r')
+% semilogy(mauss_stepinout(1:end), 'k')
+% semilogy(1:round(sc_ratio_stepinout):number_samples, mauss(1:ceil(number_samples/round(sc_ratio_stepinout))), 'b')
+% semilogy(1:round(sc_ratio):number_samples, mah(1:ceil(number_samples/round(sc_ratio))), 'r')
+% % semilogy (mah(1:end), 'r')
 % title('Magnetization');
 % legend('step In-Out','Uniform Slice Sampler', 'Exact-HMC')
 % xlabel('Iterations')
@@ -342,12 +342,12 @@ end
 % box on
 
 % % If stepping in works well
-% subplot(111)
+% subsemilogy(111)
 % hold on
-% plot(1:round(sc_ratio_stepinout):number_samples, mauss_stepinout(1:ceil(number_samples/round(sc_ratio_stepinout))), 'g')
-% plot(mauss(1:end), 'b')
-% plot(1:round(sc_ratio):number_samples, mah(1:ceil(number_samples/round(sc_ratio))), 'r')
-% plot (mah(1:end), 'r')
+% semilogy(1:round(sc_ratio_stepinout):number_samples, mauss_stepinout(1:ceil(number_samples/round(sc_ratio_stepinout))), 'g')
+% semilogy(mauss(1:end), 'b')
+% semilogy(1:round(sc_ratio):number_samples, mah(1:ceil(number_samples/round(sc_ratio))), 'r')
+% semilogy (mah(1:end), 'r')
 % title('Magnetization');
 % legend('step In-Out','Uniform Slice Sampler', 'Exact-HMC')
 % xlabel('Iterations')
@@ -356,35 +356,35 @@ end
 
 
 
-%% This is for plotting acf for log-likelihoods for various samplers
+%% This is for semilogyting acf for log-likelihoods for various samplers
 
 % figure
-% fig1 = subplot(1,4,1);
+% fig1 = subsemilogy(1,4,1);
 % acf(loglik_ana',20);
 % title('Analytic Slice Sampler')
 % hold on
 %
-% fig2 = subplot(1,4,2);
+% fig2 = subsemilogy(1,4,2);
 % acf(loglik_ana_gibbs',20);
 % title('Analytic Gibbs Sampler')
 % hold on
 %
-% % fig3 = subplot(1,4,3);
+% % fig3 = subsemilogy(1,4,3);
 % % acf(loglik_uss_stepinout',20);
 % % title('Stepping In/Out')
 % % hold on
 %
-% fig4 = subplot(1,4,3);
+% fig4 = subsemilogy(1,4,3);
 % acf(loglik_hmc,20);
 % title('HMC')
 %
-% fig5 = subplot(1,4,4);
+% fig5 = subsemilogy(1,4,4);
 % acf(log_lik_CMH',20);
 % title('Coordinate MH')
 
 
 
-%% This plots the effective sample size from various samplers
+%% This semilogys the effective sample size from various samplers
 % y=[62.5/(2*50),1, 500/(30*50)];
 % bar(1, y(1),0.4,'r');
 % hold on
@@ -408,15 +408,15 @@ end
 
 
 
-%% This plots the magnetism of points as the samplers move through the space
-% subplot(111)
+%% This semilogys the magnetism of points as the samplers move through the space
+% subsemilogy(111)
 % hold on
-% plot(mauss_ana(1:end), 'k')
-% plot(mabps(1:end),'g')
-% % plot(mauss(1:end), 'b')
-% % plot(mauss_stepinout(1:end), 'g')
-% % plot(1:round(sc_ratio):number_samples,mah(1:ceil(number_samples/round(sc_ratio))), 'r')
-% plot (mah(1:end), 'r')
+% semilogy(mauss_ana(1:end), 'k')
+% semilogy(mabps(1:end),'g')
+% % semilogy(mauss(1:end), 'b')
+% % semilogy(mauss_stepinout(1:end), 'g')
+% % semilogy(1:round(sc_ratio):number_samples,mah(1:ceil(number_samples/round(sc_ratio))), 'r')
+% semilogy (mah(1:end), 'r')
 % title('Magnetization');
 % legend('Uniform Slice Sampler', 'Exact-HMC')
 % xlabel('Iterations')
