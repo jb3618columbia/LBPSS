@@ -6,8 +6,8 @@
 % clear
 % Parameters
 d=10;
-temp_vec=[20];%, -10*pi];
-scale_vec = [2];%,2,4,6,8];
+temp_vec=[-10*pi];
+scale_vec = [20];
 
 for u=1:1:length(temp_vec)
     
@@ -118,6 +118,23 @@ for u=1:1:length(temp_vec)
             
             q
             
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % Metropolis with random flip proposal
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+            if CMH_on_off == 1
+                tic
+                disp('Coordinate MH')
+                %[samples_CMH, log_lik_CMH, nu_samples_cmh] = CMH(is1, fn_evlas_hmc, clique_size, initial_point);
+                %[samples_CMH, log_lik_CMH, nu_samples_cmh] = CMH_LBP_DES(is1,  fn_evlas_hmc, clique_size, initial_point, dist_LBP);
+                [samples_CMH, log_lik_CMH, nu_samples_cmh, dist_cmh] = CMH_LBP_RB(is1,  fn_evlas_hmc, clique_size, initial_point, dist_LBP);
+                %[samples_CMH, log_lik_CMH, nu_samples_cmh] = CMH_LBP(is1,  fn_evlas_hmc, clique_size, initial_point, dist_LBP);
+                r_cmh = nu_samples_cmh/number_samples;
+                macmh = mean(samples_CMH,1);
+                toc
+            end
+            
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Exact-HMC
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,21 +166,6 @@ for u=1:1:length(temp_vec)
                 toc
             end
             
-            
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % Metropolis with random flip proposal
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            
-            if CMH_on_off == 1
-                tic
-                disp('Coordinate MH')
-                [samples_CMH, log_lik_CMH, nu_samples_cmh] = CMH(is1, fn_evlas_hmc, clique_size, initial_point);
-                %[samples_CMH, log_lik_CMH, nu_samples_cmh] = CMH_LBP(is1,  fn_evlas_hmc, clique_size, initial_point, dist_LBP);
-                r_cmh = nu_samples_cmh/number_samples;
-                macmh = mean(samples_CMH,1);
-                toc
-            end
-            
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Analytic Gibbs Sampling
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -172,7 +174,8 @@ for u=1:1:length(temp_vec)
                 tic
                 disp('Analytic Gibbs Sampling')
                 info_on_off = 1;
-                [samples_ana_gibbs, dist_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs] = analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point);
+                %[samples_ana_gibbs, dist_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs] = analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point);
+                [samples_ana_gibbs, dist_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs] = Stretched_analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP);
                 r_a_g = nu_samples_ana_gibbs/number_samples;
                 mauss_ana_gibbs = mean(samples_ana_gibbs,1);
                 toc
@@ -193,7 +196,8 @@ for u=1:1:length(temp_vec)
                 %         error_uss(p,j-1) = sum(abs(dist_truth - emp_dist(samples_uss_line(:,1:floor(j*N*r_u)-10))));
                 %         error_uss_inout(p,j-1) = sum(abs(dist_truth - emp_dist(samples_stepinout(1:round(j*N*r_u_inout)))));
                 error_hmc(q,j-1) =sqrt(mean(   (dist_truth - emp_dist(samples_hmc(:,2:j*N-1)))  .^2));
-                error_cmh(q,j-1) = sqrt(mean(  (dist_truth - emp_dist(samples_CMH(:,2:round(j*N*r_cmh-1))))  .^2));
+                %error_cmh(q,j-1) = sqrt(mean(  (dist_truth - emp_dist(samples_CMH(:,2:round(j*N*r_cmh-1))))  .^2));
+                error_cmh(q,j-1) = sqrt(mean(   (dist_truth - mean(cat(1,dist_cmh(:,2:round(j*N*r_cmh-1))),2))   .^2));
                 
             end
             
@@ -209,7 +213,8 @@ for u=1:1:length(temp_vec)
                 %         error_uss(p,j-1) = sum(abs(dist_truth - emp_dist(samples_uss_line(:,1:floor(j*N*r_u)-10))));
                 %         error_uss_inout(p,j-1) = sum(abs(dist_truth - emp_dist(samples_stepinout(1:round(j*N*r_u_inout)))));
                 error_hmc_1(q,j-1) = max(abs(dist_truth - emp_dist(samples_hmc(:,2:j*N-1))));
-                error_cmh_1(q,j-1) = max(abs(dist_truth - emp_dist(samples_CMH(:,2:round(j*N*r_cmh-1)))));
+                %error_cmh_1(q,j-1) = max(abs(dist_truth - emp_dist(samples_CMH(:,2:round(j*N*r_cmh-1)))));
+                error_cmh_1(q,j-1) = max(abs(dist_truth - mean(cat(1,dist_cmh(:,2:round(j*N*r_cmh-1))),2)));
                 
             end
             
