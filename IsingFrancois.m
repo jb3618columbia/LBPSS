@@ -6,7 +6,7 @@
 % clear
 % Parameters
 d=10;
-temp_vec=[-10*pi];
+temp_vec=[-1*pi];
 scale_vec = [20];
 
 for u=1:1:length(temp_vec)

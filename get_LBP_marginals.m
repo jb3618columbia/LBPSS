@@ -30,7 +30,7 @@ maxState = max(edgeStruct.nStates); % Number of edges
 edgePot = zeros(maxState,maxState,edgeStruct.nEdges); % Initialize edge potentials
 for e = 1:edgeStruct.nEdges
     indices = edgeStruct.edgeEnds(e,:);
-   edgePot(:,:,e) = [exp(b(indices(1),indices(2))) exp(-b(indices(1),indices(2))) ; exp(-b(indices(1),indices(2))) exp(b(indices(1),indices(2)))]; 
+    edgePot(:,:,e) = [exp(b(indices(1),indices(2))) exp(-b(indices(1),indices(2))) ; exp(-b(indices(1),indices(2))) exp(b(indices(1),indices(2)))]; 
 end
 
 % Find the marginals
