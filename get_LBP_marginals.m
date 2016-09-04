@@ -1,4 +1,4 @@
-function [ marginalsLBP, marginalsJT ] = get_LBP_marginals( a , b )
+function [ edgeStruct, marginalsLBP, edgeBelLBP, Z_LBP, marginalsJT, edgeBelJT, Z_JT ] = get_LBP_marginals( a , b )
 % Computes loopy belief propagation marginal approximations
 
 % Likelihoods are of the form \prod_{i=1}^d \exp{a_i s_i} \prod_{i < j} \exp{b_{i,j} s_i s_j}
@@ -35,12 +35,14 @@ end
 
 % Find the marginals
 % Using LBP
-[nodeBelLBP,~,~] = UGM_Infer_LBP(nodePot,edgePot,edgeStruct);
+[nodeBelLBP,edgeBelLBP,Z_LBP] = UGM_Infer_LBP(nodePot,edgePot,edgeStruct);
 marginalsLBP = nodeBelLBP(:,1);
 
 % Using Junction Tree (exact)
-[nodeBelJT,~,~] = UGM_Infer_Junction(nodePot,edgePot,edgeStruct); 
+[nodeBelJT,edgeBelJT,Z_JT] = UGM_Infer_Junction(nodePot,edgePot,edgeStruct); 
 marginalsJT = nodeBelJT(:,1);
 
-end
+% To find the pairwise marginals between nodes i and j run the code
+% edgeBelJT(:,:,find(ismember(edgeStruct.edgeEnds, [i,j] ,'rows')))
 
+end
