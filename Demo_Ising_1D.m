@@ -1,8 +1,8 @@
 % Implementation of Different Algorithms for 1D Ising Models
 % Parameters
 d=10;
-temp_vec=[-10*pi];
-scale_vec = [1];
+temp_vec=[0.1*pi];
+scale_vec = [0];
 
 for u=1:1:length(temp_vec)
     temp = temp_vec(u);
@@ -11,16 +11,21 @@ for u=1:1:length(temp_vec)
         scale = scale_vec(v);
         is1 = Ising1D_new(d,temp, scale);  % Create 1D Ising Object
         clique_size=2; %Clique size
-        number_samples = 5250;
+        number_samples = 500;
         num_examples = 1;
         initial_point = sign(normrnd(0,1,d,1));
         
         % Algorithms:
         truth = true;
-        ana_lbp_on_off = true;
-        ana_lbp_gibbs_on_off = true;
-        exact_hmc_on_off = true;
-        CMH_lbp_on_off = true;
+        ana_slice = 0;  % plan to only show slice with rb and lbp
+        ana_gibbs = 0;
+        ana_gibbs_rb = 0;
+        ana_slice_rb_lbp = 0;
+        ana_gibbs_rb_lbp = 1; % in gibbs sampling we show rb, rb+lbp
+        exact_hmc = 1; 
+        cmh = 0;
+        cmh_lbp = 1;
+        sw = 1;
         info_on_off = true;
 
         %%%%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +65,7 @@ for u=1:1:length(temp_vec)
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Exact-HMC
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if exact_hmc_on_off == 1
+            if exact_hmc == 1
                 tic
                 disp('Exact_HMC')
                 t = 1.5; T=t*pi;
@@ -70,9 +75,20 @@ for u=1:1:length(temp_vec)
             end
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % Analytic Slice Sampling
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            if ana_slice == 1
+                tic
+                disp('Analytic Slice Sampling')
+                [samples_ana, dist_ana, loglik_ana, nu_samples_ana]= analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%2*(dist_LBP>0.5)-1%analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%
+                r_a = nu_samples_ana_lbp/number_samples;
+                toc
+            end
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Analytic Slice Sampling with LBP
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if ana_lbp_on_off == 1
+            if ana_slice_rb_lbp == 1
                 tic
                 disp('Analytic Slice Sampling with LBP')
                 [samples_ana_lbp, dist_ana_lbp, loglik_ana_lbp, nu_samples_ana_lbp]= Stretched_analytic_slice_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP);%2*(dist_LBP>0.5)-1%analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%
@@ -84,19 +100,28 @@ for u=1:1:length(temp_vec)
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Coordiante MH with LBP
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if CMH_lbp_on_off == 1
+            if cmh_lbp == 1
                 tic
                 disp('Coordinate MH with LBP')
                 [samples_CMH_lbp, log_lik_CMH_lbp, nu_samples_cmh_lbp] = CMH_LBP(is1,  fn_evlas_hmc, clique_size, initial_point, dist_LBP);
                 r_cmh_lbp = nu_samples_cmh_lbp/number_samples;
                 toc
             end
-        
+           
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % Analytic Gibbs Sampling
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            if ana_gibbs == 1
+               tic
+               disp('Analytic Gibbs Sampling')
+               [samples_ana_gibbs, dist_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs] = analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point);
+               r_a_g = nu_samples_ana_gibbs/number_samples;
+            end
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Analytic Gibbs Sampling with LBP
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if ana_lbp_gibbs_on_off == 1
+            if ana_gibbs_rb_lbp == 1
                 tic
                 disp('Analytic Gibbs Sampling with LBP')
                 [samples_ana_gibbs_lbp, dist_ana_gibbs_lbp, loglik_ana_gibbs_lbp, nu_samples_ana_gibbs_lbp] = Stretched_analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP);
@@ -104,45 +129,69 @@ for u=1:1:length(temp_vec)
                 toc
             end
         
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % Swendsen Wang 
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            if sw == 1
+                tic
+                disp('Swendsen Wang')
+                [samples_sw, dist_sw, loglik_sw, nu_samples_sw] = SW_1D( is1, fn_evlas_hmc, initial_point);
+                r_sw = nu_samples_sw/number_samples;
+                toc
+            end
             
              %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % RMSE
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
-            error_ana_lbp(q,1) = sqrt(mean(   (dist_truth - emp_dist(initial_point))   .^2));
-            error_ana_gibbs_lbp(q,1) = sqrt(mean(  (dist_truth - emp_dist(initial_point))  .^2));
-            error_hmc(q,1) =sqrt(mean(   (dist_truth - emp_dist(initial_point))  .^2));
-            error_cmh_lbp(q,1) = sqrt(mean(  (dist_truth - emp_dist(initial_point))  .^2));
-
-            for j=2:(number_samples/N)
-                error_ana_lbp(q,j) = sqrt(mean(   (dist_truth - mean(cat(1,dist_ana_lbp(:,2:round(j*N*r_a_lbp-1))),2))   .^2));
-                error_ana_gibbs_lbp(q,j) = sqrt(mean(  (dist_truth - mean(cat(1,dist_ana_gibbs_lbp(:,2:round(j*N*r_a_g_lbp-1))),2))  .^2));
-                error_hmc(q,j) =sqrt(mean(   (dist_truth - emp_dist(samples_hmc(:,2:j*N-1)))  .^2));
-                error_cmh_lbp(q,j) = sqrt(mean(  (dist_truth - emp_dist(samples_CMH_lbp(:,2:round(j*N*r_cmh_lbp-1))))  .^2));
-                
-            end
-        end
-        
-         % Node Marginal Errors
+%             error_ana_lbp(q,1) = sqrt(mean(   (dist_truth - emp_dist(initial_point))   .^2));
+%             error_ana_gibbs_lbp(q,1) = sqrt(mean(  (dist_truth - emp_dist(initial_point))  .^2));
+%             error_hmc(q,1) =sqrt(mean(   (dist_truth - emp_dist(initial_point))  .^2));
+%             error_cmh_lbp(q,1) = sqrt(mean(  (dist_truth - emp_dist(initial_point))  .^2));
+% 
+%             for j=2:(number_samples/N)
+%                 error_ana_lbp(q,j) = sqrt(mean(   (dist_truth - mean(cat(1,dist_ana_lbp(:,2:round(j*N*r_a_lbp-1))),2))   .^2));
+%                 error_ana_gibbs_lbp(q,j) = sqrt(mean(  (dist_truth - mean(cat(1,dist_ana_gibbs_lbp(:,2:round(j*N*r_a_g_lbp-1))),2))  .^2));
+%                 error_hmc(q,j) =sqrt(mean(   (dist_truth - emp_dist(samples_hmc(:,2:j*N-1)))  .^2));
+%                 error_cmh_lbp(q,j) = sqrt(mean(  (dist_truth - emp_dist(samples_CMH_lbp(:,2:round(j*N*r_cmh_lbp-1))))  .^2));
+%                 
+%             end
+         end
+%         
         figure
-        semilogy(0:length(error_ana_lbp)-1, mean(error_ana_lbp,1), '--', 'Color', [152,78,163]/255);
+%         semilogy(loglik_ana(1:end),'b')
+%         hold on
+%         semilogy(loglik_ana_gibbs(1:end),'g')
+%         hold on
+        semilogy(loglik_hmc(1:end),'g')
         hold on
-        semilogy(0:length(error_ana_gibbs_lbp)-1, mean(error_ana_gibbs_lbp,1),'--', 'Color', [77,175,74]/255);
-        hold on
-        semilogy(0:length(error_hmc)-1, mean(error_hmc,1), '--', 'Color', [228,26,28]/255);
-        hold on
-        semilogy(0:length(error_cmh_lbp)-1, mean(error_cmh_lbp,1), '--', 'Color', [55,126,184]/255);
-        hold on
-        h=legend('RBS LBP', 'RBG LBP','HMC', 'CMH LBP');
-        set(h);
-        xlabel('Function Evaluations');
-        ylabel('RMSE (Marginals)');
-        str=sprintf('Bias scale = %d', scale);
-        title(str);
-        set(gcf,'units','points','position',[10,10,800,800]);
-        name = strcat('RMSE Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
-        path = '/Users/Jalaj/Documents/Github - LBPSS/New Outputs';
-        savefig(gcf, fullfile(path, name))
+%         semilogy(log_lik_CMH_lbp(1:end),'b')
+%         hold on 
+        semilogy(loglik_sw(1:end),'k')
+        str2=sprintf('Logp:temp = %d, scale = %d', temp, scale);
+        title(str2)
+        saveas(gcf, str2, 'png')
+        
+%          % Node Marginal Errors
+%         figure
+%         semilogy(0:length(error_ana_lbp)-1, mean(error_ana_lbp,1), '--', 'Color', [152,78,163]/255);
+%         hold on
+%         semilogy(0:length(error_ana_gibbs_lbp)-1, mean(error_ana_gibbs_lbp,1),'--', 'Color', [77,175,74]/255);
+%         hold on
+%         semilogy(0:length(error_hmc)-1, mean(error_hmc,1), '--', 'Color', [228,26,28]/255);
+%         hold on
+%         semilogy(0:length(error_cmh_lbp)-1, mean(error_cmh_lbp,1), '--', 'Color', [55,126,184]/255);
+%         hold on
+%         h=legend('RBS LBP', 'RBG LBP','HMC', 'CMH LBP');
+%         set(h);
+%         xlabel('Function Evaluations');
+%         ylabel('RMSE (Marginals)');
+%         str=sprintf('Bias scale = %d', scale);
+%         title(str);
+%         set(gcf,'units','points','position',[10,10,800,800]);
+%         name = strcat('RMSE Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
+%         path = '/Users/Jalaj/Documents/Github - LBPSS/New Outputs';
+%         savefig(gcf, fullfile(path, name))
         
     end
     
