@@ -1,6 +1,6 @@
-function [ samples, dist, log_likes, i ] = analytic_gibbs_new( f, number_fn_evals, clique_size, info_on_off, initial_point )
-%UNTITLED6 Summary of this function goes here
-%   Detailed explanation goes here
+function [ samples, dist, log_likes, i, emp_count ] = analytic_gibbs_new( f, number_fn_evals, clique_size, info_on_off, initial_point, a )
+%Added the Rao-Blackwellized estimate of pairwise emperical correlations.
+%Here a is a vector of (i,j): nodes for which pairwise error is computed.
 
 
 d = f.dim;
@@ -10,7 +10,8 @@ samples(:,1)=initial_point;
 % dist(:,1) = 0.5*ones(d,1);  
 % This code passes that test
 
-dist(:,1) = emp_dist(initial_point);                           
+dist(:,1) = emp_dist(initial_point);   
+emperical_counts(:,1) = empericalCounts(initial_point, a);
 log_likes(1,1) = f.logp(initial_point);
 fn_evals = 0;
 i=2;
@@ -20,6 +21,8 @@ while fn_evals <= number_fn_evals
     k=randperm(d);
     prob_vec = zeros(2*d,1);
     prob_vec(1,1) = f.logp(xx);
+    count_est = zeros(4,2*d);
+    count_est(:,1) = empericalCounts(xx, a);
     dist_est = zeros(d,2*d);
     dist_est(:,1) = xx > 0;
     p = 2;
@@ -35,6 +38,7 @@ while fn_evals <= number_fn_evals
         
         if info_on_off ==1
             dist_est(:,p) = xx > 0;
+            count_est(:,p) = empericalCounts(xx, a);
         end
         p = p + 1;
         j = mod(c,d) + 1;
@@ -47,6 +51,7 @@ while fn_evals <= number_fn_evals
     
     if info_on_off == 1
         dist(:,i) = dist_est*prob_vec;   % getting the weighted average
+        emperical_counts(:,i) = count_est*prob_vec; % getting weighted average of pairwise count estimator
     end
     
 %     fn_evals = fn_evals + log(d);     % Extra log d for sampling from a dicrete distribution
@@ -70,4 +75,4 @@ while fn_evals <= number_fn_evals
     i = i + 1;
 
 end
-
+emp_count = mean(emperical_counts, 2)';

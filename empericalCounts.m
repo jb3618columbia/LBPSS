@@ -12,3 +12,5 @@ count(4) = size(m(m==-2),2);
 n = samples(i, :) - samples(j,:);
 count(2) = size(n(n==-2),2);
 count(3) = size(n(n==2),2);
+
+count = count/size(samples,2);

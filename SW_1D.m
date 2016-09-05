@@ -14,7 +14,7 @@ while fn_evals <= number_fn_evals
     curr_point = samples(:,l-1);
     bond = zeros(d,d);
     prob_matrix = 1 - exp(-1*abs(is_obj.M));
-    bond_prob = (rand(10) < prob_matrix);
+    bond_prob = (rand(d) < prob_matrix);
     
     % function to form the bonds between nodes
     % done by wrapping around
