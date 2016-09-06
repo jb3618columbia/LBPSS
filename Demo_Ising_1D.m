@@ -1,13 +1,24 @@
 % Implementation of Different Algorithms for 1D Ising Models
 % Parameters
-d=25;
-temp_vec=[5*pi];
+d=100;
+temp_vec=[0.5*pi];
 scale_vec = [10];
-node_marginals = 0;
-plot_marginals = 0;  % This plots the errors in node marginals
 
-pair_marg=1;
-plot_pair_marg=1;  % This plots the errors in pariwise marginals
+% This computes and plots the errors in node marginals
+node_marginals = 0;
+plot_marginals = 0;  
+
+% This computes and plots the errors in pariwise marginals
+pair_marg=0;
+plot_pair_marg=0;  
+
+% This plots the log-likelihood of samples 
+plot_log_liks=0;  
+
+% This computes and plots the auto-correlation time for node marginals
+act_marginals=1;
+plot_act_marginals=1;
+
 
 for u=1:1:length(temp_vec)
     temp = temp_vec(u);
@@ -16,8 +27,8 @@ for u=1:1:length(temp_vec)
         scale = scale_vec(v);
         is1 = Ising1D_new(d,temp, scale);  % Create 1D Ising Object
         clique_size=2; %Clique size
-        number_samples = 2000;
-        num_examples = 10;
+        number_samples = 100;
+        num_examples = 1;
         initial_point = sign(normrnd(0,1,d,1));
         
         % Algorithms:
@@ -55,12 +66,12 @@ for u=1:1:length(temp_vec)
         end
            
         [edgeStruct, dist_LBP, edgeBelLBP, Z_LBP, marginalsJT, edgeBelJT, Z_JT] = get_LBP_marginals( -is1.bias , -is1.M);
-        a = [20,21]; % (i,j) for getting the pairwise marginals
+        a = [6,7]; % (i,j) for getting the pairwise marginals
         true_marg = reshape(edgeBelJT(:,:,find(ismember(edgeStruct.edgeEnds, a ,'rows'))),1,4);
         % Reshape operation here gives the answer for [(1,1), (-1,1), (1,-1), (-1,-1)]
         
         % Error for various samplers
-        N=250; % Check error after every N equivalent iterations
+        N=25; % Check error after every N equivalent iterations
         error_hmc = zeros(num_examples, number_samples/N);
         error_ana = zeros(num_examples, number_samples/N);
         error_ana_lbp = zeros(num_examples, number_samples/N);
@@ -203,26 +214,53 @@ for u=1:1:length(temp_vec)
                 end
                 
             end
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % Pairwise marginal error
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
             if pair_marg==1
-                err_pw_hmc(q,1) = sum(abs(empericalCounts(samples_hmc, a) - true_marg));
-                err_pw_ana(q,1) = sum(abs(empericalCounts(samples_ana, a) - true_marg));
+                err_pw_hmc(q,1) = sum(abs(empericalCounts(samples_hmc, a)' - true_marg));
+                err_pw_ana(q,1) = sum(abs(empericalCounts(samples_ana, a)' - true_marg));
                 err_pw_ana_lbp(q,1) = sum(abs(emp_count_ana_lbp - true_marg));
-                err_pw_cmh(q,1) = sum(abs(empericalCounts(samples_CMH, a) - true_marg));
-                err_pw_cmh_lbp(q,1) = sum(abs(empericalCounts(samples_CMH_lbp, a) - true_marg));
-                err_pw_ana_gibbs(q,1) = sum(abs(empericalCounts(samples_ana_gibbs, a) - true_marg));
+                err_pw_cmh(q,1) = sum(abs(empericalCounts(samples_CMH, a)' - true_marg));
+                err_pw_cmh_lbp(q,1) = sum(abs(empericalCounts(samples_CMH_lbp, a)' - true_marg));
+                err_pw_ana_gibbs(q,1) = sum(abs(empericalCounts(samples_ana_gibbs, a)' - true_marg));
                 err_pw_ana_gibbs_rb(q,1) = sum(abs(emp_count_ana_gibbs - true_marg));
                 err_pw_ana_gibbs_rb_lbp(q,1) = sum(abs(emp_count_ana_gibbs_lbp - true_marg));
-                err_pw_sw(q,1) = sum(abs(empericalCounts(samples_sw, a) - true_marg));
+                err_pw_sw(q,1) = sum(abs(empericalCounts(samples_sw, a)' - true_marg));
             end
             
-         end
-%         
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % ACtime for node-marginal estimates
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+            if act_marginals==1
+                
+            end
+            
+        end
+         
+        if plot_log_liks==1
+            figure
+            plot(loglik_ana_gibbs_lbp(1:50),'b')
+            hold on
+            plot(log_lik_CMH_lbp(1:50),'g')
+            hold on
+            plot(loglik_hmc(1:50),'r')
+            h=legend('AAG LBP', 'CMH LBP','HMC');
+            set(h);
+            xlabel('Iterations');
+            ylabel('Log-likelihood');
+        end
+        
 %         figure
-%         semilogy(loglik_ana(1:end),'b')
+%         semilogy(loglik_ana_gibbs_lbp(1:100),'b')
 %         hold on
-%         semilogy(loglik_ana_gibbs(1:end),'g')
+%         semilogy(log_lik_CMH_lbp(1:100),'g')
 %         hold on
-%         semilogy(loglik_hmc(1:end),'g')
+%         semilogy(loglik_hmc(1:100),'r')
+
 %         hold on
 %         semilogy(log_lik_CMH_lbp(1:end),'b')
 %         hold on 
@@ -231,7 +269,7 @@ for u=1:1:length(temp_vec)
 %         title(str2)
 %         saveas(gcf, str2, 'png')
         
-%       % Node Marginal Errors
+        % Node Marginal Errors
         if  plot_marginals==1
             figure
             semilogy(0:length(error_ana_lbp)-1, mean(error_ana_lbp,1), '--', 'Color', [152,78,163]/255);
@@ -259,19 +297,19 @@ for u=1:1:length(temp_vec)
         
         % Pairwise node marginals
         if  plot_pair_marg ==1
-            mean_err_pw = [mean(err_pw_hmc), mean(err_pw_ana), mean(err_pw_ana_lbp), mean(err_pw_hmc), mean(err_pw_cmh), mean(err_pw_cmh_lbp), mean(err_pw_ana_gibbs), mean(err_pw_ana_gibbs_rb), mean(err_pw_ana_gibbs_rb_lbp);];
-            std_err_pw = [std(err_pw_hmc), std(err_pw_ana), std(err_pw_ana_lbp), std(err_pw_hmc), std(err_pw_cmh), std(err_pw_cmh_lbp), std(err_pw_ana_gibbs), std(err_pw_ana_gibbs_rb), std(err_pw_ana_gibbs_rb_lbp)];
+            mean_err_pw = [mean(err_pw_hmc), mean(err_pw_ana), mean(err_pw_ana_lbp), mean(err_pw_cmh), mean(err_pw_cmh_lbp), mean(err_pw_ana_gibbs), mean(err_pw_ana_gibbs_rb), mean(err_pw_ana_gibbs_rb_lbp)];
+            std_err_pw = [std(err_pw_hmc), std(err_pw_ana), std(err_pw_ana_lbp), std(err_pw_cmh), std(err_pw_cmh_lbp), std(err_pw_ana_gibbs), std(err_pw_ana_gibbs_rb), std(err_pw_ana_gibbs_rb_lbp)];
 
-            figure
-            hold on
-            bar(1:9,mean_err_pw)
-            errorbar(1:9,mean_err_pw,std_err_pw,'.')
+            h = bar(diag(mean_err_pw),'stacked');
+            grid on
+            l = cell(1,8);
+            l{1}='HMC'; l{2}='AAS'; l{3}='AAS+LBP'; l{4}='CMH'; l{5}='CMH+LBP'; l{6}='AAG'; l{7}='AAG+RB'; l{8}='AAG+RB+LBP';    
+            legend(h,l);
+%             errorbar(1:9,mean_err_pw,std_err_pw,'.')
                         
         end
         
-        
-        
-        
+              
     end
     
 end
