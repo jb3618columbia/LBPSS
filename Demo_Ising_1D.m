@@ -1,23 +1,23 @@
 % Implementation of Different Algorithms for 1D Ising Models
 % Parameters
-d=50;
-temp_vec=[-10*pi];
-scale_vec = [5];
+d=10;
+temp_vec=[5*pi];
+scale_vec = [1];
 
 % This computes and plots the errors in node marginals
 node_marginals = 0;
 plot_marginals = 0;  
 
 % This computes and plots the errors in pariwise marginals
-pair_marg=0;
-plot_pair_marg=0;  
+pair_marg=1;
+plot_pair_marg=1;  
 
 % This plots the log-likelihood of samples 
 plot_log_liks=0;  
 
 % This computes and plots the auto-correlation time for node marginals
-act_marginals=1;
-plot_act_marginals=1;
+act_marginals=0;
+plot_act_marginals=0;
 
 
 for u=1:1:length(temp_vec)
@@ -28,7 +28,7 @@ for u=1:1:length(temp_vec)
         is1 = Ising1D_new(d,temp, scale);  % Create 1D Ising Object
         clique_size=2; %Clique size
         number_samples = 2000;
-        num_examples = 1;
+        num_examples = 20;
         initial_point = sign(normrnd(0,1,d,1));
         
         % Algorithms:
@@ -66,7 +66,7 @@ for u=1:1:length(temp_vec)
         end
            
         [edgeStruct, dist_LBP, edgeBelLBP, Z_LBP, marginalsJT, edgeBelJT, Z_JT] = get_LBP_marginals( -is1.bias , -is1.M);
-        a = [6,7]; % (i,j) for getting the pairwise marginals
+        a = [3,4]; % (i,j) for getting the pairwise marginals
         true_marg = reshape(edgeBelJT(:,:,find(ismember(edgeStruct.edgeEnds, a ,'rows'))),1,4);
         % Reshape operation here gives the answer for [(1,1), (-1,1), (1,-1), (-1,-1)]
         
@@ -91,6 +91,13 @@ for u=1:1:length(temp_vec)
         err_pw_ana_gibbs_rb = zeros(num_examples,1);
         err_pw_ana_gibbs_rb_lbp = zeros(num_examples,1);   
         err_pw_sw = zeros(num_examples,1);   
+                
+        err_hmc = zeros(num_examples,1);
+        err_ana = zeros(num_examples,1);
+        err_ana_lbp = zeros(num_examples,1);
+        err_cmh = zeros(num_examples,1);
+        err_cmh_lbp = zeros(num_examples,1);
+        err_ana_gibbs = zeros(num_examples,1);
         
         for q=1:num_examples
             q
@@ -256,28 +263,16 @@ for u=1:1:length(temp_vec)
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
             if act_marginals==1
-                err_hmc = sum(corr_time_dist_hmc-corr_time_dist_ana_gibbs_lbp);
-                err_ana = sum(corr_time_dist_hmc-corr_time_dist_ana_gibbs_lbp);
-                err_ana_lbp = sum(corr_time_dist_ana_lbp-corr_time_dist_ana_gibbs_lbp);
-                err_cmh = sum(corr_time_dist_cmh-corr_time_dist_ana_gibbs_lbp);
-                err_cmh_lbp = sum(corr_time_dist_cmh_lbp-corr_time_dist_ana_gibbs_lbp);
-                err_ana_gibbs = sum(corr_time_dist_ana_gibbs-corr_time_dist_ana_gibbs_lbp);
+                err_hmc(q,1) = sum(corr_time_dist_hmc-corr_time_dist_ana_gibbs_lbp);
+                err_ana(q,1) = sum(corr_time_dist_ana-corr_time_dist_ana_gibbs_lbp);
+                err_ana_lbp(q,1) = sum(corr_time_dist_ana_lbp-corr_time_dist_ana_gibbs_lbp);
+                err_cmh(q,1) = sum(corr_time_dist_cmh-corr_time_dist_ana_gibbs_lbp);
+                err_cmh_lbp(q,1) = sum(corr_time_dist_cmh_lbp-corr_time_dist_ana_gibbs_lbp);
+                err_ana_gibbs(q,1) = sum(corr_time_dist_ana_gibbs-corr_time_dist_ana_gibbs_lbp);
             end
-            
         end
          
-        if plot_log_liks==1
-            figure
-            plot(loglik_ana_gibbs_lbp(1:50),'b')
-            hold on
-            plot(log_lik_CMH_lbp(1:50),'g')
-            hold on
-            plot(loglik_hmc(1:50),'r')
-            h=legend('AAG LBP', 'CMH LBP','HMC');
-            set(h);
-            xlabel('Iterations');
-            ylabel('Log-likelihood');
-        end
+
         
 %         figure
 %         semilogy(loglik_ana_gibbs_lbp(1:100),'b')
@@ -324,16 +319,77 @@ for u=1:1:length(temp_vec)
         if  plot_pair_marg ==1
             mean_err_pw = [mean(err_pw_hmc), mean(err_pw_ana), mean(err_pw_ana_lbp), mean(err_pw_cmh), mean(err_pw_cmh_lbp), mean(err_pw_ana_gibbs), mean(err_pw_ana_gibbs_rb), mean(err_pw_ana_gibbs_rb_lbp)];
             std_err_pw = [std(err_pw_hmc), std(err_pw_ana), std(err_pw_ana_lbp), std(err_pw_cmh), std(err_pw_cmh_lbp), std(err_pw_ana_gibbs), std(err_pw_ana_gibbs_rb), std(err_pw_ana_gibbs_rb_lbp)];
-
-            h = bar(diag(mean_err_pw),'stacked');
-            grid on
-            l = cell(1,8);
-            l{1}='HMC'; l{2}='AAS'; l{3}='AAS+LBP'; l{4}='CMH'; l{5}='CMH+LBP'; l{6}='AAG'; l{7}='AAG+RB'; l{8}='AAG+RB+LBP';    
-            legend(h,l);
-%             errorbar(1:9,mean_err_pw,std_err_pw,'.')
-                        
+            
+            % Draw error bar chart with means and standard deviations
+            figure 
+            h=errorbar(mean_err_pw, std_err_pw, 's');
+            h.Marker='o';
+            
+            % Add title and axis labels
+            title('Pairwise marginals')
+%             xlabel('Algorithms')
+            ylabel('Error: Estimated - ground truth')
+            box on
+            
+            % Change the labels for the tick marks on the x-axis
+            Algorithms = {'HMC', 'AAS', 'AAS+LBP', 'CMH', 'CMH+LBP','AAG', 'AAG+RB', 'AAG+RB+LBP'};
+            set(gca, 'XTick', 1:8, 'XTickLabel', Algorithms)
+            name = strcat('Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
+            path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Pairwise_marginals';
+            savefig(gcf, fullfile(path, name))
+            
+            
+%             h = bar(diag(mean_err_pw),'stacked');
+%             grid on
+%             l = cell(1,8);
+%             l{1}='HMC'; l{2}='AAS'; l{3}='AAS+LBP'; l{4}='CMH'; l{5}='CMH+LBP'; l{6}='AAG'; l{7}='AAG+RB'; l{8}='AAG+RB+LBP';    
+%             legend(h,l);
         end
         
+        % Plotting log-likes of the samples
+        if plot_log_liks==1
+            figure
+            plot(loglik_ana_gibbs_lbp(1:50),'b')
+            hold on
+            plot(log_lik_CMH_lbp(1:50),'g')
+            hold on
+            plot(loglik_hmc(1:50),'r')
+            h=legend('AAG LBP', 'CMH LBP','HMC');
+            set(h);
+            xlabel('Iterations');
+            ylabel('Log-likelihood');
+        end
+        
+        
+        % Plotting avg correlation time with ana_gibbs_lbp as the base 0
+        if  plot_act_marginals ==1
+            mean_err= [mean(err_hmc), mean(err_ana), mean(err_ana_lbp), mean(err_cmh), mean(err_cmh_lbp), mean(err_ana_gibbs)];
+            std_err = [std(err_hmc), std(err_ana), std(err_ana_lbp), std(err_cmh), std(err_cmh_lbp), std(err_ana_gibbs)];
+            base = [0,0,0,0,0,0];
+            % Draw error bar chart with means and standard deviations
+            figure 
+            h=errorbar(mean_err, std_err, 's');
+            h.Marker='o';
+            hold on
+            plot(base, '--');
+            
+            % Add title and axis labels
+            title('Auto-correlation time for marginals')
+%             xlabel('Algorithms')
+            ylabel('Comparison w.r.t AAG-LBP')
+            box on
+            
+            % Change the labels for the tick marks on the x-axis
+            Algorithms = {'HMC', 'AAS', 'AAS+LBP', 'CMH', 'CMH+LBP','AAG+RB'};
+            set(gca, 'XTick', 1:6, 'XTickLabel', Algorithms)
+            name = strcat('Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
+            path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Pairwise_marginals';
+            savefig(gcf, fullfile(path, name))
+            
+%             % Create labels for the legend
+%             legend(Algorithms, 'Location', 'Northwest')
+            
+        end
               
     end
     
