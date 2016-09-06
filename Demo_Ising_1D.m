@@ -1,8 +1,8 @@
 % Implementation of Different Algorithms for 1D Ising Models
 % Parameters
-d=100;
-temp_vec=[0.5*pi];
-scale_vec = [10];
+d=50;
+temp_vec=[-10*pi];
+scale_vec = [5];
 
 % This computes and plots the errors in node marginals
 node_marginals = 0;
@@ -27,7 +27,7 @@ for u=1:1:length(temp_vec)
         scale = scale_vec(v);
         is1 = Ising1D_new(d,temp, scale);  % Create 1D Ising Object
         clique_size=2; %Clique size
-        number_samples = 100;
+        number_samples = 2000;
         num_examples = 1;
         initial_point = sign(normrnd(0,1,d,1));
         
@@ -103,6 +103,8 @@ for u=1:1:length(temp_vec)
                 t = 1.5; T=t*pi;
                 [samples_hmc, loglik_hmc, energy_hmc] = HMC_binary(is1,T,number_samples, initial_point);
                 fn_evlas_hmc = number_samples*((is1.dim)*t + (is1.dim) + clique_size*(is1.dim));
+                % Doing the thinning step 
+                corr_time_dist_hmc = acorrtime(samples_hmc');
                 toc
             end
             
@@ -113,7 +115,10 @@ for u=1:1:length(temp_vec)
                 tic
                 disp('Analytic Slice Sampling')
                 [samples_ana, dist_ana, loglik_ana, nu_samples_ana]= analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%2*(dist_LBP>0.5)-1%analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%
-                r_a = nu_samples_ana_lbp/number_samples;
+                r_a = nu_samples_ana/number_samples;
+                % Doing the thinning step 
+                thin_dist_ana = thin(dist_ana', 0, r_a, nu_samples_ana-1);
+                corr_time_dist_ana = acorrtime(thin_dist_ana);
                 toc
             end
             
@@ -125,6 +130,9 @@ for u=1:1:length(temp_vec)
                 disp('Analytic Slice Sampling with LBP')
                 [samples_ana_lbp, dist_ana_lbp, loglik_ana_lbp, nu_samples_ana_lbp, emp_count_ana_lbp]= Stretched_analytic_slice_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP, a);%2*(dist_LBP>0.5)-1%analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%
                 r_a_lbp = nu_samples_ana_lbp/number_samples;
+                % Doing the thinning step 
+                thin_dist_ana_lbp = thin(dist_ana_lbp', 0, r_a_lbp, nu_samples_ana_lbp-1);
+                corr_time_dist_ana_lbp = acorrtime(thin_dist_ana_lbp);
                 toc
             end
             
@@ -136,6 +144,9 @@ for u=1:1:length(temp_vec)
                 disp('Simple Coordinate MH')
                 [samples_CMH, log_lik_CMH, nu_samples_cmh] = CMH(is1,  fn_evlas_hmc, clique_size, initial_point);
                 r_cmh = nu_samples_cmh/number_samples;
+                % Doing the thinning step, now on the samples
+                thin_dist_cmh = thin(samples_CMH', 0, r_cmh, nu_samples_cmh-1);
+                corr_time_dist_cmh = acorrtime(thin_dist_cmh);
                 toc
             end
             
@@ -148,6 +159,9 @@ for u=1:1:length(temp_vec)
                 [samples_CMH_lbp, log_lik_CMH_lbp, nu_samples_cmh_lbp] = CMH_LBP_DES(is1,  fn_evlas_hmc, clique_size, initial_point, dist_LBP);
                 r_cmh_lbp = nu_samples_cmh_lbp/number_samples;
                 toc
+                % Doing the thinning step, now on the samples
+                thin_dist_cmh_lbp = thin(samples_CMH_lbp', 0, r_cmh_lbp, nu_samples_cmh_lbp-1);
+                corr_time_dist_cmh_lbp = acorrtime(thin_dist_cmh_lbp);
             end
            
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -160,6 +174,10 @@ for u=1:1:length(temp_vec)
                r_a_g = nu_samples_ana_gibbs/number_samples;
                % To get the estimates without rao-blackwellization
                dist_ana_gibbs = emp_dist(samples_ana_gibbs);
+               
+               % Doing the thinning step for rao-blackwellized version
+                thin_dist_ana_gibbs = thin(dist_ana_gibbs_rb', 0, r_a_g, nu_samples_ana_gibbs-1);
+                corr_time_dist_ana_gibbs = acorrtime(thin_dist_ana_gibbs);
                toc
             end
             
@@ -171,6 +189,9 @@ for u=1:1:length(temp_vec)
                 disp('Analytic Gibbs Sampling with LBP')
                 [samples_ana_gibbs_lbp, dist_ana_gibbs_lbp, loglik_ana_gibbs_lbp, nu_samples_ana_gibbs_lbp, emp_count_ana_gibbs_lbp] = Stretched_analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP, a);
                 r_a_g_lbp = nu_samples_ana_gibbs_lbp/number_samples;
+                % Doing the thinning step 
+                thin_dist_ana_gibbs_lbp = thin(dist_ana_gibbs_lbp', 0, r_a_g_lbp, nu_samples_ana_gibbs_lbp-1);
+                corr_time_dist_ana_gibbs_lbp = acorrtime(thin_dist_ana_gibbs_lbp);
                 toc
             end
         
@@ -210,7 +231,6 @@ for u=1:1:length(temp_vec)
     %                 error_ana_gibbs_rb(q,j) = sqrt(mean(  (dist_truth - mean(cat(1,dist_ana_gibbs_rb(:,2:round(j*N*r_a_g-1))),2))  .^2));
                     error_ana_gibbs_rb_lbp(q,j) = sqrt(mean(  (dist_truth - mean(cat(1,dist_ana_gibbs_lbp(:,2:round(j*N*r_a_g_lbp-1))),2))  .^2));
                     error_sw(q,j) = sqrt(mean(  (dist_truth - emp_dist(samples_sw(:,2:round(j*N*r_sw-1))))  .^2));
-
                 end
                 
             end
@@ -236,7 +256,12 @@ for u=1:1:length(temp_vec)
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
             if act_marginals==1
-                
+                err_hmc = sum(corr_time_dist_hmc-corr_time_dist_ana_gibbs_lbp);
+                err_ana = sum(corr_time_dist_hmc-corr_time_dist_ana_gibbs_lbp);
+                err_ana_lbp = sum(corr_time_dist_ana_lbp-corr_time_dist_ana_gibbs_lbp);
+                err_cmh = sum(corr_time_dist_cmh-corr_time_dist_ana_gibbs_lbp);
+                err_cmh_lbp = sum(corr_time_dist_cmh_lbp-corr_time_dist_ana_gibbs_lbp);
+                err_ana_gibbs = sum(corr_time_dist_ana_gibbs-corr_time_dist_ana_gibbs_lbp);
             end
             
         end
@@ -268,7 +293,7 @@ for u=1:1:length(temp_vec)
 %         str2=sprintf('Logp:temp = %d, scale = %d', temp, scale);
 %         title(str2)
 %         saveas(gcf, str2, 'png')
-        
+
         % Node Marginal Errors
         if  plot_marginals==1
             figure

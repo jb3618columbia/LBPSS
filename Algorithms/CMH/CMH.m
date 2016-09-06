@@ -1,7 +1,6 @@
 function [samples, log_likes, i] = CMH(f,  number_fn_evals, clique_size, initial_point, varargin)
 
 d = f.dim;
-
 % K is the number of binary flip proposals between recorded d-dimensional samples 
 % We can take a sample after evry d flips or at every flip
 % To make it comparable to BPS, we will take after evry d samples
