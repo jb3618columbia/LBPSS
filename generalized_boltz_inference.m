@@ -2,7 +2,7 @@
 % Based on "Bayesian Learning in Undirected Graphical Models: Approximate
 % MCMC algorithms" (BLUG)
 
-% The goal is to sample W using Metropolis Hastings from its posterior.
+% The goal is to sample W using Metropolis Hastings from its posterior p(W|S).
 % Each iteration requires calculating a constant Z(W) which can be
 % approximated using MCMC methods if it cannot be calculated exactly by brute force.
 
@@ -36,4 +36,5 @@ W = zeros(d,d);
 %% Plots
 
 % Plot empirical distributions of W for the exact sampler vs approximate
-% samplers.
+% samplers. It is probably only worth comparing LBP-CMH and LBP-AAG with
+% the exact sampler.
