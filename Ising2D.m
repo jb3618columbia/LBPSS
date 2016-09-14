@@ -23,7 +23,7 @@ classdef Ising2D < handle  % inherit from handle so that we can pass by referenc
             obj.d = d;    %linear dimension of the 1D grid
             obj.beta=1/temp;
             obj.dim = d*d;
-            obj.M = zeros(obj.dim,obj.dim);
+            obj.M = sparse(obj.dim,obj.dim);
             obj.Neis = zeros(obj.dim,4);
             obj.bias = zeros(1,obj.dim);            
             
@@ -74,9 +74,22 @@ classdef Ising2D < handle  % inherit from handle so that we can pass by referenc
          
              function lpc= logp_change(obj,S,j)
                  % returns the difference in the log probability when 
-                 % S(j) == +1 and S(j) == -1     
-                 nei = obj.Neis(j,:);
-                 lpc = -2*obj.bias(j) + 2*obj.beta*sum(S(nei));               
+                 % S(j) == +1 and S(j) == -1 
+                 if S(j) == 1
+                    a = obj.logp(S);
+                    S(j,:) = -S(j,:);
+                    b = obj.logp(S);
+                    lpc = a-b;
+                 else
+                     b = obj.logp(S);
+                     S(j,:) = -S(j,:);
+                     a = obj.logp(S);
+                     lpc = a-b;
+                 end
+                 
+%                  nei = obj.Neis(j,:);
+% %                  lpc = -2*obj.bias(j) - 4*sum(S(nei).*obj.M(j,nei)');  
+%                  lpc = -2*obj.bias(j) + 1*sum(S(nei))*obj.beta;  
                      
              end
 

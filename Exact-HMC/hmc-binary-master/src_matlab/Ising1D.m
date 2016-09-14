@@ -6,6 +6,7 @@
         % These properties are public by default
            d;
            beta;
+           dim;
            mlp=-Inf;   
            M;
            Neis;
@@ -20,8 +21,8 @@
             
                 obj.d = d;    %linear dimension of the 1D grid
                 obj.beta=1/temp;
-                
-                obj.M = zeros(obj.d,obj.d);
+                obj.dim = d*1;
+                obj.M = sparse(obj.d,obj.d);
                 obj.Neis = zeros(obj.d,2);                
                 
                     for j=1:d                            

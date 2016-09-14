@@ -23,19 +23,21 @@ function [ samples, dist, log_likes, i ] = analytic_slice_new( f, number_fn_eval
 
 
 d = f.dim;
+L = round(number_fn_evals/(clique_size*(2*d-1)));
+samples = zeros(d, L);
 samples(:,1)=initial_point;   
 
 % Sanity check: the error should start with 0 and remain zero 
 % dist(:,1) = 0.5*ones(d,1);  
 % This code passes this test
 
-dist(:,1) = emp_dist(initial_point);                           
+dist(:,1) = emp_dist(initial_point);    
+
+log_likes = zeros(1,L);
 log_likes(1,1) = f.logp(initial_point);
 cur_log_like = f.logp(initial_point);
-fn_evals = 0;
-i=2;
 
-while fn_evals <= number_fn_evals
+for i=2:L
     xx = samples(:, i-1);  % Current point
     acc_samples = zeros(d,2*d);
     acc_samples(:,1) = xx;
@@ -47,7 +49,6 @@ while fn_evals <= number_fn_evals
     
     for c=1:(2*d)-1
        xx(k(j)) = -xx(k(j));
-       fn_evals = fn_evals + clique_size;
        % Efficient way to compute log likeiloohs of the propsoed point 
 %        cur_log_like = cur_log_like + sign(xx(k(j)))*f.logp_change(xx,k(j));
        cur_log_like = f.logp(xx);  % Inefficient 
@@ -65,5 +66,4 @@ while fn_evals <= number_fn_evals
     cur_log_like = f.logp(samples(:,i));
     log_likes(1,i) = cur_log_like;
     
-    i = i + 1;
 end

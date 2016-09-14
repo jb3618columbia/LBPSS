@@ -1,4 +1,4 @@
-function [samples, log_likes, total_samples] = CMH_LBP_DES(f,  number_fn_evals, clique_size, initial_point, marginals, varargin)
+function [samples, log_likes, total_samples, max_val] = CMH_LBP_DES(f,  number_fn_evals, clique_size, initial_point, marginals, varargin)
 
 d = f.dim;
 
@@ -19,6 +19,8 @@ log_likes(1,1) = f.logp(S) - (S==1)'*log(marginals) - (S==-1)'*log(1-marginals);
 L = number_fn_evals/(clique_size*K);           % Since every fn_eval is O(2), this denotes the total number of samples
 
 i=0;
+max_val = 0;
+
 for new_samples = 2:L*K
    
     % Sample number of rejected flips and add those counts to the previous
@@ -36,9 +38,19 @@ for new_samples = 2:L*K
     % Sample new coordinate to be flipped
     j = randsample(d,1,true, marginals.^(S==-1) .* (1-marginals).^(S==1));
     
+    new_point = S;
+    new_point(j) = -new_point(j);
+    r = exp(f.logp(new_point) - f.logp(S));
     % Change in log likelihood
-    q_j = exp(-S(j)*f.logp_change(S,j)) * ( marginals(j) / (1-marginals(j)) )^S(j) ; 
+    q_j = r*(marginals(j) / (1-marginals(j)) )^S(j) ; 
 
+    % Ari's code    
+    q_j_1 = exp(-S(j)*f.logp_change(S,j)) * ( marginals(j) / (1-marginals(j)) )^S(j) ; 
+
+    if max_val < abs(q_j - q_j_1)
+           max_val = abs(q_j - q_j_1);
+    end
+        
     % Accept the point with standard metropolis probabilities
     if (rand < min(1,q_j))
         S(j) = -S(j);    % flip it

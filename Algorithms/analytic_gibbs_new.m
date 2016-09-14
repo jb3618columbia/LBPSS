@@ -1,28 +1,32 @@
-function [ samples, dist, log_likes, i, emp_count ] = analytic_gibbs_new( f, number_fn_evals, clique_size, info_on_off, initial_point, a )
+function [ samples, dist, log_likes, i, emp_count, emperical_counts ] = analytic_gibbs_new( f, number_fn_evals, clique_size, info_on_off, initial_point, a )
 %Added the Rao-Blackwellized estimate of pairwise emperical correlations.
-%Here a is a vector of (i,j): nodes for which pairwise error is computed.
+%Here a is now a row vector of many (i,j) pairs: nodes for which pairwise error is computed.
 
 
 d = f.dim;
+L = round(number_fn_evals/(clique_size*(2*d-1)));
+samples = zeros(d, L);
 samples(:,1)=initial_point;   
 
 % Sanity check: the error should start with 0 and remain zero 
 % dist(:,1) = 0.5*ones(d,1);  
 % This code passes that test
 
-dist(:,1) = emp_dist(initial_point);   
-emperical_counts(:,1) = empericalCounts(initial_point, a);
-log_likes(1,1) = f.logp(initial_point);
-fn_evals = 0;
-i=2;
+dist(:,1) = emp_dist(initial_point);  
+pair_size = size(a,2)/2;
+emperical_counts = zeros(pair_size, 4, L);
+emperical_counts(:,:,1) = empericalCounts(initial_point, a); % this is now a tensor of size K/2 x 4 x N
 
-while fn_evals <= number_fn_evals
+log_likes = zeros(1,L);
+log_likes(1,1) = f.logp(initial_point);
+
+for i=2:L
     xx = samples(:, i-1);  % Current point
     k=randperm(d);
     prob_vec = zeros(2*d,1);
     prob_vec(1,1) = f.logp(xx);
-    count_est = zeros(4,2*d);
-    count_est(:,1) = empericalCounts(xx, a);
+    count_est = zeros(pair_size,4,2*d);
+    count_est(:,:,1) = empericalCounts(xx, a);
     dist_est = zeros(d,2*d);
     dist_est(:,1) = xx > 0;
     p = 2;
@@ -31,14 +35,13 @@ while fn_evals <= number_fn_evals
     for c=1:(2*d)-1 
         
         xx(k(j)) = -xx(k(j));
-        fn_evals = fn_evals + clique_size;
         % Efficient way to compute log likeiloohs of the propsoed point
         % cur_log_like = cur_log_like + sign(xx(k(j)))*f.logp_change(xx,k(j));
         prob_vec(p,1) = f.logp(xx);  % Inefficient
         
         if info_on_off ==1
             dist_est(:,p) = xx > 0;
-            count_est(:,p) = empericalCounts(xx, a);
+            count_est(:,:,p) = empericalCounts(xx, a);
         end
         p = p + 1;
         j = mod(c,d) + 1;
@@ -51,7 +54,7 @@ while fn_evals <= number_fn_evals
     
     if info_on_off == 1
         dist(:,i) = dist_est*prob_vec;   % getting the weighted average
-        emperical_counts(:,i) = count_est*prob_vec; % getting weighted average of pairwise count estimator
+        emperical_counts(:,:,i) = rb_emp_counts(count_est, prob_vec); % getting weighted average of pairwise count estimator
     end
     
 %     fn_evals = fn_evals + log(d);     % Extra log d for sampling from a dicrete distribution
@@ -72,7 +75,6 @@ while fn_evals <= number_fn_evals
     end
     samples(:, i) = point;
     log_likes(i,1) = f.logp(point);
-    i = i + 1;
 
 end
-emp_count = mean(emperical_counts, 2)';
+emp_count = mean(emperical_counts, 3);

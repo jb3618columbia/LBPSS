@@ -15,7 +15,7 @@ for u=1:1:length(temp_vec)
         % is1 = Ising1D_new(d,temp, scale);  % Create 1D Ising Object
         % clique_size=2; %Clique size
         is1 = Ising2D(sqrt(d),temp, scale);  % Create 2D Ising Object
-        clique_size=2; %Clique size
+        clique_size=4; %Clique size
         number_samples = 5000;
         num_examples = 20;
         initial_point = sign(normrnd(0,1,d,1));
@@ -71,7 +71,7 @@ for u=1:1:length(temp_vec)
             if exact_hmc_on_off == 1
                 tic
                 disp('Exact_HMC')
-                t = 1.5; T=t*pi;
+                t = 2.5; T=t*pi;
                 [samples_hmc, loglik_hmc, energy_hmc] = HMC_binary(is1,T,number_samples, initial_point);
                 fn_evlas_hmc = number_samples*((is1.dim)*t + (is1.dim) + clique_size*(is1.dim));
                 toc
@@ -94,7 +94,7 @@ for u=1:1:length(temp_vec)
             if ana_lbp_on_off == 1
                 tic
                 disp('Analytic Slice Sampling with LBP')
-                [samples_ana_lbp, dist_ana_lbp, loglik_ana_lbp, nu_samples_ana_lbp]= Stretched_analytic_slice_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP);%2*(dist_LBP>0.5)-1%analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%
+                [samples_ana_lbp, dist_ana_lbp, loglik_ana_lbp, nu_samples_ana_lbp]= Stretched_analytic_slice_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP); %2*(dist_LBP>0.5)-1%analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%
                 r_a_lbp = nu_samples_ana_lbp/number_samples;
                 toc
             end

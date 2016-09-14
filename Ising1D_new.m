@@ -24,7 +24,7 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
                 obj.d = d;    %linear dimension of the 1D grid
                 obj.beta=1/temp;     
                 obj.dim = d*1;
-                obj.M = zeros(obj.d,obj.d);
+                obj.M = sparse(obj.d,obj.d);
                 obj.Neis = zeros(obj.d,2); 
                 
                 
@@ -32,7 +32,8 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
                     nei = neighbors(j);
                     obj.Neis(j,:) = nei;
                     obj.M(j,nei) = -1;
-                    obj.bias(1,j) = -scale*rand;
+%                     obj.bias(1,j) = -scale*(-1 + 2*rand); % both positive and negative biases
+                    obj.bias(1,j) = -scale*rand; % positive bias
 %                     obj.bias(1,j) = 0;
                 end
                 obj.M = obj.beta*obj.M/2;    % the factor of 1/2 is because pairs are counted twice
@@ -68,8 +69,7 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
                  % S(j) == +1 and S(j) == -1     
                  % For fixed weights
                  nei = obj.Neis(j,:);
-                 lpc = -2*obj.bias(j) + 2*obj.beta*sum(S(nei));
-                                 
+                 lpc = -2*obj.bias(j) - 4*sum(S(nei).*obj.M(j,nei)');
              end
              
              

@@ -39,6 +39,7 @@ end
 marginalsLBP = nodeBelLBP(:,1);
 
 % Using Junction Tree (exact)
+% marginalsJT = 0; edgeBelJT = 0; Z_JT = 0;
 [nodeBelJT,edgeBelJT,Z_JT] = UGM_Infer_Junction(nodePot,edgePot,edgeStruct); 
 marginalsJT = nodeBelJT(:,1);
 

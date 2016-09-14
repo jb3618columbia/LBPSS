@@ -1,8 +1,9 @@
 % Implementation of Different Algorithms for 1D Ising Models
 % Parameters
-d=10;
-temp_vec=[5*pi];
-scale_vec = [1];
+d=50;
+temp_vec=[10*pi];
+scale_vec = [10];
+rng(50)
 
 % This computes and plots the errors in node marginals
 node_marginals = 0;
@@ -13,11 +14,11 @@ pair_marg=1;
 plot_pair_marg=1;  
 
 % This plots the log-likelihood of samples 
-plot_log_liks=0;  
+plot_log_liks=1;  
 
 % This computes and plots the auto-correlation time for node marginals
-act_marginals=0;
-plot_act_marginals=0;
+act_marginals=1;
+plot_act_marginals=1;
 
 
 for u=1:1:length(temp_vec)
@@ -26,11 +27,19 @@ for u=1:1:length(temp_vec)
     for v=1:1:length(scale_vec);
         scale = scale_vec(v);
         is1 = Ising1D_new(d,temp, scale);  % Create 1D Ising Object
-        clique_size=2; %Clique size
-        number_samples = 2000;
-        num_examples = 20;
-        initial_point = sign(normrnd(0,1,d,1));
         
+        % Using Ari's object for zero bias 
+%         is1 = Ising1D(d,temp);
+%         bias = zeros(1,d);
+
+        clique_size=2; %Clique size
+        
+%         is1 = Ising2D(sqrt(d),temp, scale);  % Create 2D Ising Object
+%         clique_size=4; %Clique size
+
+        number_samples = 2000;
+        num_examples = 10;
+
         % Algorithms:
         truth = 0;
         ana_slice = 1;  % plan to only show slice with rb and lbp
@@ -65,11 +74,31 @@ for u=1:1:length(temp_vec)
             end
         end
            
+%         If using zero bias as in Ari's original code
+%         [edgeStruct, dist_LBP, edgeBelLBP, Z_LBP, marginalsJT, edgeBelJT, Z_JT] = get_LBP_marginals( bias , -is1.M);
+
         [edgeStruct, dist_LBP, edgeBelLBP, Z_LBP, marginalsJT, edgeBelJT, Z_JT] = get_LBP_marginals( -is1.bias , -is1.M);
-        a = [3,4]; % (i,j) for getting the pairwise marginals
-        true_marg = reshape(edgeBelJT(:,:,find(ismember(edgeStruct.edgeEnds, a ,'rows'))),1,4);
-        % Reshape operation here gives the answer for [(1,1), (-1,1), (1,-1), (-1,-1)]
+%         initial_point = sign(normrnd(0,1,d,1));
+        initial_point = binornd(ones(d,1), dist_LBP);
+        initial_point( initial_point==0 )=-1; 
+%         % For Ising 1D
+%         m = unidrnd(d-1);
+%         n = m + 1;
+        a = linspace(1,d,d); % (i,j) for getting the pairwise marginals
         
+        % For Ising 2D
+%         m = unidrnd(sqrt(d));
+%         n = m + sqrt(d);
+%         a = [m,n]; % (i,j) for getting the pairwise marginals
+        P = size(a,2)/2;
+        true_marg = zeros(P, 4);
+        for p=1:P
+            true_marg(p,:) = reshape(edgeBelJT(:,:,find(ismember(edgeStruct.edgeEnds, [a(2*p-1), a(2*p)] ,'rows'))),1,4);
+            % Reshape operation here gives the answer for [(1,1), (-1,1), (1,-1), (-1,-1)
+        end
+        
+        
+        dist_truth = marginalsJT;
         % Error for various samplers
         N=25; % Check error after every N equivalent iterations
         error_hmc = zeros(num_examples, number_samples/N);
@@ -98,6 +127,7 @@ for u=1:1:length(temp_vec)
         err_cmh = zeros(num_examples,1);
         err_cmh_lbp = zeros(num_examples,1);
         err_ana_gibbs = zeros(num_examples,1);
+        err_ana_gibbs_rb = zeros(num_examples,1);
         
         for q=1:num_examples
             q
@@ -109,9 +139,7 @@ for u=1:1:length(temp_vec)
                 disp('Exact_HMC')
                 t = 1.5; T=t*pi;
                 [samples_hmc, loglik_hmc, energy_hmc] = HMC_binary(is1,T,number_samples, initial_point);
-                fn_evlas_hmc = number_samples*((is1.dim)*t + (is1.dim) + clique_size*(is1.dim));
-                % Doing the thinning step 
-                corr_time_dist_hmc = acorrtime(samples_hmc');
+                fn_evlas_hmc = number_samples*((is1.dim)*t + (is1.dim) + clique_size*(is1.dim)*(t-0.5));
                 toc
             end
             
@@ -123,23 +151,17 @@ for u=1:1:length(temp_vec)
                 disp('Analytic Slice Sampling')
                 [samples_ana, dist_ana, loglik_ana, nu_samples_ana]= analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%2*(dist_LBP>0.5)-1%analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%
                 r_a = nu_samples_ana/number_samples;
-                % Doing the thinning step 
-                thin_dist_ana = thin(dist_ana', 0, r_a, nu_samples_ana-1);
-                corr_time_dist_ana = acorrtime(thin_dist_ana);
                 toc
             end
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % Analytic Slice Sampling with LBP
+            % Analytic Slice Sampling with RB + LBP
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             if ana_slice_rb_lbp == 1
                 tic
                 disp('Analytic Slice Sampling with LBP')
-                [samples_ana_lbp, dist_ana_lbp, loglik_ana_lbp, nu_samples_ana_lbp, emp_count_ana_lbp]= Stretched_analytic_slice_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP, a);%2*(dist_LBP>0.5)-1%analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%
+                [samples_ana_lbp, dist_ana_lbp, loglik_ana_lbp, nu_samples_ana_lbp, emp_count_ana_lbp, emp_counts]= Stretched_analytic_slice_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP, a);%2*(dist_LBP>0.5)-1%analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%
                 r_a_lbp = nu_samples_ana_lbp/number_samples;
-                % Doing the thinning step 
-                thin_dist_ana_lbp = thin(dist_ana_lbp', 0, r_a_lbp, nu_samples_ana_lbp-1);
-                corr_time_dist_ana_lbp = acorrtime(thin_dist_ana_lbp);
                 toc
             end
             
@@ -149,11 +171,8 @@ for u=1:1:length(temp_vec)
             if cmh == 1
                 tic
                 disp('Simple Coordinate MH')
-                [samples_CMH, log_lik_CMH, nu_samples_cmh] = CMH(is1,  fn_evlas_hmc, clique_size, initial_point);
+                [samples_CMH, log_lik_CMH, nu_samples_cmh, max_CMH] = CMH(is1,  fn_evlas_hmc, clique_size, initial_point);
                 r_cmh = nu_samples_cmh/number_samples;
-                % Doing the thinning step, now on the samples
-                thin_dist_cmh = thin(samples_CMH', 0, r_cmh, nu_samples_cmh-1);
-                corr_time_dist_cmh = acorrtime(thin_dist_cmh);
                 toc
             end
             
@@ -163,12 +182,10 @@ for u=1:1:length(temp_vec)
             if cmh_lbp == 1
                 tic
                 disp('Coordinate MH with LBP')
-                [samples_CMH_lbp, log_lik_CMH_lbp, nu_samples_cmh_lbp] = CMH_LBP_DES(is1,  fn_evlas_hmc, clique_size, initial_point, dist_LBP);
+                [samples_CMH_lbp, log_lik_CMH_lbp, nu_samples_cmh_lbp, max_CMH_LBP] = CMH_LBP_DES(is1,  fn_evlas_hmc, clique_size, initial_point, dist_LBP);
                 r_cmh_lbp = nu_samples_cmh_lbp/number_samples;
                 toc
-                % Doing the thinning step, now on the samples
-                thin_dist_cmh_lbp = thin(samples_CMH_lbp', 0, r_cmh_lbp, nu_samples_cmh_lbp-1);
-                corr_time_dist_cmh_lbp = acorrtime(thin_dist_cmh_lbp);
+                
             end
            
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -177,14 +194,10 @@ for u=1:1:length(temp_vec)
             if ana_gibbs == 1
                tic
                disp('Analytic Gibbs Sampling')
-               [samples_ana_gibbs, dist_ana_gibbs_rb, loglik_ana_gibbs, nu_samples_ana_gibbs, emp_count_ana_gibbs] = analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, a);
+               [samples_ana_gibbs, dist_ana_gibbs_rb, loglik_ana_gibbs, nu_samples_ana_gibbs, emp_count_ana_gibbs, emp_counts_gibbs] = analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, a);
                r_a_g = nu_samples_ana_gibbs/number_samples;
                % To get the estimates without rao-blackwellization
-               dist_ana_gibbs = emp_dist(samples_ana_gibbs);
-               
-               % Doing the thinning step for rao-blackwellized version
-                thin_dist_ana_gibbs = thin(dist_ana_gibbs_rb', 0, r_a_g, nu_samples_ana_gibbs-1);
-                corr_time_dist_ana_gibbs = acorrtime(thin_dist_ana_gibbs);
+               dist_ana_gibbs = emp_dist(samples_ana_gibbs);               
                toc
             end
             
@@ -194,11 +207,8 @@ for u=1:1:length(temp_vec)
             if ana_gibbs_rb_lbp == 1
                 tic
                 disp('Analytic Gibbs Sampling with LBP')
-                [samples_ana_gibbs_lbp, dist_ana_gibbs_lbp, loglik_ana_gibbs_lbp, nu_samples_ana_gibbs_lbp, emp_count_ana_gibbs_lbp] = Stretched_analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP, a);
+                [samples_ana_gibbs_lbp, dist_ana_gibbs_lbp, loglik_ana_gibbs_lbp, nu_samples_ana_gibbs_lbp, emp_count_ana_gibbs_lbp, emp_counts_gibbs_lbp] = Stretched_analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP, a);
                 r_a_g_lbp = nu_samples_ana_gibbs_lbp/number_samples;
-                % Doing the thinning step 
-                thin_dist_ana_gibbs_lbp = thin(dist_ana_gibbs_lbp', 0, r_a_g_lbp, nu_samples_ana_gibbs_lbp-1);
-                corr_time_dist_ana_gibbs_lbp = acorrtime(thin_dist_ana_gibbs_lbp);
                 toc
             end
         
@@ -247,15 +257,16 @@ for u=1:1:length(temp_vec)
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
             if pair_marg==1
-                err_pw_hmc(q,1) = sum(abs(empericalCounts(samples_hmc, a)' - true_marg));
-                err_pw_ana(q,1) = sum(abs(empericalCounts(samples_ana, a)' - true_marg));
-                err_pw_ana_lbp(q,1) = sum(abs(emp_count_ana_lbp - true_marg));
-                err_pw_cmh(q,1) = sum(abs(empericalCounts(samples_CMH, a)' - true_marg));
-                err_pw_cmh_lbp(q,1) = sum(abs(empericalCounts(samples_CMH_lbp, a)' - true_marg));
-                err_pw_ana_gibbs(q,1) = sum(abs(empericalCounts(samples_ana_gibbs, a)' - true_marg));
-                err_pw_ana_gibbs_rb(q,1) = sum(abs(emp_count_ana_gibbs - true_marg));
-                err_pw_ana_gibbs_rb_lbp(q,1) = sum(abs(emp_count_ana_gibbs_lbp - true_marg));
-                err_pw_sw(q,1) = sum(abs(empericalCounts(samples_sw, a)' - true_marg));
+                err_pw_hmc(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_hmc, a) - true_marg), 2)).^2));
+                err_pw_ana(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_ana, a) - true_marg), 2)).^2)); 
+                % Add RBS here: code up the estimator in analytic slice new
+                err_pw_ana_lbp(q,1) = sqrt(mean((sum(abs(emp_count_ana_lbp - true_marg),2)).^2));
+                err_pw_cmh(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_CMH, a) - true_marg), 2)).^2));  
+                err_pw_cmh_lbp(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_CMH_lbp, a) - true_marg), 2)).^2));
+                err_pw_ana_gibbs(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_ana_gibbs, a) - true_marg), 2)).^2));
+                err_pw_ana_gibbs_rb(q,1) = sqrt(mean((sum(abs(emp_count_ana_gibbs - true_marg),2)).^2));
+                err_pw_ana_gibbs_rb_lbp(q,1) = sqrt(mean((sum(abs(emp_count_ana_gibbs_lbp - true_marg),2)).^2));
+                err_pw_sw(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_sw, a) - true_marg), 2)).^2)); 
             end
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -263,12 +274,43 @@ for u=1:1:length(temp_vec)
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
             if act_marginals==1
+                %Getting the baseline: Ana_gibbs_LBP
+                thin_dist_ana_gibbs_lbp = thin(dist_ana_gibbs_lbp', 0, r_a_g_lbp, nu_samples_ana_gibbs_lbp-1);
+                corr_time_dist_ana_gibbs_lbp = acorrtime(thin_dist_ana_gibbs_lbp);
+                
+                %HMC
+                corr_time_dist_hmc = acorrtime(samples_hmc');
                 err_hmc(q,1) = sum(corr_time_dist_hmc-corr_time_dist_ana_gibbs_lbp);
+                
+                %AAS
+                thin_dist_ana = thin(dist_ana', 0, r_a, nu_samples_ana-1);
+                corr_time_dist_ana = acorrtime(thin_dist_ana);
                 err_ana(q,1) = sum(corr_time_dist_ana-corr_time_dist_ana_gibbs_lbp);
+                
+                %RBS+LBP
+                thin_dist_ana_lbp = thin(dist_ana_lbp', 0, r_a_lbp, nu_samples_ana_lbp-1);
+                corr_time_dist_ana_lbp = acorrtime(thin_dist_ana_lbp);
                 err_ana_lbp(q,1) = sum(corr_time_dist_ana_lbp-corr_time_dist_ana_gibbs_lbp);
+                                
+                %CMH
+                thin_dist_cmh = thin(samples_CMH', 0, r_cmh, nu_samples_cmh-1);
+                corr_time_dist_cmh = acorrtime(thin_dist_cmh);
                 err_cmh(q,1) = sum(corr_time_dist_cmh-corr_time_dist_ana_gibbs_lbp);
+                
+                %CMH+LBP
+                thin_dist_cmh_lbp = thin(samples_CMH_lbp', 0, r_cmh_lbp, nu_samples_cmh_lbp-1);
+                corr_time_dist_cmh_lbp = acorrtime(thin_dist_cmh_lbp);
                 err_cmh_lbp(q,1) = sum(corr_time_dist_cmh_lbp-corr_time_dist_ana_gibbs_lbp);
+
+                %AAG
+                thin_dist_ana_gibbs = thin(samples_ana_gibbs', 0, r_a_g, nu_samples_ana_gibbs-1);
+                corr_time_dist_ana_gibbs = acorrtime(thin_dist_ana_gibbs);
                 err_ana_gibbs(q,1) = sum(corr_time_dist_ana_gibbs-corr_time_dist_ana_gibbs_lbp);
+                
+                %RBG
+                thin_dist_ana_gibbs_rb = thin(dist_ana_gibbs_rb', 0, r_a_g, nu_samples_ana_gibbs-1);
+                corr_time_dist_ana_gibbs_rb = acorrtime(thin_dist_ana_gibbs_rb);
+                err_ana_gibbs_rb(q,1) = sum(corr_time_dist_ana_gibbs_rb-corr_time_dist_ana_gibbs_lbp);
             end
         end
          
@@ -332,7 +374,7 @@ for u=1:1:length(temp_vec)
             box on
             
             % Change the labels for the tick marks on the x-axis
-            Algorithms = {'HMC', 'AAS', 'AAS+LBP', 'CMH', 'CMH+LBP','AAG', 'AAG+RB', 'AAG+RB+LBP'};
+            Algorithms = {'HMC', 'AAS', 'RBS+LBP', 'CMH', 'CMH+LBP','AAG', 'RBG', 'RBG+LBP'};
             set(gca, 'XTick', 1:8, 'XTickLabel', Algorithms)
             name = strcat('Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
             path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Pairwise_marginals';
@@ -349,12 +391,24 @@ for u=1:1:length(temp_vec)
         % Plotting log-likes of the samples
         if plot_log_liks==1
             figure
-            plot(loglik_ana_gibbs_lbp(1:50),'b')
+            Z=200;
+            plot(loglik_hmc(1:Z),'r')
             hold on
-            plot(log_lik_CMH_lbp(1:50),'g')
+            plot(log_lik_CMH(1:Z),'k')
             hold on
-            plot(loglik_hmc(1:50),'r')
-            h=legend('AAG LBP', 'CMH LBP','HMC');
+            plot(log_lik_CMH_lbp(1:Z),'g')
+            hold on
+            plot(loglik_ana(1:Z),'b')
+            hold on
+            plot(loglik_ana_lbp(1:Z),'y')
+            hold on
+            plot(loglik_ana_gibbs(1:Z),'c')
+            hold on
+            plot(loglik_ana_gibbs_lbp(1:Z),'m')
+            hold on
+%             plot(loglik_sw(1:Z), 'g');
+%             hold on 
+            h=legend('HMC', 'CMH', 'CMH LBP', 'AAS', 'RBS LBP', 'AAG','RBG LBP');
             set(h);
             xlabel('Iterations');
             ylabel('Log-likelihood');
@@ -363,9 +417,9 @@ for u=1:1:length(temp_vec)
         
         % Plotting avg correlation time with ana_gibbs_lbp as the base 0
         if  plot_act_marginals ==1
-            mean_err= [mean(err_hmc), mean(err_ana), mean(err_ana_lbp), mean(err_cmh), mean(err_cmh_lbp), mean(err_ana_gibbs)];
-            std_err = [std(err_hmc), std(err_ana), std(err_ana_lbp), std(err_cmh), std(err_cmh_lbp), std(err_ana_gibbs)];
-            base = [0,0,0,0,0,0];
+            mean_err= [mean(err_hmc), mean(err_ana), mean(err_ana_lbp), mean(err_cmh), mean(err_cmh_lbp), mean(err_ana_gibbs), mean(err_ana_gibbs_rb)];
+            std_err = [std(err_hmc), std(err_ana), std(err_ana_lbp), std(err_cmh), std(err_cmh_lbp), std(err_ana_gibbs), mean(err_ana_gibbs_rb)];
+            base = [0,0,0,0,0,0,0];
             % Draw error bar chart with means and standard deviations
             figure 
             h=errorbar(mean_err, std_err, 's');
@@ -380,8 +434,8 @@ for u=1:1:length(temp_vec)
             box on
             
             % Change the labels for the tick marks on the x-axis
-            Algorithms = {'HMC', 'AAS', 'AAS+LBP', 'CMH', 'CMH+LBP','AAG+RB'};
-            set(gca, 'XTick', 1:6, 'XTickLabel', Algorithms)
+            Algorithms = {'HMC', 'AAS', 'RBS+LBP', 'CMH', 'CMH+LBP','AAG','RBG'};
+            set(gca, 'XTick', 1:7, 'XTickLabel', Algorithms)
             name = strcat('Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
             path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Pairwise_marginals';
             savefig(gcf, fullfile(path, name))
