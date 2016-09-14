@@ -14,9 +14,10 @@ end
 
 
 S = initial_point;  % Initial point
+L = number_fn_evals/(clique_size*K);           % Since every fn_eval is O(2), this denotes the total number of samples, since we are taking a sample after K proposals 
+% samples = zeros(d,L*K);
 samples(:,1)=S;    
 log_likes(1,1) = f.logp(S) - (S==1)'*log(marginals) - (S==-1)'*log(1-marginals);
-L = number_fn_evals/(clique_size*K);           % Since every fn_eval is O(2), this denotes the total number of samples
 
 i=0;
 max_val = 0;
