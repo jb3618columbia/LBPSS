@@ -43,7 +43,8 @@ for i=2:L
         xx(k(c)) = -xx(k(c));
         % Efficient way to compute log likeiloohs of the propsoed point
         % cur_log_like = cur_log_like + sign(xx(k(j)))*f.logp_change(xx,k(j));
-        prob_vec(c+1,1) = ((log(times(c+1)-times(c)) + f.logp(xx) - (xx==1)'*log(marginals) - (xx==-1)'*log(1-marginals)) > log_y);  % Inefficient
+        % prob_vec(c+1,1) = ((log(times(c+1)-times(c)) + f.logp(xx) - (xx==1)'*log(marginals) - (xx==-1)'*log(1-marginals)) > log_y);  % Inefficient
+        prob_vec(c+1,1) = (times(c+1)-times(c)) * ((f.logp(xx) - (xx==1)'*log(marginals) - (xx==-1)'*log(1-marginals)) > log_y);  % Inefficient
         
         if info_on_off ==1
             dist_est(:,c+1) = xx > 0;
