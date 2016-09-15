@@ -13,6 +13,7 @@ else
 end
 
 S = initial_point;  % Initial point
+samples = zeros(d,L);    
 samples(:,1)=S;    
 log_likes(1,1) = f.logp(S) - (S==1)'*log(marginals) - (S==-1)'*log(1-marginals);
 L = number_fn_evals/(clique_size*K);           % Since every fn_eval is O(2), this denotes the total number of samples

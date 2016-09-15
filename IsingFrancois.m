@@ -26,9 +26,9 @@ for u=1:1:length(temp_vec)
         
         % Algorithms:
         truth = true;
-        ana_on_off = true;
-        ana_gibbs_on_off =  true;
-        exact_hmc_on_off = true;
+        ana_on_off = false;
+        ana_gibbs_on_off =  false;
+        exact_hmc_on_off = false;
         CMH_on_off = true;
         info_on_off = true;
         
@@ -126,9 +126,9 @@ for u=1:1:length(temp_vec)
             if CMH_on_off == 1
                 tic
                 disp('Coordinate MH')
-                %[samples_CMH, log_lik_CMH, nu_samples_cmh] = CMH(is1, fn_evlas_hmc, clique_size, initial_point);
+                [samples_CMH, log_lik_CMH, nu_samples_cmh] = CMH(is1, fn_evlas_hmc, clique_size, initial_point);
                 %[samples_CMH, log_lik_CMH, nu_samples_cmh] = CMH_LBP_DES(is1,  fn_evlas_hmc, clique_size, initial_point, dist_LBP);
-                [samples_CMH, log_lik_CMH, nu_samples_cmh, dist_cmh] = CMH_LBP_RB(is1,  fn_evlas_hmc, clique_size, initial_point, dist_LBP);
+                %[samples_CMH, log_lik_CMH, nu_samples_cmh, dist_cmh] = CMH_LBP_RB(is1,  fn_evlas_hmc, clique_size, initial_point, dist_LBP);
                 %[samples_CMH, log_lik_CMH, nu_samples_cmh] = CMH_LBP(is1,  fn_evlas_hmc, clique_size, initial_point, dist_LBP);
                 r_cmh = nu_samples_cmh/number_samples;
                 macmh = mean(samples_CMH,1);
@@ -187,7 +187,7 @@ for u=1:1:length(temp_vec)
             % RMSE
             for j=2:number_samples/N
                 
-                error_ana(q,j-1) = sqrt(mean(   (dist_truth - emp_dist(samples_ana(:,2:round(j*N*r_a-1)))) .^2));
+                %error_ana(q,j-1) = sqrt(mean(   (dist_truth - emp_dist(samples_ana(:,2:round(j*N*r_a-1)))) .^2));
                 error_ana_dist(q,j-1) = sqrt(mean(   (dist_truth - mean(cat(1,dist_ana(:,2:round(j*N*r_a-1))),2))   .^2));
                 error_ana_gibbs(q,j-1) = sqrt(mean(   (dist_truth - emp_dist(samples_ana_gibbs(:,2:round(j*N*r_a_g-1))))  .^2));
                 if info_on_off ==1
