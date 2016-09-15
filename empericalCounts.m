@@ -20,11 +20,12 @@ K = size(a,2)/2;
 count = zeros(K, 4);
 for k=1:K
    i = a(2*k -1); j=a(2*k);
-   
+
    count(k,:) = [ sum( (samples(i,:) > 0) .* (samples(j,:) > 0) ), ....
                 sum( (samples(i,:) < 0) .* (samples(j,:) > 0) ), ...
                 sum( (samples(i,:) > 0) .* (samples(j,:) < 0) ), ....
                 sum( (samples(i,:) < 0) .* (samples(j,:) < 0) ), ]/size(samples,2);
+
    
 %    m = samples(i, :) + samples(j,:);
 %    count(k,1) = size(m(m==2),2);

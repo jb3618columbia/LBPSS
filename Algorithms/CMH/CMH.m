@@ -20,6 +20,11 @@ samples(:,1)=S;
 
 log_likes = zeros(1,L);
 log_likes(1,1) = f.logp(S);
+L = number_fn_evals/(clique_size*K);            % Since every fn_eval is O(2), this denotes the total number of samples. 
+                                                % Clique size is the cost
+                                                % per proposed flip and
+                                                % clique_size*K is the cost
+                                                % per sample.
 indices = randsample(d,L*K,true);
 
 max_val = 0;
