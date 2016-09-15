@@ -1,24 +1,24 @@
 % Implementation of Different Algorithms for 1D Ising Models
 % Parameters
-d=50;
+d=4;
 temp_vec=[10*pi];
 scale_vec = [10];
-rng(50)
+% rng(50)
 
 % This computes and plots the errors in node marginals
-node_marginals = 0;
-plot_marginals = 0;  
+node_marginals = 1;
+plot_marginals = 1;  
 
 % This computes and plots the errors in pariwise marginals
 pair_marg=1;
 plot_pair_marg=1;  
 
 % This plots the log-likelihood of samples 
-plot_log_liks=1;  
+plot_log_liks=0;  
 
 % This computes and plots the auto-correlation time for node marginals
-act_marginals=1;
-plot_act_marginals=1;
+act_marginals=0;
+plot_act_marginals=0;
 
 
 for u=1:1:length(temp_vec)
@@ -37,20 +37,19 @@ for u=1:1:length(temp_vec)
 %         is1 = Ising2D(sqrt(d),temp, scale);  % Create 2D Ising Object
 %         clique_size=4; %Clique size
 
-        number_samples = 2000;
-        num_examples = 10;
+        number_samples = 5000;
+        num_examples = 5;
 
         % Algorithms:
-        truth = 0;
-        ana_slice = 1;  % plan to only show slice with rb and lbp
-        ana_gibbs = 1;
-        ana_gibbs_rb = 1;
-        ana_slice_rb_lbp = 1;
-        ana_gibbs_rb_lbp = 1; % in gibbs sampling we show rb, rb+lbp
+        truth = 0;     % brute force gorund truth; no longer needed
         exact_hmc = 1; 
         cmh = 1;
         cmh_lbp = 1;
-        sw = 1;
+        ana_slice = 1;  
+        ana_slice_rb_lbp = 1;
+        ana_gibbs = 1;
+        ana_gibbs_rb_lbp = 1; 
+        sw = 0;
         info_on_off = true;
 
         %%%%%%%%%%%%%%%%%%%%%%%
@@ -81,6 +80,7 @@ for u=1:1:length(temp_vec)
 %         initial_point = sign(normrnd(0,1,d,1));
         initial_point = binornd(ones(d,1), dist_LBP);
         initial_point( initial_point==0 )=-1; 
+        
 %         % For Ising 1D
 %         m = unidrnd(d-1);
 %         n = m + 1;
@@ -100,20 +100,21 @@ for u=1:1:length(temp_vec)
         
         dist_truth = marginalsJT;
         % Error for various samplers
-        N=25; % Check error after every N equivalent iterations
-        error_hmc = zeros(num_examples, number_samples/N);
-        error_ana = zeros(num_examples, number_samples/N);
-        error_ana_lbp = zeros(num_examples, number_samples/N);
-        error_cmh = zeros(num_examples, number_samples/N);
-        error_cmh_lbp = zeros(num_examples, number_samples/N);
-        error_ana_gibbs = zeros(num_examples, number_samples/N);
-        error_ana_gibbs_rb = zeros(num_examples, number_samples/N);
-        error_ana_gibbs_rb_lbp = zeros(num_examples, number_samples/N);
-        error_sw = zeros(num_examples, number_samples/N);   
+        error_hmc = zeros(num_examples,1);
+        error_ana = zeros(num_examples,1);
+        error_ana_rb = zeros(num_examples,1);
+        error_ana_rb_lbp = zeros(num_examples,1);
+        error_cmh = zeros(num_examples,1);
+        error_cmh_lbp = zeros(num_examples,1);
+        error_ana_gibbs = zeros(num_examples,1);
+        error_ana_gibbs_rb = zeros(num_examples,1);
+        error_ana_gibbs_rb_lbp = zeros(num_examples,1);
+        error_sw = zeros(num_examples,1);   
         
         err_pw_hmc = zeros(num_examples,1);
         err_pw_ana = zeros(num_examples,1);
-        err_pw_ana_lbp = zeros(num_examples,1);
+        err_pw_ana_rb = zeros(num_examples,1);
+        err_pw_ana_rb_lbp = zeros(num_examples,1);
         err_pw_cmh = zeros(num_examples,1);
         err_pw_cmh_lbp = zeros(num_examples,1);
         err_pw_ana_gibbs = zeros(num_examples,1);
@@ -141,28 +142,12 @@ for u=1:1:length(temp_vec)
                 [samples_hmc, loglik_hmc, energy_hmc] = HMC_binary(is1,T,number_samples, initial_point);
                 fn_evlas_hmc = number_samples*((is1.dim)*t + (is1.dim) + clique_size*(is1.dim)*(t-0.5));
                 toc
-            end
-            
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % Analytic Slice Sampling
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if ana_slice == 1
-                tic
-                disp('Analytic Slice Sampling')
-                [samples_ana, dist_ana, loglik_ana, nu_samples_ana]= analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%2*(dist_LBP>0.5)-1%analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%
-                r_a = nu_samples_ana/number_samples;
-                toc
-            end
-            
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % Analytic Slice Sampling with RB + LBP
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if ana_slice_rb_lbp == 1
-                tic
-                disp('Analytic Slice Sampling with LBP')
-                [samples_ana_lbp, dist_ana_lbp, loglik_ana_lbp, nu_samples_ana_lbp, emp_count_ana_lbp, emp_counts]= Stretched_analytic_slice_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP, a);%2*(dist_LBP>0.5)-1%analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%
-                r_a_lbp = nu_samples_ana_lbp/number_samples;
-                toc
+                if node_marginals==1
+                    error_hmc(q,1)= sqrt(mean( (dist_truth - emp_dist(samples_hmc(:,end))) .^2));
+                end
+                if pair_marg==1
+                    err_pw_hmc(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_hmc, a) - true_marg), 2)).^2));
+                end
             end
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -174,6 +159,12 @@ for u=1:1:length(temp_vec)
                 [samples_CMH, log_lik_CMH, nu_samples_cmh, max_CMH] = CMH(is1,  fn_evlas_hmc, clique_size, initial_point);
                 r_cmh = nu_samples_cmh/number_samples;
                 toc
+                if node_marginals==1
+                    error_cmh(q,1) = sqrt(mean( (dist_truth - emp_dist(samples_CMH(:,end))) .^2));
+                end
+                if pair_marg==1
+                    err_pw_cmh(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_CMH, a) - true_marg), 2)).^2));
+                end
             end
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,20 +176,70 @@ for u=1:1:length(temp_vec)
                 [samples_CMH_lbp, log_lik_CMH_lbp, nu_samples_cmh_lbp, max_CMH_LBP] = CMH_LBP_DES(is1,  fn_evlas_hmc, clique_size, initial_point, dist_LBP);
                 r_cmh_lbp = nu_samples_cmh_lbp/number_samples;
                 toc
+                if node_marginals==1
+                    error_cmh_lbp(q,1) = sqrt(mean( (dist_truth - emp_dist(samples_CMH_lbp(:,end))) .^2));
+                end
+                if pair_marg==1
+                    err_pw_cmh_lbp(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_CMH_lbp, a) - true_marg), 2)).^2));
+                end
+            end
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % Analytic Slice Sampling (with RB)
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            if ana_slice == 1
+                tic
+                disp('Analytic Slice Sampling')
+                [samples_ana, dist_ana, loglik_ana, nu_samples_ana, emp_count_ana, emp_counts_ana]= analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point, a);%2*(dist_LBP>0.5)-1%analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%
+                r_a = nu_samples_ana/number_samples;
+                toc
+                if node_marginals==1
+                    error_ana(q,1)= sqrt(mean( (dist_truth - emp_dist(samples_ana(:,end))) .^2));
+                    error_ana_rb(q,1) = sqrt(mean(  (dist_truth - (dist_ana(:,end)))  .^2));
+                end
+                if pair_marg==1
+                    err_pw_ana(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_ana, a) - true_marg), 2)).^2));
+                    err_pw_ana_rb(q,1) = sqrt(mean((sum(abs(emp_count_ana - true_marg), 2)).^2));
+                    
+                end
                 
             end
-           
+            
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % Analytic Gibbs Sampling
+            % Analytic Slice Sampling with RB + LBP
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            if ana_slice_rb_lbp == 1
+                tic
+                disp('Analytic Slice Sampling with LBP')
+                [samples_ana_lbp, dist_ana_lbp, loglik_ana_lbp, nu_samples_ana_lbp, emp_count_ana_lbp, emp_counts_ana_lbp]= Stretched_analytic_slice_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP, a);%2*(dist_LBP>0.5)-1%analytic_slice_new( is1, fn_evlas_hmc, clique_size, initial_point);%
+                r_a_lbp = nu_samples_ana_lbp/number_samples;
+                toc
+                if node_marginals==1
+                    error_ana_rb_lbp(q,1) = sqrt(mean(  (dist_truth - (dist_ana_lbp(:,end)))  .^2));
+                end
+                if pair_marg==1
+                    err_pw_ana_rb_lbp(q,1) = sqrt(mean((sum(abs(emp_count_ana_lbp - true_marg),2)).^2));
+                end
+            end
+                            
+                
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % Analytic Gibbs Sampling (with RB)
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             if ana_gibbs == 1
-               tic
-               disp('Analytic Gibbs Sampling')
-               [samples_ana_gibbs, dist_ana_gibbs_rb, loglik_ana_gibbs, nu_samples_ana_gibbs, emp_count_ana_gibbs, emp_counts_gibbs] = analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, a);
-               r_a_g = nu_samples_ana_gibbs/number_samples;
-               % To get the estimates without rao-blackwellization
-               dist_ana_gibbs = emp_dist(samples_ana_gibbs);               
-               toc
+                tic
+                disp('Analytic Gibbs Sampling')
+                [samples_ana_gibbs, dist_ana_gibbs_rb, loglik_ana_gibbs, nu_samples_ana_gibbs, emp_count_ana_gibbs, emp_counts_gibbs] = analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, a);
+                r_a_g = nu_samples_ana_gibbs/number_samples;
+                toc
+                if node_marginals==1
+                    error_ana_gibbs = sqrt(mean( (dist_truth - emp_dist(samples_ana_gibbs(:,end))) .^2));
+                    error_ana_gibbs_rb = sqrt(mean(  (dist_truth - (dist_ana_gibbs_rb(:,end)))  .^2));
+                end
+                if pair_marg==1
+                    err_pw_ana_gibbs(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_ana_gibbs, a) - true_marg), 2)).^2));
+                    err_pw_ana_gibbs_rb(q,1) = sqrt(mean((sum(abs(emp_count_ana_gibbs - true_marg),2)).^2));
+                end
             end
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -210,6 +251,12 @@ for u=1:1:length(temp_vec)
                 [samples_ana_gibbs_lbp, dist_ana_gibbs_lbp, loglik_ana_gibbs_lbp, nu_samples_ana_gibbs_lbp, emp_count_ana_gibbs_lbp, emp_counts_gibbs_lbp] = Stretched_analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP, a);
                 r_a_g_lbp = nu_samples_ana_gibbs_lbp/number_samples;
                 toc
+                if node_marginals==1
+                    error_ana_gibbs_rb_lbp(q,1) = sqrt(mean(  (dist_truth - (dist_ana_gibbs_lbp(:,end)))  .^2));
+                end
+                if pair_marg==1
+                    err_pw_ana_gibbs_rb_lbp(q,1) = sqrt(mean((sum(abs(emp_count_ana_gibbs_lbp - true_marg),2)).^2));
+                end
             end
         
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -221,53 +268,14 @@ for u=1:1:length(temp_vec)
                 [samples_sw, dist_sw, loglik_sw, nu_samples_sw] = SW_1D( is1, fn_evlas_hmc, initial_point);
                 r_sw = nu_samples_sw/number_samples;
                 toc
-            end
-            
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % RMSE
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if node_marginals==1
-                init = sqrt(mean( (dist_truth - emp_dist(initial_point))  .^2));
-                error_hmc(q,1)=init;
-                error_ana(q,1)=init;
-                error_ana_lbp(q,1)=init;
-                error_cmh(q,1)=init;
-                error_cmh_lbp(q,1)=init;
-                error_ana_gibbs=init;
-                error_ana_gibbs_rb=init;
-                error_ana_gibbs_rb_lbp(q,1)=init;
-                error_sw(q,1)=init;
-
-                for j=2:(number_samples/N)
-                    error_hmc(q,j) = sqrt(mean(   (dist_truth - emp_dist(samples_hmc(:,2:j*N-1)))  .^2));
-    %                 error_ana(q,j) = sqrt(mean(   (dist_truth - mean(cat(1,dist_ana(:,2:round(j*N*r_a-1))),2))   .^2));
-                    error_ana_lbp(q,j) = sqrt(mean(   (dist_truth - mean(cat(1,dist_ana_lbp(:,2:round(j*N*r_a_lbp-1))),2))   .^2));
-    %                 error_cmh(q,j) = sqrt(mean(  (dist_truth - emp_dist(samples_CMH(:,2:round(j*N*r_cmh-1))))  .^2));
-                    error_cmh_lbp(q,j) = sqrt(mean(  (dist_truth - emp_dist(samples_CMH_lbp(:,2:round(j*N*r_cmh_lbp-1))))  .^2));
-    %                 error_ana_gibbs(q,j) = sqrt(mean(  (dist_truth - mean(cat(1,dist_ana_gibbs(:,2:round(j*N*r_a_g-1))),2))  .^2));
-    %                 error_ana_gibbs_rb(q,j) = sqrt(mean(  (dist_truth - mean(cat(1,dist_ana_gibbs_rb(:,2:round(j*N*r_a_g-1))),2))  .^2));
-                    error_ana_gibbs_rb_lbp(q,j) = sqrt(mean(  (dist_truth - mean(cat(1,dist_ana_gibbs_lbp(:,2:round(j*N*r_a_g_lbp-1))),2))  .^2));
-                    error_sw(q,j) = sqrt(mean(  (dist_truth - emp_dist(samples_sw(:,2:round(j*N*r_sw-1))))  .^2));
+                if node_marginals==1
+                    error_sw(q,1) = sqrt(mean( (dist_truth - emp_dist(samples_sw(:,end))) .^2));
                 end
-                
+                if pair_marg==1
+                    err_pw_sw(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_sw, a) - true_marg), 2)).^2));
+                end
             end
             
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % Pairwise marginal error
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            
-            if pair_marg==1
-                err_pw_hmc(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_hmc, a) - true_marg), 2)).^2));
-                err_pw_ana(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_ana, a) - true_marg), 2)).^2)); 
-                % Add RBS here: code up the estimator in analytic slice new
-                err_pw_ana_lbp(q,1) = sqrt(mean((sum(abs(emp_count_ana_lbp - true_marg),2)).^2));
-                err_pw_cmh(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_CMH, a) - true_marg), 2)).^2));  
-                err_pw_cmh_lbp(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_CMH_lbp, a) - true_marg), 2)).^2));
-                err_pw_ana_gibbs(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_ana_gibbs, a) - true_marg), 2)).^2));
-                err_pw_ana_gibbs_rb(q,1) = sqrt(mean((sum(abs(emp_count_ana_gibbs - true_marg),2)).^2));
-                err_pw_ana_gibbs_rb_lbp(q,1) = sqrt(mean((sum(abs(emp_count_ana_gibbs_lbp - true_marg),2)).^2));
-                err_pw_sw(q,1) = sqrt(mean((sum(abs(empericalCounts(samples_sw, a) - true_marg), 2)).^2)); 
-            end
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % ACtime for node-marginal estimates
@@ -312,80 +320,81 @@ for u=1:1:length(temp_vec)
                 corr_time_dist_ana_gibbs_rb = acorrtime(thin_dist_ana_gibbs_rb);
                 err_ana_gibbs_rb(q,1) = sum(corr_time_dist_ana_gibbs_rb-corr_time_dist_ana_gibbs_lbp);
             end
-        end
-         
-
+        end 
         
-%         figure
-%         semilogy(loglik_ana_gibbs_lbp(1:100),'b')
-%         hold on
-%         semilogy(log_lik_CMH_lbp(1:100),'g')
-%         hold on
-%         semilogy(loglik_hmc(1:100),'r')
-
-%         hold on
-%         semilogy(log_lik_CMH_lbp(1:end),'b')
-%         hold on 
-%         semilogy(loglik_sw(1:end),'k')
-%         str2=sprintf('Logp:temp = %d, scale = %d', temp, scale);
-%         title(str2)
-%         saveas(gcf, str2, 'png')
-
         % Node Marginal Errors
         if  plot_marginals==1
             figure
-            semilogy(0:length(error_ana_lbp)-1, mean(error_ana_lbp,1), '--', 'Color', [152,78,163]/255);
+            mean_err = [mean(error_hmc), mean(error_cmh), mean(error_cmh_lbp), mean(error_ana), mean(error_ana_rb), mean(error_ana_rb_lbp),  ....
+                        mean(error_ana_gibbs), mean(error_ana_gibbs_rb), mean(error_ana_gibbs_rb_lbp)];
+            std_err =  [std(error_hmc), std(error_cmh), std(error_cmh_lbp), std(error_ana), std(error_ana_rb), std(error_ana_rb_lbp),  ....
+                        std(error_ana_gibbs), std(error_ana_gibbs_rb), std(error_ana_gibbs_rb_lbp)];
             hold on
-            semilogy(0:length(error_ana_gibbs_rb_lbp)-1, mean(error_ana_gibbs_rb_lbp,1),'--', 'Color', [77,175,74]/255);
-            hold on
-            semilogy(0:length(error_hmc)-1, mean(error_hmc,1), '--', 'Color', [228,26,28]/255);
-            hold on
-            semilogy(0:length(error_cmh_lbp)-1, mean(error_cmh_lbp,1), '--', 'Color', [55,126,184]/255);
-            hold on
-            semilogy(0:length(error_sw)-1, mean(error_sw,1), '--', 'Color', [55,126,184]/255);
-            hold on
-            h=legend('RBS LBP', 'RBG LBP','HMC', 'CMH LBP', 'SW');
-            set(h);
-            xlabel('Function Evaluations');
-            ylabel('RMSE (Marginals)');
-            str=sprintf('Bias scale = %d', scale);
-            title(str);
-            set(gcf,'units','points','position',[10,10,800,800]);
-            name = strcat('RMSE Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
-            path = '/Users/Jalaj/Documents/Github - LBPSS/New Outputs';
-            savefig(gcf, fullfile(path, name))
-         
-        end
-        
-        % Pairwise node marginals
-        if  plot_pair_marg ==1
-            mean_err_pw = [mean(err_pw_hmc), mean(err_pw_ana), mean(err_pw_ana_lbp), mean(err_pw_cmh), mean(err_pw_cmh_lbp), mean(err_pw_ana_gibbs), mean(err_pw_ana_gibbs_rb), mean(err_pw_ana_gibbs_rb_lbp)];
-            std_err_pw = [std(err_pw_hmc), std(err_pw_ana), std(err_pw_ana_lbp), std(err_pw_cmh), std(err_pw_cmh_lbp), std(err_pw_ana_gibbs), std(err_pw_ana_gibbs_rb), std(err_pw_ana_gibbs_rb_lbp)];
-            
-            % Draw error bar chart with means and standard deviations
-            figure 
-            h=errorbar(mean_err_pw, std_err_pw, 's');
-            h.Marker='o';
-            
-            % Add title and axis labels
-            title('Pairwise marginals')
-%             xlabel('Algorithms')
+            for k = 1:length(mean_err)
+                e1 = errorbar(k,mean_err(k),std_err(k),'o');
+                set(e1,'Color', [228,26,28]/255)
+                set(e1,'MarkerEdgeColor',[228,26,28]/255)
+            end
+            hold off
+%             str=sprintf('Node marginals:Bias scale = %d', scale);
+%             title(str)
+            title('Node marginals');
             ylabel('Error: Estimated - ground truth')
             box on
-            
             % Change the labels for the tick marks on the x-axis
-            Algorithms = {'HMC', 'AAS', 'RBS+LBP', 'CMH', 'CMH+LBP','AAG', 'RBG', 'RBG+LBP'};
-            set(gca, 'XTick', 1:8, 'XTickLabel', Algorithms)
+            xtl1 = '\begin{tabular}{c} HMC \end{tabular}';
+            xtl2 = '\begin{tabular}{c} CMH \end{tabular}';
+            xtl3 = '\begin{tabular}{c} CMH \\+\\LBP\end{tabular}';
+            xtl4 = '\begin{tabular}{c} AAS \end{tabular}';
+            xtl5 = '\begin{tabular}{c} AAS \\+\\RB\end{tabular}';
+            xtl6 = '\begin{tabular}{c} AAS \\ + \\ RB\\ + \\ LBP\end{tabular}';
+            xtl7 = '\begin{tabular}{c} AAG \end{tabular}';
+            xtl8 = '\begin{tabular}{c} AAG\\+\\ RB \end{tabular}';
+            xtl9 = '\begin{tabular}{c} AAG \\ + \\ RB\\ + \\ LBP\end{tabular}';
+            Algorithms = {xtl1, xtl2, xtl3, xtl4, xtl5, xtl6, xtl7, xtl8, xtl9};
+            set(gca, 'XTick', 1:9, 'XTickLabel', Algorithms, 'TickLabelInterpreter', 'latex');
             name = strcat('Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
             path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Pairwise_marginals';
             savefig(gcf, fullfile(path, name))
-            
-            
-%             h = bar(diag(mean_err_pw),'stacked');
-%             grid on
-%             l = cell(1,8);
-%             l{1}='HMC'; l{2}='AAS'; l{3}='AAS+LBP'; l{4}='CMH'; l{5}='CMH+LBP'; l{6}='AAG'; l{7}='AAG+RB'; l{8}='AAG+RB+LBP';    
-%             legend(h,l);
+%             set(gcf,'units','points','position',[10,10,800,800]);
+         
+        end
+                        
+        % Pairwise node marginals
+        if  plot_pair_marg ==1
+            mean_err_pw = [mean(err_pw_hmc), mean(err_pw_cmh), mean(err_pw_cmh_lbp), mean(err_pw_ana), mean(err_pw_ana_rb), ...
+                          mean(err_pw_ana_rb_lbp),  mean(err_pw_ana_gibbs), mean(err_pw_ana_gibbs_rb), mean(err_pw_ana_gibbs_rb_lbp)];
+            std_err_pw = [std(err_pw_hmc), std(err_pw_cmh), std(err_pw_cmh_lbp), std(err_pw_ana), std(err_pw_ana_rb), ...
+                          std(err_pw_ana_rb_lbp),  std(err_pw_ana_gibbs), std(err_pw_ana_gibbs_rb), std(err_pw_ana_gibbs_rb_lbp)];
+            % Draw error bar chart with means and standard deviations
+%             color_chart = [[152,78,163]/255, [77,175,74]/255, [228,26,28]/255, [55,126,184]/255, [218, 189, 22]/255, [218, 22, 212]/255, [13, 231, 224]/255, [0, 0, 0]/255];
+            figure 
+            hold on
+            for k = 1:length(mean_err_pw)
+                e1 = errorbar(k,mean_err_pw(k),std_err_pw(k),'o');
+                set(e1,'Color', [55,126,184]/255)
+                set(e1,'MarkerEdgeColor',[55,126,184]/255)
+            end
+            hold off
+            title('Pairwise marginals');
+            ylabel('Error: Estimated - ground truth')
+            box on
+            % Change the labels for the tick marks on the x-axis
+            xtl1 = '\begin{tabular}{c} HMC \end{tabular}';
+            xtl2 = '\begin{tabular}{c} CMH \end{tabular}';
+            xtl3 = '\begin{tabular}{c} CMH \\+\\LBP\end{tabular}';
+            xtl4 = '\begin{tabular}{c} AAS \end{tabular}';
+            xtl5 = '\begin{tabular}{c} AAS \\+\\RB\end{tabular}';
+            xtl6 = '\begin{tabular}{c} AAS \\ + \\ RB\\ + \\ LBP\end{tabular}';
+            xtl7 = '\begin{tabular}{c} AAG \end{tabular}';
+            xtl8 = '\begin{tabular}{c} AAG\\+\\ RB \end{tabular}';
+            xtl9 = '\begin{tabular}{c} AAG \\ + \\ RB\\ + \\ LBP\end{tabular}';
+%             xtl = '\begin{tabular}{c} line 1 \\ line 2 \\ line 3\\ line 4\end{tabular}';
+            Algorithms = {xtl1, xtl2, xtl3, xtl4, xtl5, xtl6, xtl7, xtl8};
+            set(gca, 'XTick', 1:9, 'XTickLabel', Algorithms, 'TickLabelInterpreter', 'latex');
+            name = strcat('Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
+            path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Pairwise_marginals';
+            savefig(gcf, fullfile(path, name))
         end
         
         % Plotting log-likes of the samples
@@ -449,5 +458,71 @@ for u=1:1:length(temp_vec)
     
 end
             
+      
+%% Old PLotting fucntions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% RMSE for node marginals with iterations
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% N=25; % Check error after every N equivalent iterations
+% error_hmc = zeros(num_examples, number_samples/N);
+% error_ana = zeros(num_examples, number_samples/N);
+% error_ana_lbp = zeros(num_examples, number_samples/N);
+% error_cmh = zeros(num_examples, number_samples/N);
+% error_cmh_lbp = zeros(num_examples, number_samples/N);
+% error_ana_gibbs = zeros(num_examples, number_samples/N);
+% error_ana_gibbs_rb = zeros(num_examples, number_samples/N);
+% error_ana_gibbs_rb_lbp = zeros(num_examples, number_samples/N);
+% error_sw = zeros(num_examples, number_samples/N);
         
+% if node_marginals==1
+%     init = sqrt(mean( (dist_truth - emp_dist(initial_point))  .^2));
+%     error_hmc(q,1)=init;
+%     error_ana(q,1)=init;
+%     error_ana_lbp(q,1)=init;
+%     error_cmh(q,1)=init;
+%     error_cmh_lbp(q,1)=init;
+%     error_ana_gibbs=init;
+%     error_ana_gibbs_rb=init;
+%     error_ana_gibbs_rb_lbp(q,1)=init;
+%     error_sw(q,1)=init;
+%     
+%     for j=2:(number_samples/N)
+%         error_hmc(q,j) = sqrt(mean(   (dist_truth - emp_dist(samples_hmc(:,2:j*N-1)))  .^2));
+%         %                 error_ana(q,j) = sqrt(mean(   (dist_truth - mean(cat(1,dist_ana(:,2:round(j*N*r_a-1))),2))   .^2));
+%         error_ana_lbp(q,j) = sqrt(mean(   (dist_truth - mean(cat(1,dist_ana_lbp(:,2:round(j*N*r_a_lbp-1))),2))   .^2));
+%         %                 error_cmh(q,j) = sqrt(mean(  (dist_truth - emp_dist(samples_CMH(:,2:round(j*N*r_cmh-1))))  .^2));
+%         error_cmh_lbp(q,j) = sqrt(mean(  (dist_truth - emp_dist(samples_CMH_lbp(:,2:round(j*N*r_cmh_lbp-1))))  .^2));
+%         %                 error_ana_gibbs(q,j) = sqrt(mean(  (dist_truth - mean(cat(1,dist_ana_gibbs(:,2:round(j*N*r_a_g-1))),2))  .^2));
+%         %                 error_ana_gibbs_rb(q,j) = sqrt(mean(  (dist_truth - mean(cat(1,dist_ana_gibbs_rb(:,2:round(j*N*r_a_g-1))),2))  .^2));
+%         error_ana_gibbs_rb_lbp(q,j) = sqrt(mean(  (dist_truth - mean(cat(1,dist_ana_gibbs_lbp(:,2:round(j*N*r_a_g_lbp-1))),2))  .^2));
+%         error_sw(q,j) = sqrt(mean(  (dist_truth - emp_dist(samples_sw(:,2:round(j*N*r_sw-1))))  .^2));
+%     end
+%     
+% end
+
+% if  plot_marginals==1
+%     figure
+%     semilogy(0:length(error_ana_lbp)-1, mean(error_ana_lbp,1), '--', 'Color', [152,78,163]/255);
+%     hold on
+%     semilogy(0:length(error_ana_gibbs_rb_lbp)-1, mean(error_ana_gibbs_rb_lbp,1),'--', 'Color', [77,175,74]/255);
+%     hold on
+%     semilogy(0:length(error_hmc)-1, mean(error_hmc,1), '--', 'Color', [228,26,28]/255);
+%     hold on
+%     semilogy(0:length(error_cmh_lbp)-1, mean(error_cmh_lbp,1), '--', 'Color', [55,126,184]/255);
+%     hold on
+%     semilogy(0:length(error_sw)-1, mean(error_sw,1), '--', 'Color', [55,126,184]/255);
+%     hold on
+%     h=legend('RBS LBP', 'RBG LBP','HMC', 'CMH LBP', 'SW');
+%     set(h);
+%     xlabel('Function Evaluations');
+%     ylabel('RMSE (Marginals)');
+%     str=sprintf('Bias scale = %d', scale);
+%     title(str);
+%     set(gcf,'units','points','position',[10,10,800,800]);
+%     name = strcat('RMSE Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
+%     path = '/Users/Jalaj/Documents/Github - LBPSS/New Outputs';
+%     savefig(gcf, fullfile(path, name))
+%     
+% end
         

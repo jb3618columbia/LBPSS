@@ -15,7 +15,7 @@ samples(:,1)=initial_point;
 dist(:,1) = emp_dist(initial_point);  
 pair_size = size(a,2)/2;
 emperical_counts = zeros(pair_size, 4, L);
-emperical_counts(:,:,1) = empericalCounts(initial_point, a); % this is now a tensor of size K/2 x 4 x N
+emperical_counts(:,:,1) = empericalCounts(initial_point, a); % this is now a tensor of size K/2 x 4 x L
 
 log_likes = zeros(1,L);
 log_likes(1,1) = f.logp(initial_point);

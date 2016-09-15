@@ -1,4 +1,4 @@
-function [ samples, dist, log_likes, i ] = analytic_slice_new( f, number_fn_evals, clique_size, initial_point)
+function [ samples, dist, log_likes, i, emp_count, emperical_counts ] = analytic_slice_new( f, number_fn_evals, clique_size, initial_point, a)
 
 % This sampler analytically finds all the coordinate flips that are above a
 % certain threshold level and then uniformly samples one among them
@@ -20,7 +20,8 @@ function [ samples, dist, log_likes, i ] = analytic_slice_new( f, number_fn_eval
 %    3) log_likes: 1 x L vector of log-likelihoods of all samples
 %    4) i: total number of samples
 
-
+% Added the Rao-Blackwellized estimate of pairwise emperical correlations.
+% Here a is now a row vector of many (i,j) pairs: nodes for which pairwise error is computed.
 
 d = f.dim;
 L = round(number_fn_evals/(clique_size*(2*d-1)));
@@ -32,6 +33,10 @@ samples(:,1)=initial_point;
 % This code passes this test
 
 dist(:,1) = emp_dist(initial_point);    
+dist(:,1) = emp_dist(initial_point);  
+pair_size = size(a,2)/2;
+emperical_counts = zeros(pair_size, 4, L);
+emperical_counts(:,:,1) = empericalCounts(initial_point, a); % this is now a tensor of size K/2 x 4 x L
 
 log_likes = zeros(1,L);
 log_likes(1,1) = f.logp(initial_point);
@@ -63,7 +68,10 @@ for i=2:L
     index = unidrnd(p-1);   
     samples(:,i) = acc_samples(:,index);
     dist(:,i) = emp_dist(acc_samples(:,1:end));
+    emperical_counts(:,:,i) = empericalCounts(acc_samples, a); % this is now a tensor of size K/2 x 4 x L
+    
     cur_log_like = f.logp(samples(:,i));
     log_likes(1,i) = cur_log_like;
     
 end
+emp_count = mean(emperical_counts, 3);
