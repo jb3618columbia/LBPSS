@@ -1,4 +1,4 @@
-function [ samples, dist, log_likes, i, emp_count, emperical_counts ] = analytic_gibbs_new( f, number_fn_evals, clique_size, info_on_off, initial_point, a )
+function [ samples, dist, mag, log_likes, i, emp_count, emperical_counts ] = analytic_gibbs_new( f, number_fn_evals, clique_size, info_on_off, initial_point, a )
 %Added the Rao-Blackwellized estimate of pairwise emperical correlations.
 %Here a is now a row vector of many (i,j) pairs: nodes for which pairwise error is computed.
 
@@ -19,6 +19,8 @@ emperical_counts(:,:,1) = empericalCounts(initial_point, a); % this is now a ten
 
 log_likes = zeros(1,L);
 log_likes(1,1) = f.logp(initial_point);
+mag = zeros(1,L);
+mag(1,1) = sum(initial_point,1)/d;
 
 for i=2:L
     xx = samples(:, i-1);  % Current point
@@ -29,6 +31,8 @@ for i=2:L
     count_est(:,:,1) = empericalCounts(xx, a);
     dist_est = zeros(d,2*d);
     dist_est(:,1) = xx > 0;
+    mag_est = zeros(1,2*d);
+    mag_est(:,1) = sum(xx,1)/d;
     p = 2;
     j=1;
     
@@ -42,6 +46,7 @@ for i=2:L
         if info_on_off ==1
             dist_est(:,p) = xx > 0;
             count_est(:,:,p) = empericalCounts(xx, a);
+            mag_est(:,p) = sum(xx,1)/d;
         end
         p = p + 1;
         j = mod(c,d) + 1;
@@ -55,6 +60,7 @@ for i=2:L
     if info_on_off == 1
         dist(:,i) = dist_est*prob_vec;   % getting the weighted average
         emperical_counts(:,:,i) = rb_emp_counts(count_est, prob_vec); % getting weighted average of pairwise count estimator
+        mag(1,i) = mag_est*prob_vec;  % getting the weighted magnetization
     end
     
 %     fn_evals = fn_evals + log(d);     % Extra log d for sampling from a dicrete distribution

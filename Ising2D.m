@@ -11,6 +11,7 @@ classdef Ising2D < handle  % inherit from handle so that we can pass by referenc
            M;
            Neis;
            bias;
+           a;
         end
         
              
@@ -34,6 +35,8 @@ classdef Ising2D < handle  % inherit from handle so that we can pass by referenc
                 obj.bias(1,j) = -scale*rand;
             end
             obj.M = obj.beta*obj.M/2;
+            obj.a = full(obj.M);
+            
             obj.bias = obj.beta*obj.bias;
             function nei = neighbors(j)
                 if j == 1

@@ -1,18 +1,13 @@
 function [samples, log_likes, i] = independence_LBP(f,  number_fn_evals, clique_size, initial_point, marginals, varargin)
 
-
-
 % Parameters
 d = f.dim;
-if length(varargin) > 0
-    K = varargin{1};
-    % K is the number of binary flip proposals between recorded d-dimensional samples 
-    % We can take a sample after every d flips or at every flip
-    % To make it comparable to BPS, we will take after every d samples
-else
-    K = d;
-end
-L = number_fn_evals/(clique_size*K);           % Since every fn_eval is O(2), this denotes the total number of samples
+% Here K is 1, we are taking every consecutive sample
+K = 1;
+L = 2*number_fn_evals/(clique_size*d); 
+% The justification here is simple. For 1D Ising models, the cost is O(d),
+% and for 2D Ising models, the cost is ~ 2D
+% Clique size for 1D is 2 and for 2D is 4.
 
 % Initialize point and log-likelihood
 S = initial_point; 
@@ -23,7 +18,7 @@ samples = zeros(d,L);
 samples(:,1)=S;    
 log_likes = zeros(1,L);   
 log_likes(1,1) = log_p;
-indices = randsample(d,L*K,true);
+% indices = randsample(d,L*K,true); 
 
 for i=2:L
    
@@ -31,8 +26,7 @@ for i=2:L
     end
     for k = 1:K
         S_prop = 2*(rand(d,1)< marginals) -1;
-        logp_prop = f.logp(S_prop) - (S_prop==1)'*log(marginals) - (S_prop==-1)'*log(1-marginals);;
-        
+        logp_prop = f.logp(S_prop) - (S_prop==1)'*log(marginals) - (S_prop==-1)'*log(1-marginals);
         
         if (rand < exp(logp_prop - log_p) ) % Accept and propose point
             S = S_prop;

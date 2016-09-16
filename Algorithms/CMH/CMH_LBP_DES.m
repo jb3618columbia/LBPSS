@@ -15,42 +15,43 @@ end
 
 S = initial_point;  % Initial point
 L = number_fn_evals/(clique_size*K);           % Since every fn_eval is O(2), this denotes the total number of samples, since we are taking a sample after K proposals 
-samples = zeros(d , L*K);  
+samples = zeros(d , L);  
 samples(:,1)=S;    
 log_likes(1,1) = f.logp(S) - (S==1)'*log(marginals) - (S==-1)'*log(1-marginals);
 
 i=0;
 max_val = 0;
 
-for new_samples = 2:L*K
+for new_samples = 2:(L*K)
    
-    % Sample number of rejected flips and add those counts to the previous
-    % sample
-%     for j = 0:geornd( sum( marginals.^(S==-1) .* (1-marginals).^(S==1) ) / d )
-%         i=i+1;
-%         
-%         % Add every K-th sample
-%         if mod(i,K)==0
-%             log_likes(1,i/K) = f.logp(S);
-%             samples(:,i/K)=S;
-%         end 
-%     end
+%  Sample number of rejected flips and add those counts to the previous sample
+%  Here S denotes the current point 
+
+    for j = 0:geornd( sum( marginals.^(S==-1) .* (1-marginals).^(S==1) ) / d )
+        i=i+1;
+        % Add every K-th sample
+        if mod(i,K)==0
+            log_likes(1,i/K) = f.logp(S);
+            samples(:,i/K)=S;
+        end 
+    end
     
 
     % Sample new coordinate to be flipped
     j = randsample(d,1,true, marginals.^(S==-1) .* (1-marginals).^(S==1));
     
+    % Just a check
     new_point = S;
     new_point(j) = -new_point(j);
     r = exp(f.logp(new_point) - f.logp(S));
+    
     % Change in log likelihood
     q_j = r*(marginals(j) / (1-marginals(j)) )^S(j) ; 
 
     % Ari's code    
-    q_j_1 = exp(-S(j)*f.logp_change(S,j)) * ( marginals(j) / (1-marginals(j)) )^S(j) ; 
-
+    q_j_1 = exp(-S(j)*f.logp_change(S,j)) * ( marginals(j) / (1-marginals(j)) )^S(j) ;
     if max_val < abs(q_j - q_j_1)
-           max_val = abs(q_j - q_j_1);
+           max_val = abs(q_j - q_j_1);   % difference between two ways
     end
         
     % Accept the point with standard metropolis probabilities
@@ -58,7 +59,7 @@ for new_samples = 2:L*K
         S(j) = -S(j);    % flip it
     end       
     
-    samples(:,new_samples) = geornd( sum( marginals.^(S==-1) .* (1-marginals).^(S==1) ) / d ) * S;
+%     samples(:,new_samples) = geornd( sum( marginals.^(S==-1) .* (1-marginals).^(S==1) ) / d ) * S;
 end
 
 total_samples = length(log_likes);
