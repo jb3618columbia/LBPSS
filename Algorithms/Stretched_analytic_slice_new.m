@@ -30,10 +30,10 @@ for i=2:L
     [times, flip_indices_sorted] = sort([t_brackets(1:d), t_brackets(d+1:2*d)]);
     k = mod(flip_indices_sorted-1,d)+1;
     
-    log_y = log(rand)+ log(times(1)+2*pi-times(2*d))+f.logp(xx) - (xx==1)'*log(marginals) - (xx==-1)'*log(1-marginals);% Slice height
+    log_y = log(rand) + f.logp(xx) - (xx==1)'*log(marginals) - (xx==-1)'*log(1-marginals);% Slice height %
     
     prob_vec = zeros(2*d,1);
-    prob_vec(1,1) = 1;
+    prob_vec(1,1) = times(1)+2*pi-times(2*d);
     count_est = zeros(pair_size,4,2*d);
     count_est(:,:,1) = empericalCounts(xx, a);
     dist_est = zeros(d,2*d);

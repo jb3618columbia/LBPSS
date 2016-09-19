@@ -1,11 +1,11 @@
 % Implementation of different algorithms for 1D and 2D Ising Models
 % Parameters
-ising_1d = 0;
-ising_2d = 1;
+ising_1d = 1;
+ising_2d = 0;
 
-d=16;
+d=10;
 temp_vec=[5*pi];
-scale_vec = [2];
+scale_vec = [50];
 % rng(50)
 
 % This computes the errors in node and pairwise marginals
