@@ -1,11 +1,11 @@
-function [ ] = plot_fn( mean_err_pw, std_err_pw, title_pass, act)
+function [ ] = plot_marg( mean_err_pw, std_err_pw, title_pass, act)
 % Draw error bar chart with means and standard deviations
 % for both node
 
 figure
 hold on
-color_chart = color_code();
-ind = [-1 1 3 5 6 8 9 10 12 13 14];
+color_chart = color_code_marg();
+ind = [1 3 5 7 8 10 11 12 14 15 16];
 for kk = 1:length(ind)
     k = ind(kk);
     %e1 = errorbar(k,mean_err_pw(k),std_err_pw(k),'o');
@@ -41,14 +41,13 @@ xtl8 = '\begin{tabular}{c} AAG \end{tabular}';
 xtl9 = '\begin{tabular}{c} AAG\\+\\ RB \end{tabular}';
 xtl10 = '\begin{tabular}{c} AAG \\ + \\ RB\\ + \\ LBP\end{tabular}';
 Algorithms = {xtl1, xtl2, xtl3, xtl4, xtl5, xtl6, xtl7, xtl8, xtl9, xtl10};
-legend_lab = {'BP', 'MH-LBP','HMC','CMH','CMH + LBP','AAS','AAS+RB','AAS+RB+LBP','AAG','AAG+RB','AAG+RB+LBP'};
+legend_lab = {'LBP', 'MH-LBP','HMC','CMH','CMH + LBP','AAS','AAS+RB','AAS+RB+LBP','AAG','AAG+RB','AAG+RB+LBP'};
 %set(gca, 'XTick', 1:11, 'XTickLabel', Algorithms, 'TickLabelInterpreter', 'latex');
 set(gca,'XTick',[])
 ylim([0 0.1+max(mean_err_pw)])
-xlim([-2 15])
+xlim([0 17])
 % legend(e0,legend_lab,'Orientation','horizontal','Location','southoutside');
-[legend_h,~,~,~] = columnlegend(5, e0, legend_lab, 1.5,'southoutside');
+[legend_h,~,~,~] = columnlegend(6, e0, legend_lab, 1.5,'southoutside');
 set(legend_h, 'position', [0.105 -0.22 0.8 0.35]);
 
 end
-

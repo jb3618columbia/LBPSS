@@ -1,11 +1,11 @@
 % Implementation of different algorithms for 1D and 2D Ising Models
 % Parameters
-ising_1d = 1;
-ising_2d = 0;
+ising_1d = 0;
+ising_2d = 1;
 
-d=4;
-temp_vec=[10*pi];
-scale_vec = [10];
+d=16;
+temp_vec=[5*pi];
+scale_vec = [2];
 % rng(50)
 
 % This computes the errors in node and pairwise marginals
@@ -13,6 +13,7 @@ node_marginals = 1;
 pair_marg = 1;
 
 plot_marg_pairwise = 1;
+plot_marginals = 1;
 
 % This plots the log-likelihood of samples
 plot_log_liks=0;
@@ -48,8 +49,8 @@ for u=1:1:length(temp_vec)
             clique_size=4;
         end
         
-        number_samples = 200;
-        num_examples = 3;
+        number_samples = 5000;
+        num_examples = 1;
         
         % Algorithms:
         truth = 0;     % brute force gorund truth; no longer needed
@@ -150,7 +151,11 @@ for u=1:1:length(temp_vec)
             if exact_hmc == 1
                 tic
                 disp('Exact_HMC')
-                t = 1.5; T=t*pi;
+                t = 1.5;
+                if ising_2d ==1
+                  t = 2.5;
+                end
+                T=t*pi;
                 [samples_hmc, loglik_hmc, energy_hmc] = HMC_binary(is1,T,number_samples, initial_point);
                 fn_evlas_hmc = number_samples*((is1.dim)*t + (is1.dim) + clique_size*(is1.dim)*(t-0.5));
                 toc
@@ -332,11 +337,11 @@ for u=1:1:length(temp_vec)
 
         % Node marginals
         if  plot_marginals==1
-            mean_err = [mean(error_ind), mean(error_hmc), mean(error_cmh), mean(error_cmh_lbp), mean(error_ana), mean(error_ana_rb), mean(error_ana_rb_lbp),  ....
+            mean_err = [sum(abs(dist_LBP-dist_truth)), mean(error_ind), mean(error_hmc), mean(error_cmh), mean(error_cmh_lbp), mean(error_ana), mean(error_ana_rb), mean(error_ana_rb_lbp),  ...
                 mean(error_ana_gibbs), mean(error_ana_gibbs_rb), mean(error_ana_gibbs_rb_lbp)];
-            std_err =  [std(error_ind), std(error_hmc), std(error_cmh), std(error_cmh_lbp), std(error_ana), std(error_ana_rb), std(error_ana_rb_lbp),  ....
+            std_err =  [0, std(error_ind), std(error_hmc), std(error_cmh), std(error_cmh_lbp), std(error_ana), std(error_ana_rb), std(error_ana_rb_lbp),  ...
                 std(error_ana_gibbs), std(error_ana_gibbs_rb), std(error_ana_gibbs_rb_lbp)];
-            plot_fn(mean_err, std_err,'Node marginals');
+            plot_marg(mean_err, std_err, 'Node marginals', 0);
             name = strcat('Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
             path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Node_marginals';
             savefig(gcf, fullfile(path, name))
@@ -348,7 +353,7 @@ for u=1:1:length(temp_vec)
                 mean(err_pw_ana_rb_lbp),  mean(err_pw_ana_gibbs), mean(err_pw_ana_gibbs_rb), mean(err_pw_ana_gibbs_rb_lbp)];
             std_err_pw = [std(error_ind), std(err_pw_hmc), std(err_pw_cmh), std(err_pw_cmh_lbp), std(err_pw_ana), std(err_pw_ana_rb), ...
                 std(err_pw_ana_rb_lbp), std(err_pw_ana_gibbs), std(err_pw_ana_gibbs_rb), std(err_pw_ana_gibbs_rb_lbp)];
-            plot_fn(mean_err_pw, std_err_pw,'Pairwise marginals');
+            plot_fn(mean_err_pw, std_err_pw,'Pairwise marginals', 0);
             name = strcat('Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
             path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Pairwise_marginals';
             savefig(gcf, fullfile(path, name))
@@ -359,9 +364,9 @@ for u=1:1:length(temp_vec)
         if  plot_act_mag ==1
             mean_act= [mean(act_mag_mh_lbp), mean(act_mag_hmc), mean(act_mag_cmh), mean(act_mag_cmh_lbp), mean(act_mag_ana), mean(act_mag_ana_rb), ... 
                        mean(act_mag_ana_rb_lbp), mean(act_mag_ana_gibbs), mean(act_mag_ana_gibbs_rb), mean(act_mag_ana_gibbs_rb_lbp)];
-            std_act= [std(act_mag_mh_lbp), std(act_mag_hmc), std(act_mag_cmh), std(act_mag_cmh_lbp), std(act_mag_ana), mean(act_mag_ana_rb), ... 
+            std_act= [std(act_mag_mh_lbp), std(act_mag_hmc), std(act_mag_cmh), std(act_mag_cmh_lbp), std(act_mag_ana), std(act_mag_ana_rb), ... 
                        std(act_mag_ana_rb_lbp), std(act_mag_ana_gibbs), std(act_mag_ana_gibbs_rb), std(act_mag_ana_gibbs_rb_lbp)];
-            plot_fn(mean_err_pw, std_err_pw,'Auto-correlation time: magnetization');
+            plot_fn(mean_act, std_act,'Auto-correlation time: magnetization', 1);
             name = strcat('Temp', num2str(temp), 'Bias', num2str(scale), '.fig');
             path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Act_mag';
             savefig(gcf, fullfile(path, name))

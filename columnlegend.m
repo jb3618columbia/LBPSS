@@ -65,7 +65,7 @@ set(legend_h, 'units', 'normalized');
 set(gca, 'units', 'normalized');
 
 pos = get(legend_h, 'position');
-width = numcolumns*pos(3);
+width = 2*numcolumns*pos(3);
 newheight = (pos(4)/numlines)*numpercolumn;
 rescale = pos(3)/width;
 
