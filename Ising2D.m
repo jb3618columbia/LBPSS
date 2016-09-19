@@ -1,6 +1,7 @@
 classdef Ising2D < handle  % inherit from handle so that we can pass by reference
 
-        % this class implements a 1d Ising model with zero magnetic field. 
+        % This class implements a 1d Ising model, bias and correlation strength 
+        % terms have been added to encourage multimodality 
      
         properties(SetObservable = true)
         % These properties are public by default

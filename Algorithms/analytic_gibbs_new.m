@@ -15,7 +15,10 @@ samples(:,1)=initial_point;
 dist(:,1) = emp_dist(initial_point);  
 pair_size = size(a,2)/2;
 emperical_counts = zeros(pair_size, 4, L);
-emperical_counts(:,:,1) = empericalCounts(initial_point, a); % this is now a tensor of size K/2 x 4 x L
+% emperical_counts(:,:,1) = empericalCounts(initial_point, a); % this is now a tensor of size K/2 x 4 x L
+
+% Only on keeping this sum
+emp_count = empericalCounts(initial_point, a);  
 
 log_likes = zeros(1,L);
 log_likes(1,1) = f.logp(initial_point);
@@ -27,12 +30,14 @@ for i=2:L
     k=randperm(d);
     prob_vec = zeros(2*d,1);
     prob_vec(1,1) = f.logp(xx);
-    count_est = zeros(pair_size,4,2*d);
-    count_est(:,:,1) = empericalCounts(xx, a);
-    dist_est = zeros(d,2*d);
-    dist_est(:,1) = xx > 0;
-    mag_est = zeros(1,2*d);
-    mag_est(:,1) = sum(xx,1)/d;
+    if info_on_off == 1
+        count_est = zeros(pair_size,4,2*d);
+        count_est(:,:,1) = empericalCounts(xx, a);
+        dist_est = zeros(d,2*d);
+        dist_est(:,1) = xx > 0;
+        mag_est = zeros(1,2*d);
+        mag_est(:,1) = sum(xx,1)/d;
+    end
     p = 2;
     j=1;
     
@@ -43,7 +48,7 @@ for i=2:L
         % cur_log_like = cur_log_like + sign(xx(k(j)))*f.logp_change(xx,k(j));
         prob_vec(p,1) = f.logp(xx);  % Inefficient
         
-        if info_on_off ==1
+        if info_on_off == 1
             dist_est(:,p) = xx > 0;
             count_est(:,:,p) = empericalCounts(xx, a);
             mag_est(:,p) = sum(xx,1)/d;
@@ -59,7 +64,8 @@ for i=2:L
     
     if info_on_off == 1
         dist(:,i) = dist_est*prob_vec;   % getting the weighted average
-        emperical_counts(:,:,i) = rb_emp_counts(count_est, prob_vec); % getting weighted average of pairwise count estimator
+%         emperical_counts(:,:,i) = rb_emp_counts(count_est, prob_vec); % getting weighted average of pairwise count estimator
+        emp_count = emp_count + rb_emp_counts(count_est, prob_vec); % adding the weighted average of pairwise count estimator
         mag(1,i) = mag_est*prob_vec;  % getting the weighted magnetization
     end
     
@@ -80,7 +86,9 @@ for i=2:L
        end
     end
     samples(:, i) = point;
-    log_likes(i,1) = f.logp(point);
+    log_likes(1,i) = f.logp(point);
 
 end
-emp_count = mean(emperical_counts, 3);
+% emp_count = mean(emperical_counts, 3);
+emp_count = emp_count/L;
+
