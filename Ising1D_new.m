@@ -1,7 +1,7 @@
 classdef Ising1D_new < handle  % inherit from handle so that we can pass by reference
 
-        % this class implements a 1d Ising model with zero magnetic field.
-        % bias terms have been added to encourage multimodality 
+        % this class implements a 1d Ising model, bias and correlation strength 
+        %  terms have been added to encourage multimodality 
      
         properties(SetObservable = true)
         % These properties are public by default
@@ -18,7 +18,7 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
         methods
         % These methods are public by default. 
         
-            function obj = Ising1D_new(d,temp, scale)
+            function obj = Ising1D_new(d,temp, scale_connect, scale_bias)
             % class constructor            
             
                 obj.d = d;    %linear dimension of the 1D grid
@@ -31,9 +31,9 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
                 for j=1:d
                     nei = neighbors(j);
                     obj.Neis(j,:) = nei;
-                    obj.M(j,nei) = -1;
-%                     obj.bias(1,j) = -scale*(-1 + 2*rand); % both positive and negative biases
-                    obj.bias(1,j) = -scale*rand; % positive bias
+                    obj.M(j,nei) = -scale_connect;
+%                     obj.bias(1,j) = -scale_bias*(-1 + 2*rand); % both positive and negative biases
+                    obj.bias(1,j) = -scale_bias*rand; % positive bias
 %                     obj.bias(1,j) = 0;
                 end
                 obj.M = obj.beta*obj.M/2;    % the factor of 1/2 is because pairs are counted twice
@@ -72,9 +72,7 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
                  lpc = -2*obj.bias(j) - 4*sum(S(nei).*obj.M(j,nei)');
              end
              
-             
- 
-             
+                          
         end
         
         

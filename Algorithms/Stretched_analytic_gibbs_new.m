@@ -77,7 +77,7 @@ for i=2:L
         end
     end
     samples(:, i) = xx;
-    log_likes(i,1) = f.logp(samples(:, i));
+    log_likes(1,i) = f.logp(samples(:, i));
 
 end
 emp_count_gibbs = mean(emperical_counts, 3);
