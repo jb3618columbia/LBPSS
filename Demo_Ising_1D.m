@@ -5,8 +5,7 @@ ising_2d = 0;
 
 d=10;
 temp_vec=[5*pi];
-scale_vec = [2];
-scale_conn = [5];
+scale_vec = [50];
 % rng(50)
 
 % This computes the errors in node and pairwise marginals
