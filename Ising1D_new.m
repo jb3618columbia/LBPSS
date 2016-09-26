@@ -49,9 +49,6 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
                 end                
             end
             
-            
-                
-            
             % Conventions:
             % S is a signs vector  (+1,-1)
             % H = -log P(S) = S'*obj.M*S 
