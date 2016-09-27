@@ -2,7 +2,8 @@ function [ ] = plot_fn( mean_err_pw, std_err_pw, title_pass, act)
 % Draw error bar chart with means and standard deviations
 % for both node
 
-figure
+FigHandle = figure;
+  set(FigHandle, 'Position', [10, 10, 800, 700]);
 hold on
 color_chart = color_code();
 ind = [1 3 5 6 8 9 10 12 13 14];

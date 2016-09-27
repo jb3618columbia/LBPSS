@@ -6,7 +6,7 @@ ising_2d = 1;
 d=4;
 temp_vec=[5*pi];
 scale_vec = [50];
-scale_conn = [1,2,3];
+scale_conn = [1];
 % rng(50)
 
 % This computes the errors in node and pairwise marginals
@@ -53,8 +53,8 @@ for u=1:1:length(temp_vec)
                 clique_size=4;
             end
             
-            number_samples = 1000;
-            num_examples = 5;
+            number_samples = 400;
+            num_examples = 1;
             
             % Algorithms:
             truth = 0;     % brute force gorund truth; no longer needed
