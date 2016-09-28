@@ -4,7 +4,7 @@ function [ ] = plot_fn( mean_err_pw, std_err_pw, title_pass, act, temp, scale_bi
 
 figure(1)
 FigHandle = figure(1);
-set(FigHandle, 'PaperPosition', [0 0 8 6]);
+set(FigHandle, 'PaperPosition', [0 0 7 5]);
 hold on
 color_chart = color_code();
 ind = [1 3 5 6 8 9 10 12 13 14];
@@ -16,9 +16,9 @@ for kk = 1:length(ind)
     set(e0(kk),'Color', color_chart(kk,:))
     set(e0(kk),'MarkerFaceColor',color_chart(kk,:))
     set(e0(kk),'MarkerEdgeColor',[0 0 0])
-    set(e0(kk),'MarkerSize',8)
+    set(e0(kk),'MarkerSize',5)
     set(e1(kk),'Color', color_chart(kk,:))
-    set(e1(kk),'LineWidth',3)
+    set(e1(kk),'LineWidth',2)
 end
 
 
@@ -49,13 +49,13 @@ set(gca,'XTick',[])
 ylim([0 0.1+max(mean_err_pw)])
 xlim([0 15])
 % legend(e0,legend_lab,'Orientation','horizontal','Location','southoutside');
-[legend_h,~,~,~] = columnlegend(5, e0, legend_lab, 1.5,'southoutside');
-set(legend_h, 'position', [0.105 -0.22 0.8 0.35]);
+[legend_h,~,~,~] = columnlegend(5, e0, legend_lab, 2,'southoutside');
+set(legend_h, 'position', [0.045 -0.20 0.95 0.35]);
 name = strcat('Temp', num2str(round(temp)), 'Bias', num2str(scale_bias));
 if act ==1
-    path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Act_mag/';
+    path = 'C:\Users\Student.DESKTOP-GMAHVHB\Downloads\LBPSS-master\LBPSS-master\Outputs_after_NIPS\Act_mag';
 else
-    path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Pairwise_marginals/';
+    path = 'C:\Users\Student.DESKTOP-GMAHVHB\Downloads\LBPSS-master\LBPSS-master\Outputs_after_NIPS\Pairwise_marginals';
 end
 % saveas(1, [path, name], 'epsc')
 saveas(1, [path, name], 'png')
