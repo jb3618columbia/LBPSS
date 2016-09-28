@@ -32,8 +32,8 @@ classdef Ising1D_new < handle  % inherit from handle so that we can pass by refe
                     nei = neighbors(j);
                     obj.Neis(j,:) = nei;
                     obj.M(j,nei) = -scale_connect;
-%                     obj.bias(1,j) = -scale_bias*(-1 + 2*rand); % both positive and negative biases
-                    obj.bias(1,j) = -scale_bias*rand; % positive bias
+                    obj.bias(1,j) = -scale_bias*(-1 + 2*rand); % both positive and negative biases
+%                     obj.bias(1,j) = -scale_bias*rand; % positive bias
 %                     obj.bias(1,j) = 0;
                 end
                 obj.M = obj.beta*obj.M/2;    % the factor of 1/2 is because pairs are counted twice

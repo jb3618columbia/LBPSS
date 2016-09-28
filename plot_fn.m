@@ -1,4 +1,4 @@
-function [ ] = plot_fn( mean_err_pw, std_err_pw, title_pass, act, temp, scale_bias)
+function [ ] = plot_fn( mean_err_pw, std_err_pw, title_pass, act, temp, scale_bias, scale_corr)
 % Draw error bar chart with means and standard deviations
 % for both node
 
@@ -51,11 +51,11 @@ xlim([0 15])
 % legend(e0,legend_lab,'Orientation','horizontal','Location','southoutside');
 [legend_h,~,~,~] = columnlegend(5, e0, legend_lab, 2,'southoutside');
 set(legend_h, 'position', [0.045 -0.20 0.95 0.35]);
-name = strcat('Temp', num2str(round(temp)), 'Bias', num2str(scale_bias));
+name = strcat('Temp', num2str(round(temp)), 'Bias', num2str(scale_bias), 'Corr', num2str(scale_corr));
 if act ==1
-    path = 'C:\Users\Student.DESKTOP-GMAHVHB\Downloads\LBPSS-master\LBPSS-master\Outputs_after_NIPS\Act_mag';
+    path = 'C:\Users\Student.DESKTOP-GMAHVHB\Downloads\LBPSS-master\LBPSS-master\Outputs_after_NIPS\Actmag\';
 else
-    path = 'C:\Users\Student.DESKTOP-GMAHVHB\Downloads\LBPSS-master\LBPSS-master\Outputs_after_NIPS\Pairwise_marginals';
+    path = 'C:\Users\Student.DESKTOP-GMAHVHB\Downloads\LBPSS-master\LBPSS-master\Outputs_after_NIPS\Pairmarginal\';
 end
 % saveas(1, [path, name], 'epsc')
 saveas(1, [path, name], 'png')

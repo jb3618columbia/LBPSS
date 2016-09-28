@@ -12,14 +12,14 @@ classdef Ising2D < handle  % inherit from handle so that we can pass by referenc
            M;
            Neis;
            bias;
-           a;
+           afull;
         end
         
              
         methods
         % These methods are public by default. 
         
-        function obj = Ising2D(d,temp, scale)
+        function obj = Ising2D(d,temp, scale_connect, scale_bias)
             % class constructor
             
             obj.d = d;    %linear dimension of the 1D grid
@@ -32,11 +32,12 @@ classdef Ising2D < handle  % inherit from handle so that we can pass by referenc
             for j=1:d*d
                 nei = neighbors(j);
                 obj.Neis(j,:) = nei;
-                obj.M(j, nei) =-1;
-                obj.bias(1,j) = -scale*rand;
+                obj.M(j, nei) =-scale_connect;
+                obj.bias(1,j) = -scale_bias*(-1 + 2*rand); % both positive and negative biases
+%                 obj.bias(1,j) = -scale*rand; % positive bias
             end
             obj.M = obj.beta*obj.M/2;
-            obj.a = full(obj.M);
+            obj.afull = full(obj.M);
             
             obj.bias = obj.beta*obj.bias;
             function nei = neighbors(j)
