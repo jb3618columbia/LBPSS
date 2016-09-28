@@ -52,7 +52,7 @@ xlim([0 15])
 [legend_h,~,~,~] = columnlegend(5, e0, legend_lab, 2,'southoutside');
 set(legend_h, 'position', [0.045 -0.20 0.95 0.35]);
 if act ==1
-    name = strcat('Act_mag','',''Temp', num2str(round(temp)), 'Bias', num2str(scale_bias), 'Corr', num2str(scale_corr));
+    name = strcat('Act_mag','','Temp', num2str(round(temp)), 'Bias', num2str(scale_bias), 'Corr', num2str(scale_corr));
     path = 'C:\Users\Student.DESKTOP-GMAHVHB\Downloads\LBPSS-master\LBPSS-master\Outputs_after_NIPS\Actmag\';
 else
     name = strcat('Pair_marg','','Temp', num2str(round(temp)), 'Bias', num2str(scale_bias), 'Corr', num2str(scale_corr));
