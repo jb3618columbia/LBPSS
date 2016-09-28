@@ -1,9 +1,10 @@
-function [ ] = plot_fn( mean_err_pw, std_err_pw, title_pass, act)
+function [ ] = plot_fn( mean_err_pw, std_err_pw, title_pass, act, temp, scale_bias)
 % Draw error bar chart with means and standard deviations
 % for both node
 
-FigHandle = figure;
-  set(FigHandle, 'Position', [10, 10, 800, 700]);
+figure(1)
+FigHandle = figure(1);
+set(FigHandle, 'PaperPosition', [0 0 8 6]);
 hold on
 color_chart = color_code();
 ind = [1 3 5 6 8 9 10 12 13 14];
@@ -15,7 +16,7 @@ for kk = 1:length(ind)
     set(e0(kk),'Color', color_chart(kk,:))
     set(e0(kk),'MarkerFaceColor',color_chart(kk,:))
     set(e0(kk),'MarkerEdgeColor',[0 0 0])
-    set(e0(kk),'MarkerSize',11)
+    set(e0(kk),'MarkerSize',8)
     set(e1(kk),'Color', color_chart(kk,:))
     set(e1(kk),'LineWidth',3)
 end
@@ -50,6 +51,21 @@ xlim([0 15])
 % legend(e0,legend_lab,'Orientation','horizontal','Location','southoutside');
 [legend_h,~,~,~] = columnlegend(5, e0, legend_lab, 1.5,'southoutside');
 set(legend_h, 'position', [0.105 -0.22 0.8 0.35]);
+name = strcat('Temp', num2str(round(temp)), 'Bias', num2str(scale_bias));
+if act ==1
+    path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Act_mag/';
+else
+    path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Pairwise_marginals/';
+end
+% saveas(1, [path, name], 'epsc')
+saveas(1, [path, name], 'png')
+close all
+
+% Save as Matlab figs
+% name = strcat('Temp', num2str(temp), 'Bias', num2str(scale_bias), '.fig');
+% path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Pairwise_marginals';
+% savefig(gcf, fullfile(path, name))
+
 
 end
 

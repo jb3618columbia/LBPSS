@@ -345,10 +345,10 @@ for u=1:1:length(temp_vec)
                     mean(error_ana_gibbs), mean(error_ana_gibbs_rb), mean(error_ana_gibbs_rb_lbp)];
                 std_err =  [0, std(error_ind), std(error_hmc), std(error_cmh), std(error_cmh_lbp), std(error_ana), std(error_ana_rb), std(error_ana_rb_lbp),  ...
                     std(error_ana_gibbs), std(error_ana_gibbs_rb), std(error_ana_gibbs_rb_lbp)];
-                plot_marg(mean_err, std_err, 'Node marginals', 0);
-                name = strcat('Temp', num2str(temp), 'Bias', num2str(scale_bias), '.fig');
-                path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Node_marginals';
-                savefig(gcf, fullfile(path, name))
+                plot_marg(mean_err, std_err, 'Node marginals', temp, scale_bias);
+%                 name = strcat('Temp', num2str(temp), 'Bias', num2str(scale_bias), '.fig');
+%                 path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Node_marginals';
+%                 savefig(gcf, fullfile(path, name))
             end
             
             % Pairwise node marginals
@@ -357,10 +357,7 @@ for u=1:1:length(temp_vec)
                     mean(err_pw_ana_rb_lbp),  mean(err_pw_ana_gibbs), mean(err_pw_ana_gibbs_rb), mean(err_pw_ana_gibbs_rb_lbp)];
                 std_err_pw = [std(error_ind), std(err_pw_hmc), std(err_pw_cmh), std(err_pw_cmh_lbp), std(err_pw_ana), std(err_pw_ana_rb), ...
                     std(err_pw_ana_rb_lbp), std(err_pw_ana_gibbs), std(err_pw_ana_gibbs_rb), std(err_pw_ana_gibbs_rb_lbp)];
-                plot_fn(mean_err_pw, std_err_pw,'Pairwise marginals', 0);
-                name = strcat('Temp', num2str(temp), 'Bias', num2str(scale_bias), '.fig');
-                path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Pairwise_marginals';
-                savefig(gcf, fullfile(path, name))
+                plot_fn(mean_err_pw, std_err_pw,'Pairwise marginals', 0, temp, scale_bias);
                 
             end
             
@@ -370,10 +367,10 @@ for u=1:1:length(temp_vec)
                     mean(act_mag_ana_rb_lbp), mean(act_mag_ana_gibbs), mean(act_mag_ana_gibbs_rb), mean(act_mag_ana_gibbs_rb_lbp)];
                 std_act= [std(act_mag_mh_lbp), std(act_mag_hmc), std(act_mag_cmh), std(act_mag_cmh_lbp), std(act_mag_ana), std(act_mag_ana_rb), ...
                     std(act_mag_ana_rb_lbp), std(act_mag_ana_gibbs), std(act_mag_ana_gibbs_rb), std(act_mag_ana_gibbs_rb_lbp)];
-                plot_fn(mean_act, std_act,'Auto-correlation time: magnetization', 1);
-                name = strcat('Temp', num2str(temp), 'Bias', num2str(scale_bias), '.fig');
-                path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Act_mag';
-                savefig(gcf, fullfile(path, name))
+                plot_fn(mean_act, std_act,'Auto-correlation time: magnetization', 1, temp, scale_bias);
+%                 name = strcat('Temp', num2str(temp), 'Bias', num2str(scale_bias), '.fig');
+%                 path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Act_mag';
+%                 savefig(gcf, fullfile(path, name))
             end
             
             % Plotting log-likes of the samples

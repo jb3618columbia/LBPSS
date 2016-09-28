@@ -1,9 +1,10 @@
-function [ ] = plot_marg( mean_err_pw, std_err_pw, title_pass, act)
+function [ ] = plot_marg( mean_err_pw, std_err_pw, title_pass, temp, scale_bias)
 % Draw error bar chart with means and standard deviations
 % for both node
 
-FigHandle = figure;
-set(FigHandle, 'Position', [10, 10, 800, 700]);
+figure(2)
+FigHandle = figure(2);
+set(FigHandle, 'PaperPosition', [0 0 8 6]);
 hold on
 color_chart = color_code_marg();
 ind = [1 3 5 7 8 10 11 12 14 15 16];
@@ -15,18 +16,14 @@ for kk = 1:length(ind)
     set(e0(kk),'Color', color_chart(kk,:))
     set(e0(kk),'MarkerFaceColor',color_chart(kk,:))
     set(e0(kk),'MarkerEdgeColor',[0 0 0])
-    set(e0(kk),'MarkerSize',11)
+    set(e0(kk),'MarkerSize',8)
     set(e1(kk),'Color', color_chart(kk,:))
     set(e1(kk),'LineWidth',3)
 end
 
 
 title(title_pass);
-if act==1
-    label_y = 'ACT';
-else
-    label_y = 'RMSE';
-end
+label_y = 'RMSE';
 ylabel(label_y)
 box on
 % Change the labels for the tick marks on the x-axis
@@ -50,5 +47,10 @@ xlim([0 17])
 % legend(e0,legend_lab,'Orientation','horizontal','Location','southoutside');
 [legend_h,~,~,~] = columnlegend(6, e0, legend_lab, 1.5,'southoutside');
 set(legend_h, 'position', [0.105 -0.22 0.8 0.35]);
+name = strcat('Temp', num2str(round(temp)), 'Bias', num2str(scale_bias));
+path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Node_marginals/';
+% saveas(1, [path, name], 'epsc')
+saveas(2, [path, name], 'png')
+close all
 
 end
