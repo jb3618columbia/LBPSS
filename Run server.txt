@@ -1,0 +1,12 @@
+How to run things on a cluster:
+
+- In terminal do: ssh jalaj@border1.ieor.columbia.edu
+- Enter the right directory
+- Command: ./runmatlab.sh filename.m output.txt
+
+Output file gives the outputs displayed on the Matlab console.
+
+ps - jobs running on current session
+ps -u jalaj: To see the all the jobs running, even after closing the terminal session
+
+- command + K to edit using cyberduck in the server

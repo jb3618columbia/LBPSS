@@ -47,8 +47,8 @@ xlim([0 17])
 % legend(e0,legend_lab,'Orientation','horizontal','Location','southoutside');
 [legend_h,~,~,~] = columnlegend(6, e0, legend_lab, 2,'southoutside');
 set(legend_h, 'position', [-0.005 -0.22 1.05 0.35]);
-name = strcat('Node_marg','','Temp', num2str(round(temp)), 'Bias', num2str(scale_bias), 'Corr', num2str(scale_corr));
-path = 'C:\Users\Student.DESKTOP-GMAHVHB\Downloads\LBPSS-master\LBPSS-master\Outputs_after_NIPS\Nodemarginal\';
+name = strcat('Node_marg','','Temp', num2str(round(temp)), 'Bias', num2str(scale_bias*100), 'Corr', num2str(scale_corr*100));
+path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/Nodemarginal/';
 % saveas(1, [path, name], 'epsc')
 saveas(2, [path, name], 'png')
 close all
