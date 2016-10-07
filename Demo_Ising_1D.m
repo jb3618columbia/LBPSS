@@ -8,7 +8,7 @@ ising_1d = 0;
 ising_2d = 1;
 
 %Parameters
-d=49;
+d=4;
 temp_vec=[1];
 scale_vec = linspace(0,0.15,4);
 scale_conn = linspace(0.1,0.7,5);
@@ -16,7 +16,7 @@ number_samples = 200;
 num_examples = 1;
 % rng(50)
 
-% Algorithms:
+% Algorithms: 
 truth = 0;     % brute force gorund truth; no longer needed
 ind_sampler = 0;  % MH with proposals
 exact_hmc = 1;

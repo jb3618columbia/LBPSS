@@ -10,3 +10,7 @@ ps - jobs running on current session
 ps -u jalaj: To see the all the jobs running, even after closing the terminal session
 
 - command + K to edit using cyberduck in the server
+
+We may not have enough time for real data experiments, unless Francois pitches in, but he seems busy with another submission.
+
+I am currently running the case where bias =0.1, and I progressively increase strength. Here we will see the LBP breaking down, and all LBP guided samplers doing worse, as was the case with 7 x 7.

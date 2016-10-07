@@ -7,12 +7,74 @@
 % approximated using MCMC methods if it cannot be calculated exactly by brute force.
 
 % Load dataset (available from http://artax.karlin.mff.cuni.cz/r-help/library/bnlearn/html/coronary.html)
-load('coronary.mat')
+load('coronary.mat');
 
 % Parameters
-n = size(coronary,1);       % number of training examples
-d = size(coronary,2);       % dimension of S
-K = 10;                     % number of MCMC samples per F calcuation
+n = size(coronary,1);      % number of training examples
+d = size(coronary,2);      % dimension of S
+num_samples = 100;          % number of samples
+F = 1000;                   % number of MCMC samples per inner loop
+
+% Prior
+mu_prior = zeros(1,d*(d-1)/2);
+Sigma_prior = 10*eye(d*(d-1)/2);
+
+% Initial point
+W_init = mvnrnd(mu_prior, eye(d*(d-1)/2));  % passed as row vectors 
+
+% Algorithms 
+truth = 1;
+HMC = 1;
+CMH = 1;
+AAS = 1;
+AAG = 1;
+
+%% Run samplers
+% initialW = iwishrnd(A,10)*(10-6-1);  % random PSD matrix, df are kept small 
+% Wvec = nonzeros(triu(initialW, 1)');
+
+if true == 1
+    tic
+    display('True')
+    [samples_true, logZ_est_true] = OuterMH( num_samples, F,  W_init, coronary, mu_prior, Sigma_prior, 0);
+    samples_true = unique(samples_true, 'rows');
+    toc
+end
+
+if HMC == 1
+    tic
+    display('HMC')
+    [samples_HMC, logZ_est_HMC] = OuterMH( num_samples, F,  W_init, coronary, mu_prior, Sigma_prior, 1);
+    samples_HMC = unique(samples_HMC, 'rows');
+    toc
+end
+
+if CMH ==1
+    tic
+    display('CMH')
+    [samples_CMH, logZ_est_CMH] = OuterMH( num_samples, F,  W_init, coronary, mu_prior, Sigma_prior, 2);
+    samples_CMH = unique(samples_CMH, 'rows');
+    toc
+end
+
+if AAS ==1
+    tic
+    display('AAS')
+    [samples_AAS, logZ_est_AAS] = OuterMH( num_samples, F,  W_init, coronary, mu_prior, Sigma_prior, 3);
+    samples_AAS = unique(samples_AAS, 'rows');
+    toc
+end
+
+if AAG ==1
+    tic
+    display('AAG')
+    [samples_AAG, logZ_est_AAG] = OuterMH( num_samples, F,  W_init, coronary, mu_prior, Sigma_prior, 4);
+    samples_AAG = unique(samples_AAG, 'rows');
+    toc
+end
+
+% plotRealdata(samples_true, samples_HMC, samples_CMH, samples_AAS, samples_AAG);
+plotZerror(logZ_est_true, logZ_est_HMC, logZ_est_CMH, logZ_est_AAS, logZ_est_AAG)
 
 %% Run samplers
 
@@ -38,3 +100,4 @@ W = zeros(d,d);
 % Plot empirical distributions of W for the exact sampler vs approximate
 % samplers. It is probably only worth comparing LBP-CMH and LBP-AAG with
 % the exact sampler.
+

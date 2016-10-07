@@ -1,6 +1,6 @@
 classdef Ising2D < handle  % inherit from handle so that we can pass by reference
 
-        % This class implements a 1d Ising model, bias and correlation strength 
+        % This class implements a 2D Ising model, bias and correlation strength 
         % terms have been added to encourage multimodality 
      
         properties(SetObservable = true)
