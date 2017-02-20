@@ -2,6 +2,7 @@ function [ ] = plot_heatmap_data(data, legendText, scale_conn, plotsPath, data_c
 
 nAlg = size(data,1);
 % nAlg = size(data,1)-1;
+
 nStrength = size(data,3);
 
 % Manipulate the data matrix construction here to cherry pick the values
@@ -30,8 +31,8 @@ figure(1)
 colormap(autumn(50000));
 brighten(0.6);
 imagesc(heatmapMatrix);
-xlabel('Strength');
-% xlabel('Bias');
+xlabel('Strength (W)');
+% xlabel('Bias scale (c)');
 
 scale_conn = round(scale_conn,3);
 if on_off ==1

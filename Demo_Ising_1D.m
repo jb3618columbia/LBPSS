@@ -8,11 +8,11 @@ ising_1d = 0;
 ising_2d = 1;
 
 %Parameters
-d=4;
+d=16;
 temp_vec=[1];
-scale_vec = linspace(0,0.15,4);
-scale_conn = linspace(0.1,0.7,5);
-number_samples = 200;
+scale_vec = 0;
+scale_conn = linspace(0.1,0.2,1);
+number_samples = 2000;
 num_examples = 1;
 % rng(50)
 
@@ -21,10 +21,10 @@ truth = 0;     % brute force gorund truth; no longer needed
 ind_sampler = 0;  % MH with proposals
 exact_hmc = 1;
 cmh = 1;
-cmh_lbp = 1;
-ana_slice = 1;
+cmh_lbp = 0;
+ana_slice = 0;
 ana_slice_rb_lbp = 1;
-ana_gibbs = 1;
+ana_gibbs = 0;
 ana_gibbs_rb_lbp = 1;
 sw = 0;
 info_on_off = true;
@@ -107,6 +107,7 @@ for u=1:1:length(temp_vec)
             %         [edgeStruct, dist_LBP, edgeBelLBP, Z_LBP, marginalsJT, edgeBelJT, Z_JT] = get_LBP_marginals( bias , -is1.M);
             
             [edgeStruct, dist_LBP, edgeBelLBP, Z_LBP, marginalsJT, edgeBelJT, Z_JT] = get_LBP_marginals( -is1.bias , -is1.M);
+            dist_LBP = 0.05*ones(d,1);
             % initial_point = sign(normrnd(0,1,d,1));
             initial_point = binornd(ones(d,1), dist_LBP);
             initial_point( initial_point==0 )=-1;
@@ -394,24 +395,24 @@ for u=1:1:length(temp_vec)
             % Plotting log-likes of the samples
             if plot_log_liks==1
                 figure
-                Z=200;
-                plot(loglik_hmc(1:Z),'r')
+                Z=2000;
+                plot(loglik_hmc(1000:Z),'r')
                 hold on
-                plot(log_lik_CMH(1:Z),'k')
+%                 plot(log_lik_CMH(1:Z),'k')
+%                 hold on
+%                 plot(log_lik_CMH_lbp(1:Z),'g')
+%                 hold on
+%                 plot(loglik_ana(1:Z),'b')
+%                 hold on
+                plot(loglik_ana_lbp(1000:Z),'b')
                 hold on
-                plot(log_lik_CMH_lbp(1:Z),'g')
-                hold on
-                plot(loglik_ana(1:Z),'b')
-                hold on
-                plot(loglik_ana_lbp(1:Z),'y')
-                hold on
-                plot(loglik_ana_gibbs(1:Z),'c')
-                hold on
-                plot(loglik_ana_gibbs_lbp(1:Z),'m')
+%                 plot(loglik_ana_gibbs(1:Z),'c')
+%                 hold on
+                plot(loglik_ana_gibbs_lbp(1000:Z),'k')
                 hold on
                 %             plot(loglik_sw(1:Z), 'g');
                 %             hold on
-                h=legend('HMC', 'CMH', 'CMH LBP', 'AAS', 'RBS LBP', 'AAG','RBG LBP');
+                h=legend('HMC', 'RBS LBP', 'RBG LBP');
                 set(h);
                 xlabel('Iterations');
                 ylabel('Log-likelihood');

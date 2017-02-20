@@ -1,1 +1,0 @@
-[samples_ana_gibbs, dist_ana_gibbs_rb, mag_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs, emp_count_ana_gibbs, emp_counts_gibbs] = analytic_gibbs_new( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, a);

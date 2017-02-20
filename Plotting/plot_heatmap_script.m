@@ -9,12 +9,12 @@ else
 end
 % scale_vec = linspace(0,0.15,4);
 % scale_conn = [linspace(0.2,0.5,5) , linspace(0.55,0.75,10)]; 
-scale_vec = 0
-scale_conn = [0.25:0.25:1, 2, 3, 4, 5]
+scale_vec = 0.2
+scale_conn = [0.1:0.1:0.8]
 
 % Passing the entire connection strength, 
-data_code = [{'err'}];
-% data_code = [{'err'}, {'err_pw'}];
+% data_code = [{'err'}];
+data_code = [{'err'}, {'err_pw'}];
 % data_code = [{'err'}, {'err_pw'}, {'act'}];
 
 legendText = {'LBP','HMC','CMH','CMH + LBP','AAS','AAS+RB','AAS+RB+LBP','AAG','AAG+RB','AAG+RB+LBP'};
