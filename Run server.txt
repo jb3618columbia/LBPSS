@@ -9,27 +9,8 @@ Output file gives the outputs displayed on the Matlab console.
 ps - jobs running on current session
 ps -u jalaj: To see the all the jobs running, even after closing the terminal session
 
-- command + K to edit using cyberduck in the server.
+- command + K to edit using cyberduck in the server
 
-Tutorials:
+We may not have enough time for real data experiments, unless Francois pitches in, but he seems busy with another submission.
 
-1) Deep RL through policy optimization - and a prelude in ICML 2016
-- hierarchical variational models.
-
-2) GANs - learning in implicit generative models (Balaji and Shakir), our idea of MMD with GANS, Adji’s new paper on the slack channel.
-
-Schimdt Huber
-
-3) Predictive learning: Reinforcement learning - policy, rewards read more.
-
-4) Value iteration networks: Value iteration and policy iteration based policy in networks - a lot of MDP based approaches in neural nets.
-
-5) Sequential neural models with stochastic layers.
-
-6) Machine Learning and Likelihood-Free Inference in Particle Physics.
-
-7) Global analysis of EM for mixture of gaussians
-
-Roger Grosse - AIS/Reverse AIS 
-
-
+I am currently running the case where bias =0.1, and I progressively increase strength. Here we will see the LBP breaking down, and all LBP guided samplers doing worse, as was the case with 7 x 7.
