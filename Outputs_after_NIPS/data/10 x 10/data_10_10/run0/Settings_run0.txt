@@ -1,5 +1,0 @@
-Settings 10 x 10 
-
-run 0: 
-scale_vec = linspace(0,0.15,1);
-scale_conn = linspace(0.5,1,6);

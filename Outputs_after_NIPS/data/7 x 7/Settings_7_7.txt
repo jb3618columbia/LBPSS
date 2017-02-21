@@ -1,4 +1,0 @@
-Setting 7 x 7:
-
-scale_vec = linspace(0,0.15,4);
-scale_conn = [linspace(0.2,0.5,5) , linspace(0.55,0.75,10)]; 

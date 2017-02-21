@@ -1,0 +1,1529 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2015 The MathWorks, Inc.
+                   R2015b (8.6.0.267246) 64-bit (glnxa64)
+                              August 20, 2015
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+
+	Academic License
+
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
+num_samples =
+
+   100
+
+>> 
+F =
+
+        1000
+
+>> 
+num_sample_paths =
+
+   100
+
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
+1 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.844328 seconds.
+HMC
+Elapsed time is 32.137241 seconds.
+CMH
+Elapsed time is 29.910876 seconds.
+AAS
+Elapsed time is 12.668875 seconds.
+AAG
+Elapsed time is 29.963258 seconds.
+
+2 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.857333 seconds.
+HMC
+Elapsed time is 33.554150 seconds.
+CMH
+Elapsed time is 32.232201 seconds.
+AAS
+Elapsed time is 13.434933 seconds.
+AAG
+Elapsed time is 31.515677 seconds.
+
+3 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.907826 seconds.
+HMC
+Elapsed time is 34.367167 seconds.
+CMH
+Elapsed time is 31.882403 seconds.
+AAS
+Elapsed time is 13.582648 seconds.
+AAG
+Elapsed time is 31.745274 seconds.
+
+4 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.954301 seconds.
+HMC
+Elapsed time is 33.882954 seconds.
+CMH
+Elapsed time is 32.449765 seconds.
+AAS
+Elapsed time is 13.956112 seconds.
+AAG
+Elapsed time is 31.673084 seconds.
+
+5 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.876739 seconds.
+HMC
+Elapsed time is 35.140126 seconds.
+CMH
+Elapsed time is 32.850930 seconds.
+AAS
+Elapsed time is 13.905150 seconds.
+AAG
+Elapsed time is 32.382993 seconds.
+
+6 =
+
+Iteration Number =
+
+True
+Elapsed time is 2.017865 seconds.
+HMC
+Elapsed time is 35.019156 seconds.
+CMH
+Elapsed time is 32.448870 seconds.
+AAS
+Elapsed time is 14.035144 seconds.
+AAG
+Elapsed time is 32.345101 seconds.
+
+7 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.977471 seconds.
+HMC
+Elapsed time is 35.282547 seconds.
+CMH
+Elapsed time is 32.819368 seconds.
+AAS
+Elapsed time is 13.650904 seconds.
+AAG
+Elapsed time is 31.152809 seconds.
+
+8 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.896154 seconds.
+HMC
+Elapsed time is 33.775424 seconds.
+CMH
+Elapsed time is 31.862609 seconds.
+AAS
+Elapsed time is 13.571304 seconds.
+AAG
+Elapsed time is 31.183126 seconds.
+
+9 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.982427 seconds.
+HMC
+Elapsed time is 33.944253 seconds.
+CMH
+Elapsed time is 30.884061 seconds.
+AAS
+Elapsed time is 13.286563 seconds.
+AAG
+Elapsed time is 31.660757 seconds.
+
+10 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.927046 seconds.
+HMC
+Elapsed time is 33.852407 seconds.
+CMH
+Elapsed time is 31.358125 seconds.
+AAS
+Elapsed time is 13.322196 seconds.
+AAG
+Elapsed time is 31.115405 seconds.
+
+11 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.907859 seconds.
+HMC
+Elapsed time is 33.963920 seconds.
+CMH
+Elapsed time is 31.606218 seconds.
+AAS
+Elapsed time is 13.510041 seconds.
+AAG
+Elapsed time is 31.164065 seconds.
+
+12 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.849379 seconds.
+HMC
+Elapsed time is 34.547184 seconds.
+CMH
+Elapsed time is 31.879444 seconds.
+AAS
+Elapsed time is 13.727586 seconds.
+AAG
+Elapsed time is 31.255479 seconds.
+
+13 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.904476 seconds.
+HMC
+Elapsed time is 33.751643 seconds.
+CMH
+Elapsed time is 32.927586 seconds.
+AAS
+Elapsed time is 13.863701 seconds.
+AAG
+Elapsed time is 31.646728 seconds.
+
+14 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.872749 seconds.
+HMC
+Elapsed time is 33.847241 seconds.
+CMH
+Elapsed time is 32.800248 seconds.
+AAS
+Elapsed time is 13.714661 seconds.
+AAG
+Elapsed time is 31.851560 seconds.
+
+15 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.959402 seconds.
+HMC
+Elapsed time is 34.395401 seconds.
+CMH
+Elapsed time is 33.094011 seconds.
+AAS
+Elapsed time is 13.355084 seconds.
+AAG
+Elapsed time is 32.285648 seconds.
+
+16 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.940593 seconds.
+HMC
+Elapsed time is 34.196112 seconds.
+CMH
+Elapsed time is 32.570260 seconds.
+AAS
+Elapsed time is 13.826925 seconds.
+AAG
+Elapsed time is 32.185631 seconds.
+
+17 =
+
+Iteration Number =
+
+True
+Elapsed time is 2.040971 seconds.
+HMC
+Elapsed time is 34.443769 seconds.
+CMH
+Elapsed time is 32.354315 seconds.
+AAS
+Elapsed time is 13.857098 seconds.
+AAG
+Elapsed time is 32.299911 seconds.
+
+18 =
+
+Iteration Number =
+
+True
+Elapsed time is 2.001866 seconds.
+HMC
+Elapsed time is 34.048017 seconds.
+CMH
+Elapsed time is 31.586270 seconds.
+AAS
+Elapsed time is 13.567310 seconds.
+AAG
+Elapsed time is 30.568249 seconds.
+
+19 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.838524 seconds.
+HMC
+Elapsed time is 33.857422 seconds.
+CMH
+Elapsed time is 31.356017 seconds.
+AAS
+Elapsed time is 13.627825 seconds.
+AAG
+Elapsed time is 31.453167 seconds.
+
+20 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.924604 seconds.
+HMC
+Elapsed time is 33.647731 seconds.
+CMH
+Elapsed time is 31.105661 seconds.
+AAS
+Elapsed time is 13.264814 seconds.
+AAG
+Elapsed time is 31.293088 seconds.
+
+21 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.889603 seconds.
+HMC
+Elapsed time is 33.129080 seconds.
+CMH
+Elapsed time is 31.070246 seconds.
+AAS
+Elapsed time is 12.957617 seconds.
+AAG
+Elapsed time is 30.167746 seconds.
+
+22 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.834693 seconds.
+HMC
+Elapsed time is 33.467501 seconds.
+CMH
+Elapsed time is 30.944174 seconds.
+AAS
+Elapsed time is 13.107770 seconds.
+AAG
+Elapsed time is 31.104716 seconds.
+
+23 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.904743 seconds.
+HMC
+Elapsed time is 34.544449 seconds.
+CMH
+Elapsed time is 31.979945 seconds.
+AAS
+Elapsed time is 13.705317 seconds.
+AAG
+Elapsed time is 31.765916 seconds.
+
+24 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.871066 seconds.
+HMC
+Elapsed time is 34.393875 seconds.
+CMH
+Elapsed time is 32.359484 seconds.
+AAS
+Elapsed time is 13.672961 seconds.
+AAG
+Elapsed time is 31.824663 seconds.
+
+25 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.819863 seconds.
+HMC
+Elapsed time is 34.149928 seconds.
+CMH
+Elapsed time is 32.462821 seconds.
+AAS
+Elapsed time is 13.954595 seconds.
+AAG
+Elapsed time is 32.379036 seconds.
+
+26 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.909477 seconds.
+HMC
+Elapsed time is 34.595931 seconds.
+CMH
+Elapsed time is 32.662246 seconds.
+AAS
+Elapsed time is 13.618873 seconds.
+AAG
+Elapsed time is 32.003708 seconds.
+
+27 =
+
+Iteration Number =
+
+True
+Elapsed time is 2.016325 seconds.
+HMC
+Elapsed time is 34.386912 seconds.
+CMH
+Elapsed time is 32.004429 seconds.
+AAS
+Elapsed time is 13.518317 seconds.
+AAG
+Elapsed time is 32.425701 seconds.
+
+28 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.872524 seconds.
+HMC
+Elapsed time is 35.295904 seconds.
+CMH
+Elapsed time is 32.001795 seconds.
+AAS
+Elapsed time is 13.439939 seconds.
+AAG
+Elapsed time is 31.857038 seconds.
+
+29 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.890504 seconds.
+HMC
+Elapsed time is 33.117471 seconds.
+CMH
+Elapsed time is 31.081579 seconds.
+AAS
+Elapsed time is 13.011023 seconds.
+AAG
+Elapsed time is 30.886365 seconds.
+
+30 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.870818 seconds.
+HMC
+Elapsed time is 33.391995 seconds.
+CMH
+Elapsed time is 31.668625 seconds.
+AAS
+Elapsed time is 13.663071 seconds.
+AAG
+Elapsed time is 31.233329 seconds.
+
+31 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.868068 seconds.
+HMC
+Elapsed time is 33.249036 seconds.
+CMH
+Elapsed time is 31.288443 seconds.
+AAS
+Elapsed time is 13.384567 seconds.
+AAG
+Elapsed time is 31.904531 seconds.
+
+32 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.907920 seconds.
+HMC
+Elapsed time is 34.377439 seconds.
+CMH
+Elapsed time is 31.696089 seconds.
+AAS
+Elapsed time is 13.659906 seconds.
+AAG
+Elapsed time is 31.552750 seconds.
+
+33 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.885997 seconds.
+HMC
+Elapsed time is 34.044356 seconds.
+CMH
+Elapsed time is 32.194595 seconds.
+AAS
+Elapsed time is 13.733837 seconds.
+AAG
+Elapsed time is 32.269986 seconds.
+
+34 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.978290 seconds.
+HMC
+Elapsed time is 34.272626 seconds.
+CMH
+Elapsed time is 31.948037 seconds.
+AAS
+Elapsed time is 13.859734 seconds.
+AAG
+Elapsed time is 31.987308 seconds.
+
+35 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.917685 seconds.
+HMC
+Elapsed time is 34.131089 seconds.
+CMH
+Elapsed time is 32.669761 seconds.
+AAS
+Elapsed time is 13.983433 seconds.
+AAG
+Elapsed time is 32.445926 seconds.
+
+36 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.966901 seconds.
+HMC
+Elapsed time is 35.727985 seconds.
+CMH
+Elapsed time is 32.713180 seconds.
+AAS
+Elapsed time is 13.468269 seconds.
+AAG
+Elapsed time is 32.737075 seconds.
+
+37 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.962562 seconds.
+HMC
+Elapsed time is 35.479782 seconds.
+CMH
+Elapsed time is 32.434986 seconds.
+AAS
+Elapsed time is 13.702667 seconds.
+AAG
+Elapsed time is 32.438478 seconds.
+
+38 =
+
+Iteration Number =
+
+True
+Elapsed time is 2.140116 seconds.
+HMC
+Elapsed time is 35.069385 seconds.
+CMH
+Elapsed time is 33.079062 seconds.
+AAS
+Elapsed time is 13.167549 seconds.
+AAG
+Elapsed time is 31.156288 seconds.
+
+39 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.824020 seconds.
+HMC
+Elapsed time is 33.932074 seconds.
+CMH
+Elapsed time is 31.775409 seconds.
+AAS
+Elapsed time is 13.919851 seconds.
+AAG
+Elapsed time is 31.882333 seconds.
+
+40 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.888127 seconds.
+HMC
+Elapsed time is 34.137316 seconds.
+CMH
+Elapsed time is 31.225310 seconds.
+AAS
+Elapsed time is 13.216689 seconds.
+AAG
+Elapsed time is 31.223729 seconds.
+
+41 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.848056 seconds.
+HMC
+Elapsed time is 33.939047 seconds.
+CMH
+Elapsed time is 31.922516 seconds.
+AAS
+Elapsed time is 13.625211 seconds.
+AAG
+Elapsed time is 32.108056 seconds.
+
+42 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.968685 seconds.
+HMC
+Elapsed time is 34.273368 seconds.
+CMH
+Elapsed time is 31.540607 seconds.
+AAS
+Elapsed time is 13.925262 seconds.
+AAG
+Elapsed time is 32.714092 seconds.
+
+43 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.914069 seconds.
+HMC
+Elapsed time is 34.359182 seconds.
+CMH
+Elapsed time is 31.960134 seconds.
+AAS
+Elapsed time is 13.700282 seconds.
+AAG
+Elapsed time is 32.629489 seconds.
+
+44 =
+
+Iteration Number =
+
+True
+Elapsed time is 2.029459 seconds.
+HMC
+Elapsed time is 34.978405 seconds.
+CMH
+Elapsed time is 32.914410 seconds.
+AAS
+Elapsed time is 13.918187 seconds.
+AAG
+Elapsed time is 32.429829 seconds.
+
+45 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.932006 seconds.
+HMC
+Elapsed time is 35.000753 seconds.
+CMH
+Elapsed time is 33.022481 seconds.
+AAS
+Elapsed time is 14.027758 seconds.
+AAG
+Elapsed time is 32.700266 seconds.
+
+46 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.961150 seconds.
+HMC
+Elapsed time is 35.597850 seconds.
+CMH
+Elapsed time is 33.346606 seconds.
+AAS
+Elapsed time is 14.390297 seconds.
+AAG
+Elapsed time is 32.496367 seconds.
+
+47 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.943065 seconds.
+HMC
+Elapsed time is 35.018338 seconds.
+CMH
+Elapsed time is 33.549674 seconds.
+AAS
+Elapsed time is 14.160235 seconds.
+AAG
+Elapsed time is 32.583239 seconds.
+
+48 =
+
+Iteration Number =
+
+True
+Elapsed time is 2.037817 seconds.
+HMC
+Elapsed time is 35.491219 seconds.
+CMH
+Elapsed time is 33.612287 seconds.
+AAS
+Elapsed time is 14.087427 seconds.
+AAG
+Elapsed time is 31.796397 seconds.
+
+49 =
+
+Iteration Number =
+
+True
+Elapsed time is 2.017299 seconds.
+HMC
+Elapsed time is 34.893515 seconds.
+CMH
+Elapsed time is 32.478851 seconds.
+AAS
+Elapsed time is 13.766406 seconds.
+AAG
+Elapsed time is 31.681951 seconds.
+
+50 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.912122 seconds.
+HMC
+Elapsed time is 33.641393 seconds.
+CMH
+Elapsed time is 32.324319 seconds.
+AAS
+Elapsed time is 13.513218 seconds.
+AAG
+Elapsed time is 31.580298 seconds.
+
+51 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.923866 seconds.
+HMC
+Elapsed time is 33.317368 seconds.
+CMH
+Elapsed time is 31.198991 seconds.
+AAS
+Elapsed time is 13.134826 seconds.
+AAG
+Elapsed time is 32.024652 seconds.
+
+52 =
+
+Iteration Number =
+
+True
+Elapsed time is 2.022002 seconds.
+HMC
+Elapsed time is 33.735670 seconds.
+CMH
+Elapsed time is 31.693562 seconds.
+AAS
+Elapsed time is 13.582781 seconds.
+AAG
+Elapsed time is 31.698914 seconds.
+
+53 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.818531 seconds.
+HMC
+Elapsed time is 34.179002 seconds.
+CMH
+Elapsed time is 32.334092 seconds.
+AAS
+Elapsed time is 13.790485 seconds.
+AAG
+Elapsed time is 31.645865 seconds.
+
+54 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.973119 seconds.
+HMC
+Elapsed time is 35.101128 seconds.
+CMH
+Elapsed time is 33.105227 seconds.
+AAS
+Elapsed time is 14.002954 seconds.
+AAG
+Elapsed time is 32.447659 seconds.
+
+55 =
+
+Iteration Number =
+
+True
+Elapsed time is 2.011955 seconds.
+HMC
+Elapsed time is 35.756407 seconds.
+CMH
+Elapsed time is 33.096074 seconds.
+AAS
+Elapsed time is 13.659163 seconds.
+AAG
+Elapsed time is 32.339445 seconds.
+
+56 =
+
+Iteration Number =
+
+True
+Elapsed time is 2.030859 seconds.
+HMC
+Elapsed time is 35.275830 seconds.
+CMH
+Elapsed time is 33.740845 seconds.
+AAS
+Elapsed time is 14.197097 seconds.
+AAG
+Elapsed time is 32.990563 seconds.
+
+57 =
+
+Iteration Number =
+
+True
+Elapsed time is 2.071202 seconds.
+HMC
+Elapsed time is 35.483659 seconds.
+CMH
+Elapsed time is 33.546788 seconds.
+AAS
+Elapsed time is 14.175192 seconds.
+AAG
+Elapsed time is 32.137995 seconds.
+
+58 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.961032 seconds.
+HMC
+Elapsed time is 35.221914 seconds.
+CMH
+Elapsed time is 33.344308 seconds.
+AAS
+Elapsed time is 14.237532 seconds.
+AAG
+Elapsed time is 32.689675 seconds.
+
+59 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.855261 seconds.
+HMC
+Elapsed time is 33.935264 seconds.
+CMH
+Elapsed time is 32.382924 seconds.
+AAS
+Elapsed time is 13.495850 seconds.
+AAG
+Elapsed time is 31.016970 seconds.
+
+60 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.930255 seconds.
+HMC
+Elapsed time is 33.946697 seconds.
+CMH
+Elapsed time is 31.188445 seconds.
+AAS
+Elapsed time is 13.341724 seconds.
+AAG
+Elapsed time is 30.764442 seconds.
+
+61 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.871355 seconds.
+HMC
+Elapsed time is 34.767390 seconds.
+CMH
+Elapsed time is 32.614542 seconds.
+AAS
+Elapsed time is 13.525858 seconds.
+AAG
+Elapsed time is 30.745017 seconds.
+
+62 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.896381 seconds.
+HMC
+Elapsed time is 33.933987 seconds.
+CMH
+Elapsed time is 32.470296 seconds.
+AAS
+Elapsed time is 13.483004 seconds.
+AAG
+Elapsed time is 32.360946 seconds.
+
+63 =
+
+Iteration Number =
+
+True
+Elapsed time is 2.057975 seconds.
+HMC
+Elapsed time is 35.357535 seconds.
+CMH
+Elapsed time is 33.357196 seconds.
+AAS
+Elapsed time is 13.727222 seconds.
+AAG
+Elapsed time is 31.597507 seconds.
+
+64 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.965257 seconds.
+HMC
+Elapsed time is 34.375711 seconds.
+CMH
+Elapsed time is 32.464824 seconds.
+AAS
+Elapsed time is 13.704277 seconds.
+AAG
+Elapsed time is 31.789523 seconds.
+
+65 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.908557 seconds.
+HMC
+Elapsed time is 34.434483 seconds.
+CMH
+Elapsed time is 32.094390 seconds.
+AAS
+Elapsed time is 13.634487 seconds.
+AAG
+Elapsed time is 31.882505 seconds.
+
+66 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.878272 seconds.
+HMC
+Elapsed time is 34.122272 seconds.
+CMH
+Elapsed time is 32.370609 seconds.
+AAS
+Elapsed time is 13.889273 seconds.
+AAG
+Elapsed time is 32.181012 seconds.
+
+67 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.888292 seconds.
+HMC
+Elapsed time is 33.991651 seconds.
+CMH
+Elapsed time is 32.577178 seconds.
+AAS
+Elapsed time is 13.733758 seconds.
+AAG
+Elapsed time is 32.178528 seconds.
+
+68 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.936264 seconds.
+HMC
+Elapsed time is 34.542388 seconds.
+CMH
+Elapsed time is 32.087773 seconds.
+AAS
+Elapsed time is 13.831662 seconds.
+AAG
+Elapsed time is 32.524677 seconds.
+
+69 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.962937 seconds.
+HMC
+Elapsed time is 33.779224 seconds.
+CMH
+Elapsed time is 31.092920 seconds.
+AAS
+Elapsed time is 13.047252 seconds.
+AAG
+Elapsed time is 30.775262 seconds.
+
+70 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.943593 seconds.
+HMC
+Elapsed time is 34.207731 seconds.
+CMH
+Elapsed time is 31.424943 seconds.
+AAS
+Elapsed time is 13.590014 seconds.
+AAG
+Elapsed time is 31.445513 seconds.
+
+71 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.883892 seconds.
+HMC
+Elapsed time is 33.826920 seconds.
+CMH
+Elapsed time is 31.690284 seconds.
+AAS
+Elapsed time is 13.508243 seconds.
+AAG
+Elapsed time is 31.387475 seconds.
+
+72 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.863501 seconds.
+HMC
+Elapsed time is 34.018929 seconds.
+CMH
+Elapsed time is 30.832065 seconds.
+AAS
+Elapsed time is 13.322753 seconds.
+AAG
+Elapsed time is 31.457024 seconds.
+
+73 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.876427 seconds.
+HMC
+Elapsed time is 33.569146 seconds.
+CMH
+Elapsed time is 31.907674 seconds.
+AAS
+Elapsed time is 13.382315 seconds.
+AAG
+Elapsed time is 30.734389 seconds.
+
+74 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.820823 seconds.
+HMC
+Elapsed time is 33.955138 seconds.
+CMH
+Elapsed time is 32.730474 seconds.
+AAS
+Elapsed time is 13.742074 seconds.
+AAG
+Elapsed time is 31.850712 seconds.
+
+75 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.944882 seconds.
+HMC
+Elapsed time is 34.150505 seconds.
+CMH
+Elapsed time is 31.743632 seconds.
+AAS
+Elapsed time is 13.503939 seconds.
+AAG
+Elapsed time is 31.277984 seconds.
+
+76 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.839187 seconds.
+HMC
+Elapsed time is 34.385712 seconds.
+CMH
+Elapsed time is 32.568741 seconds.
+AAS
+Elapsed time is 13.875402 seconds.
+AAG
+Elapsed time is 31.984842 seconds.
+
+77 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.932339 seconds.
+HMC
+Elapsed time is 34.616081 seconds.
+CMH
+Elapsed time is 32.070498 seconds.
+AAS
+Elapsed time is 13.730105 seconds.
+AAG
+Elapsed time is 31.869178 seconds.
+
+78 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.883481 seconds.
+HMC
+Elapsed time is 34.874411 seconds.
+CMH
+Elapsed time is 32.774253 seconds.
+AAS
+Elapsed time is 13.773868 seconds.
+AAG
+Elapsed time is 32.402424 seconds.
+
+79 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.946315 seconds.
+HMC
+Elapsed time is 34.495361 seconds.
+CMH
+Elapsed time is 31.352154 seconds.
+AAS
+Elapsed time is 13.623778 seconds.
+AAG
+Elapsed time is 31.910300 seconds.
+
+80 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.888904 seconds.
+HMC
+Elapsed time is 33.569017 seconds.
+CMH
+Elapsed time is 31.465043 seconds.
+AAS
+Elapsed time is 13.351884 seconds.
+AAG
+Elapsed time is 30.939446 seconds.
+
+81 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.852546 seconds.
+HMC
+Elapsed time is 33.349066 seconds.
+CMH
+Elapsed time is 31.468349 seconds.
+AAS
+Elapsed time is 13.294856 seconds.
+AAG
+Elapsed time is 31.432953 seconds.
+
+82 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.881414 seconds.
+HMC
+Elapsed time is 32.941527 seconds.
+CMH
+Elapsed time is 31.908420 seconds.
+AAS
+Elapsed time is 13.502986 seconds.
+AAG
+Elapsed time is 31.469156 seconds.
+
+83 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.916923 seconds.
+HMC
+Elapsed time is 34.286215 seconds.
+CMH
+Elapsed time is 31.807320 seconds.
+AAS
+Elapsed time is 13.627685 seconds.
+AAG
+Elapsed time is 31.263888 seconds.
+
+84 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.890351 seconds.
+HMC
+Elapsed time is 34.036054 seconds.
+CMH
+Elapsed time is 32.311652 seconds.
+AAS
+Elapsed time is 13.773749 seconds.
+AAG
+Elapsed time is 31.786416 seconds.
+
+85 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.845729 seconds.
+HMC
+Elapsed time is 34.514309 seconds.
+CMH
+Elapsed time is 32.227835 seconds.
+AAS
+Elapsed time is 13.692728 seconds.
+AAG
+Elapsed time is 31.998056 seconds.
+
+86 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.982206 seconds.
+HMC
+Elapsed time is 34.410722 seconds.
+CMH
+Elapsed time is 32.688679 seconds.
+AAS
+Elapsed time is 13.942739 seconds.
+AAG
+Elapsed time is 32.080234 seconds.
+
+87 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.901078 seconds.
+HMC
+Elapsed time is 34.514849 seconds.
+CMH
+Elapsed time is 32.774781 seconds.
+AAS
+Elapsed time is 14.043615 seconds.
+AAG
+Elapsed time is 32.507156 seconds.
+
+88 =
+
+Iteration Number =
+
+True
+Elapsed time is 2.022811 seconds.
+HMC
+Elapsed time is 34.863608 seconds.
+CMH
+Elapsed time is 32.670741 seconds.
+AAS
+Elapsed time is 13.734703 seconds.
+AAG
+Elapsed time is 31.990411 seconds.
+
+89 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.956842 seconds.
+HMC
+Elapsed time is 34.168736 seconds.
+CMH
+Elapsed time is 32.603996 seconds.
+AAS
+Elapsed time is 13.840210 seconds.
+AAG
+Elapsed time is 31.638384 seconds.
+
+90 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.925990 seconds.
+HMC
+Elapsed time is 33.661500 seconds.
+CMH
+Elapsed time is 32.100366 seconds.
+AAS
+Elapsed time is 13.715133 seconds.
+AAG
+Elapsed time is 31.600722 seconds.
+
+91 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.896713 seconds.
+HMC
+Elapsed time is 33.544463 seconds.
+CMH
+Elapsed time is 31.933194 seconds.
+AAS
+Elapsed time is 13.759246 seconds.
+AAG
+Elapsed time is 31.581726 seconds.
+
+92 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.889527 seconds.
+HMC
+Elapsed time is 33.471320 seconds.
+CMH
+Elapsed time is 30.373278 seconds.
+AAS
+Elapsed time is 13.314351 seconds.
+AAG
+Elapsed time is 31.654599 seconds.
+
+93 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.949631 seconds.
+HMC
+Elapsed time is 33.162209 seconds.
+CMH
+Elapsed time is 31.903506 seconds.
+AAS
+Elapsed time is 13.538076 seconds.
+AAG
+Elapsed time is 31.835088 seconds.
+
+94 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.930941 seconds.
+HMC
+Elapsed time is 33.358408 seconds.
+CMH
+Elapsed time is 32.025606 seconds.
+AAS
+Elapsed time is 13.645380 seconds.
+AAG
+Elapsed time is 31.944645 seconds.
+
+95 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.963035 seconds.
+HMC
+Elapsed time is 34.086683 seconds.
+CMH
+Elapsed time is 31.459777 seconds.
+AAS
+Elapsed time is 13.537812 seconds.
+AAG
+Elapsed time is 31.608991 seconds.
+
+96 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.873472 seconds.
+HMC
+Elapsed time is 34.091141 seconds.
+CMH
+Elapsed time is 32.094256 seconds.
+AAS
+Elapsed time is 13.833912 seconds.
+AAG
+Elapsed time is 32.163042 seconds.
+
+97 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.941952 seconds.
+HMC
+Elapsed time is 34.852610 seconds.
+CMH
+Elapsed time is 32.996198 seconds.
+AAS
+Elapsed time is 14.065672 seconds.
+AAG
+Elapsed time is 31.623280 seconds.
+
+98 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.901733 seconds.
+HMC
+Elapsed time is 33.956892 seconds.
+CMH
+Elapsed time is 32.227288 seconds.
+AAS
+Elapsed time is 13.414241 seconds.
+AAG
+Elapsed time is 32.212019 seconds.
+
+99 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.901771 seconds.
+HMC
+Elapsed time is 34.555435 seconds.
+CMH
+Elapsed time is 31.676081 seconds.
+AAS
+Elapsed time is 13.427200 seconds.
+AAG
+Elapsed time is 31.999703 seconds.
+
+100 =
+
+Iteration Number =
+
+True
+Elapsed time is 1.948953 seconds.
+HMC
+Elapsed time is 33.831709 seconds.
+CMH
+Elapsed time is 31.585802 seconds.
+AAS
+Elapsed time is 13.200919 seconds.
+AAG
+Elapsed time is 30.824864 seconds.
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
