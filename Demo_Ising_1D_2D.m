@@ -9,7 +9,7 @@ ising_1d = 0;
 ising_2d = 1;
 
 %Parameters
-d=16;
+d=9;
 temp_vec=[1];
 scale_vec = 0.2;
 % scale_conn = linspace(0.1,0.2,1);

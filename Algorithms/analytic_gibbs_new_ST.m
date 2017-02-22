@@ -70,7 +70,7 @@ for i=2:L
     [m, pos] = max(prob_vec);
     
     % w and S vectors 
-    place_holder = zeros(2*d,1);
+    place_holder = zeros(2*d,1); % placeholder is the w vector in ST paper
     for z = 0:2*d -1
        place_holder(z+1,1) = prob_vec(mod(pos+z-1, 2*d)+1, 1);    
     end
@@ -100,7 +100,6 @@ for i=2:L
            % getting the right transition probabilities 
         end 
     end
-    
     % prob_vec_new are the right transition probabilities
     % we get the new estimators using prob_vec_new
     
