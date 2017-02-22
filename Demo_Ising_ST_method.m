@@ -29,7 +29,7 @@ legend_lab = {'HMC','CMH','CMH + LBP','AAS','AAS+RB','AAS+RB+LBP','AAG','AAG+RB'
 
 % This computes the errors in node and pairwise marginals
 node_marginals = 1;
-num_alg = sum(ind_sampler+exact_hmc+cmh+cmh_lbp+(2*ana_slice)+ana_slice_rb_lbp+(2*ana_gibbs)+ana_gibbs_rb_lbp+sw);
+num_alg = 2;
 marg_array = zeros(num_alg+1,2,size(scale_conn,2), size(scale_vec,2)); % for each bias and connection, store mean and std. deviation.
 % +1 as we are also showing the LBP approximation
 plot_marginals = 1;
@@ -116,7 +116,7 @@ for u=1:1:length(temp_vec)
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 % Analytic Gibbs Sampling (with RB)
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                if ana_gibbs == 1
+                if ana_gibbs_rb_st == 1
                     tic
                     disp('Analytic Gibbs Sampling with RB and ST')
                     [samples_ana_gibbs, dist_ana_gibbs_rb, mag_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs, emp_count_ana_gibbs, emp_counts_gibbs] = analytic_gibbs_new_ST( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, a);
@@ -136,7 +136,7 @@ for u=1:1:length(temp_vec)
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 % Analytic Gibbs Sampling with LBP
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                if ana_gibbs_rb_lbp == 1
+                if ana_gibbs_rb_lbp_st == 1
                     tic
                     disp('Analytic Gibbs Sampling with RB + LBP + ST')
                     [samples_ana_gibbs_lbp, dist_ana_gibbs_lbp, mag_ana_gibbs_lbp, loglik_ana_gibbs_lbp, nu_samples_ana_gibbs_lbp, emp_count_ana_gibbs_lbp, emp_counts_gibbs_lbp] = Stretched_analytic_gibbs_new_ST( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP, a);
