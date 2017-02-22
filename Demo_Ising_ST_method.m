@@ -15,7 +15,7 @@ d=9;
 temp_vec=[1];
 scale_vec = 0;
 scale_conn = linspace(0.1,0.2,1);
-number_samples = 200;
+number_samples = 2000;
 num_examples = 1;
 % rng(50)
 
