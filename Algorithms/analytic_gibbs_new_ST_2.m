@@ -68,19 +68,25 @@ for i=2:L
     % Sort such that w1 is the highest
     % Tip to check if coordinate system rotations are correct: notice if
     % pos=1 then the two systems are the same. Then notice that rotations
-    % are proportional to +pos and -pos respectively.
+    % are proportional to either +pos or -pos where appropriate.
     [~, pos] = max(prob_vec);
     w = prob_vec( mod( (1:2*d) + pos - 2, 2*d) + 1 ); % Rotate entries to new coordinate system with max being the first entry, equivalent to [prob_vec(pos:length(prob_vec)) ; prob_vec(1:pos-1)]
     S = cumsum(w);
     ii = mod(1-pos, 2*d)+1; % This is the index we are transitioning from in the new coordinate system
     v = zeros(2*d,1); % Transition probabilities from ii in the new coordinate system
     for j = 1:2*d
-        delta = S(ii) - S(mod(j-2,2*d)+1) + w(1);  % Note mod(j-1,2*d)+1 = j unless j=1 in which case = 2*d
+        delta = S(ii) - S(mod(j-2,2*d)+1) + w(1);  % Note mod(j-1,2*d)+1 = j unless j=0 in which case = 2*d. This is for S_0 = S_n.
         v(j) = max(0, min([delta, w(ii) + w(j) - delta, w(ii), w(j)]));
     end
-    v = v / sum(v); % Normalize
     v = v( mod( (1:2*d) - pos, 2*d) + 1 ); % Rotate entries back to original coordinate system
     index = discretesample(v,1);
+    
+    if info_on_off == 1
+        dist(:,i) = dist_est*v;   % getting the weighted average
+%         emperical_counts(:,:,i) = rb_emp_counts(count_est, prob_vec); % getting weighted average of pairwise count estimator
+        emp_count = emp_count + rb_emp_counts(count_est, v); % adding the weighted average of pairwise count estimator
+        mag(1,i) = mag_est*v;  % getting the weighted magnetization
+    end
     
     if index == 1
        point = samples(:, i-1);
