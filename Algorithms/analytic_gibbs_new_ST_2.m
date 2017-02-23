@@ -78,7 +78,7 @@ for i=2:L
         delta = S(ii) - S(mod(j-2,2*d)+1) + w(1);  % Note mod(j-1,2*d)+1 = j unless j=0 in which case = 2*d. This is for S_0 = S_n.
         v(j) = max(0, min([delta, w(ii) + w(j) - delta, w(ii), w(j)]));
     end
-    v = v( mod( (1:2*d) - pos, 2*d) + 1 ); % Rotate entries back to original coordinate system
+    v = v( mod( (1:2*d) - pos, 2*d) + 1 ) /sum(v) ; % Rotate entries back to original coordinate system and normalize
     index = discretesample(v,1);
     
     if info_on_off == 1

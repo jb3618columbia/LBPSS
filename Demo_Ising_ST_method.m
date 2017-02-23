@@ -119,7 +119,7 @@ for u=1:1:length(temp_vec)
                 if ana_gibbs_rb_st == 1
                     tic
                     disp('Analytic Gibbs Sampling with RB and ST')
-                    [samples_ana_gibbs, dist_ana_gibbs_rb, mag_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs, emp_count_ana_gibbs, emp_counts_gibbs] = analytic_gibbs_new_ST( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, a);
+                    [samples_ana_gibbs, dist_ana_gibbs_rb, mag_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs, emp_count_ana_gibbs, emp_counts_gibbs] = analytic_gibbs_new_ST_2( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, a);
                     r_a_g = nu_samples_ana_gibbs/number_samples;
                     toc
                     if node_marginals==1
