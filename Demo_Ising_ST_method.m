@@ -14,13 +14,10 @@ ising_2d = 1;
 d=81;
 temp_vec=[1];
 scale_vec = 0;
-scale_conn = [0.25, 0.5, 0.75, 1, 2, 3, 4, 5]
+scale_conn = [0.25, 0.5, 0.75, 1, 2, 3, 4, 5];
 number_samples = 1000;
 num_examples = 15;
 % rng(50)
-% scale_vec = 0
-% % scale_conn = [0.25:0.25:1, 1:1:5]
-% scale_conn = [0.25, 0.5, 0.75, 1, 2, 3, 4, 5]
 
 % Algorithms: 
 ana_gibbs_rb_st = 1; 

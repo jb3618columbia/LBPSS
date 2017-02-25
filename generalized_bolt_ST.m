@@ -13,9 +13,9 @@ load('coronary.mat');
 % Parameters
 n = size(coronary,1);      % number of training examples
 d = size(coronary,2);      % dimension of S
-num_samples = 100         % number of samples
-F = 100             % number of MCMC samples per inner loop
-num_sample_paths = 5000
+num_samples = 100         % number of samples for outre
+F = 1000             % number of MCMC samples per inner loop
+num_sample_paths = 1000
 
 % Prior
 mu_prior = zeros(1,d*(d-1)/2);
@@ -23,17 +23,11 @@ Sigma_prior = 3*eye(d*(d-1)/2);
 
 % Algorithms
 truth = 1;
-HMC = 1;
-CMH = 1;
-AAS = 1;
-AAG = 1;
+AAG_ST = 1;
 % Error in estimating the partition function ratio
-Z_error_mat = zeros(4, num_sample_paths);
+Z_error_mat = zeros(1, num_sample_paths);
 samples_true = zeros((num_samples*num_sample_paths), d*(d-1)/2);
-samples_HMC = zeros((num_samples*num_sample_paths), d*(d-1)/2);
-samples_CMH = zeros((num_samples*num_sample_paths), d*(d-1)/2);
-samples_AAS = zeros((num_samples*num_sample_paths), d*(d-1)/2);
-samples_AAG = zeros((num_samples*num_sample_paths), d*(d-1)/2);
+samples_AAG_ST = zeros((num_samples*num_sample_paths), d*(d-1)/2);
 
 for k=1:num_sample_paths
     
@@ -52,42 +46,18 @@ for k=1:num_sample_paths
         toc
     end
     
-    if HMC == 1
+    if AAG_ST ==1
         tic
-        display('HMC')
-        [samples_HMC((k-1)*num_samples + 1:k*num_samples, :), logZ_est_HMC] = OuterMH( num_samples, F,  W_init, coronary, mu_prior, Sigma_prior, 1);
-        Z_error_mat(1,k) = mean(abs(logZ_est_true - logZ_est_HMC));
-        toc
-    end
-    
-    if CMH ==1
-        tic
-        display('CMH')
-        [samples_CMH((k-1)*num_samples + 1:k*num_samples, :), logZ_est_CMH] = OuterMH( num_samples, F,  W_init, coronary, mu_prior, Sigma_prior, 2);
-        Z_error_mat(2,k) = mean(abs(logZ_est_true - logZ_est_CMH));
-        toc
-    end
-    
-    if AAS ==1
-        tic
-        display('AAS')
-        [samples_AAS((k-1)*num_samples + 1:k*num_samples, :), logZ_est_AAS] = OuterMH( num_samples, F,  W_init, coronary, mu_prior, Sigma_prior, 3);
-        Z_error_mat(3,k) = mean(abs(logZ_est_true - logZ_est_AAS));
-        toc
-    end
-    
-    if AAG ==1
-        tic
-        display('AAG')
-        [samples_AAG((k-1)*num_samples + 1:k*num_samples, :), logZ_est_AAG] = OuterMH( num_samples, F,  W_init, coronary, mu_prior, Sigma_prior, 4);
-        Z_error_mat(4,k) = mean(abs(logZ_est_true - logZ_est_AAG));
+        display('AAG_ST')
+        [samples_AAG_ST((k-1)*num_samples + 1:k*num_samples, :), logZ_est_AAG_ST] = OuterMH( num_samples, F,  W_init, coronary, mu_prior, Sigma_prior, 4);
+        Z_error_mat(1,k) = mean(abs(logZ_est_true - logZ_est_AAG_ST));
         toc
     end
     
 end
 
 Z_error_mean = [mean(Z_error_mat,2), std(Z_error_mat,0,2)];
-fileName = [path, 'Z_error', '.mat'];
+fileName = [path, 'Z_error_mean', '.mat'];
 save(fileName, 'Z_error_mean')
 
 fileName = [path, 'tru', '.mat'];
@@ -97,35 +67,12 @@ samples_true1 = unique(samples_true, 'rows');
 fileName = [path, 'tru1', '.mat'];
 save(fileName, 'samples_true1')
 
-fileName = [path, 'HMC', '.mat'];
-save(fileName, 'samples_HMC')
+fileName = [path, 'AAG_ST', '.mat'];
+save(fileName, 'samples_AAG_ST')
 
-samples_HMC1 = unique(samples_HMC, 'rows');
-fileName = [path, 'HMC1', '.mat'];
-save(fileName, 'samples_HMC1')
-
-
-fileName = [path, 'CMH', '.mat'];
-save(fileName, 'samples_CMH')
-
-samples_CMH1 = unique(samples_CMH, 'rows');
-fileName = [path, 'CMH1', '.mat'];
-save(fileName, 'samples_CMH1')
-
-fileName = [path, 'AAS', '.mat'];
-save(fileName, 'samples_AAS')
-
-samples_AAS1 = unique(samples_AAS, 'rows');
-fileName = [path, 'AAS1', '.mat'];
-save(fileName, 'samples_AAS1')
-
-
-fileName = [path, 'AAG', '.mat'];
-save(fileName, 'samples_AAG')
-
-samples_AAG1 = unique(samples_AAG, 'rows');
-fileName = [path, 'AAG1', '.mat'];
-save(fileName, 'samples_AAG1')
+samples_AAG_ST_1 = unique(samples_AAG_ST, 'rows');
+fileName = [path, 'AAG_ST_1', '.mat'];
+save(fileName, 'samples_AAG_ST1')
 
                                 
 

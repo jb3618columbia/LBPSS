@@ -12,8 +12,8 @@ load('coronary.mat');
 % Parameters
 n = size(coronary,1);      % number of training examples
 d = size(coronary,2);      % dimension of S
-num_samples = 100;          % number of samples
-F = 1000;                   % number of MCMC samples per inner loop
+num_samples = 10;          % number of samples
+F = 100;                   % number of MCMC samples per inner loop
 
 % Prior
 mu_prior = zeros(1,d*(d-1)/2);
@@ -28,6 +28,7 @@ HMC = 1;
 CMH = 1;
 AAS = 1;
 AAG = 1;
+AAg_ST =1;
 
 %% Run samplers
 % initialW = iwishrnd(A,10)*(10-6-1);  % random PSD matrix, df are kept small 
@@ -74,7 +75,7 @@ if AAG ==1
 end
 
 % plotRealdata(samples_true, samples_HMC, samples_CMH, samples_AAS, samples_AAG);
-plotZerror(logZ_est_true, logZ_est_HMC, logZ_est_CMH, logZ_est_AAS, logZ_est_AAG)
+% plotZerror(logZ_est_true, logZ_est_HMC, logZ_est_CMH, logZ_est_AAS, logZ_est_AAG)
 
 %% Run samplers
 

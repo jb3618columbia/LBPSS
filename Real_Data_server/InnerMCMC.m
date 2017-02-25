@@ -16,24 +16,23 @@ t = 1.5;
 T=t*pi;
 fn_evlas_hmc = F*( (bm.dim)*t + (bm.dim) + clique_size*(bm.dim)*(t-0.5) );
 
-if alg == 0
-    logZratio = groundTruth(bm_old, bm); % passing the current and new obj.
+switch alg
+    case 0
+        logZratio = groundTruth(bm_old, bm); % passing the current and new obj.
+    case 1
+        [samples_hmc, ~, ~] = HMC_binary(bm, T, F, initial_point);
+        logZratio = log(sum(diag(exp(samples_hmc'*W*samples_hmc)))/F);
+    case 2
+        [samples_CMH, ~, ~, ~] = CMH(bm, fn_evlas_hmc, clique_size, initial_point);
+        logZratio = log(sum(diag(exp(samples_CMH'*W*samples_CMH)))/F);
+    case 3
+        [samples_AAS, ~, ~, logZratio] = AAS_RB_data(bm, fn_evlas_hmc, clique_size, initial_point, W);
+    case 4
+        info_on_off = 1; % RB 
+        [samples_AAG, ~, ~, logZratio] = AAG_ST(bm, fn_evlas_hmc, clique_size, initial_point, W, info_on_off);      
 end
 
-if alg == 1
-    [samples_hmc, ~, ~] = HMC_binary(bm, T, F, initial_point);
-    logZratio = log(sum(diag(exp(samples_hmc'*W*samples_hmc)))/F);
+
 end
-if alg == 2
-    [samples_CMH, ~, ~, ~] = CMH(bm, fn_evlas_hmc, clique_size, initial_point);
-    logZratio = log(sum(diag(exp(samples_CMH'*W*samples_CMH)))/F);
-end
-if alg == 3
-     [samples_AAS, ~, ~, logZratio] = AAS_RB_data(bm, fn_evlas_hmc, clique_size, initial_point, W);
-end
-if alg == 4
-    info_on_off = 1;
-    [samples_AAG, ~, ~, logZratio] = AAG_RB_data(bm, fn_evlas_hmc, clique_size, initial_point, W, info_on_off);
-end
-end
+
 

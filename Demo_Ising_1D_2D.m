@@ -9,14 +9,14 @@ ising_1d = 0;
 ising_2d = 1;
 
 %Parameters
-d=9;
+d=25;
 temp_vec=[1];
 scale_vec = 0.2;
 % scale_conn = linspace(0.1,0.2,1);
 scale_conn = 0.8;
 
 number_samples = 2000;
-num_examples = 1;
+num_examples = 10;
 % rng(50)
 
 % Algorithms: 
@@ -330,7 +330,7 @@ for u=1:1:length(temp_vec)
                 if ana_gibbs_rb_st == 1
                     tic
                     disp('Analytic Gibbs Sampling with ST method')
-                    [samples_ana_gibbs_rb_st, dist_ana_gibbs_rb_st, mag_ana_gibbs_rb_st, loglik_ana_gibbs_rb_st, nu_samples_ana_gibbs_rb_st, emp_count_ana_gibbs_rb_st, emp_counts_gibbs_rb_st] = analytic_gibbs_new_ST( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, a);
+                    [samples_ana_gibbs_rb_st, dist_ana_gibbs_rb_st, mag_ana_gibbs_rb_st, loglik_ana_gibbs_rb_st, nu_samples_ana_gibbs_rb_st, emp_count_ana_gibbs_rb_st, emp_counts_gibbs_rb_st] = analytic_gibbs_new_ST_2( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, a);
                     r_a_g_st = nu_samples_ana_gibbs_rb_st/number_samples;
                     toc
                     if node_marginals==1
