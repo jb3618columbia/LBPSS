@@ -13,18 +13,17 @@ ising_2d = 1;
 %Parameters
 d=9;
 temp_vec=[1];
-scale_vec = 0;
-scale_conn = linspace(0.1,0.2,1);
-number_samples = 20000;
+scale_vec = 0.2;
+scale_conn = 0.1:0.1:0.8;
+number_samples = 100;
 num_examples = 1;
 % rng(50)
-disp('I am here 1s');
 
 % Algorithms: 
-ana_gibbs_rb_st = 1;
+ana_gibbs_rb_st = 1; 
 info_on_off = true;
 % legend_lab = {'MH-LBP','HMC','CMH','CMH + LBP','AAS','AAS+RB','AAS+RB+LBP','AAG','AAG+RB','AAG+RB+LBP'};
-legend_lab = {'HMC','CMH','CMH + LBP','AAS','AAS+RB','AAS+RB+LBP','AAG','AAG+RB','AAG+RB+LBP'};
+% legend_lab = {'HMC','CMH','CMH + LBP','AAS','AAS+RB','AAS+RB+LBP','AAG','AAG+RB','AAG+RB+LBP'};
 
 
 % This computes the errors in node and pairwise marginals
