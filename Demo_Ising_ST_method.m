@@ -18,10 +18,10 @@ scale_conn = linspace(0.1,0.2,1);
 number_samples = 20000;
 num_examples = 1;
 % rng(50)
+disp('I am here 1s');
 
 % Algorithms: 
 ana_gibbs_rb_st = 1;
-ana_gibbs_rb_lbp_st = 0;
 info_on_off = true;
 % legend_lab = {'MH-LBP','HMC','CMH','CMH + LBP','AAS','AAS+RB','AAS+RB+LBP','AAG','AAG+RB','AAG+RB+LBP'};
 legend_lab = {'HMC','CMH','CMH + LBP','AAS','AAS+RB','AAS+RB+LBP','AAG','AAG+RB','AAG+RB+LBP'};
@@ -79,14 +79,14 @@ for u=1:1:length(temp_vec)
             initial_point( initial_point==0 )=-1;
             
             P = size(a,2)/2;
-            true_marg = zeros(P, 4);
+            true_marg = zeros(P, 4); % pairwise marginals
             for p=1:P
                 true_marg(p,:) = reshape(edgeBelJT(:,:,find(ismember(edgeStruct.edgeEnds, [a(2*p-1), a(2*p)] ,'rows'))),1,4);
                 % Reshape operation here gives the answer for [(1,1), (-1,1), (1,-1), (-1,-1)
             end
             
             
-            dist_truth = marginalsJT;
+            dist_truth = marginalsJT; % LBP marginals
             % Error for various samplers
             % Node marginals
             error_ana_gibbs_rb_st = zeros(num_examples,1);
@@ -118,7 +118,7 @@ for u=1:1:length(temp_vec)
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 if ana_gibbs_rb_st == 1
                     tic
-                    disp('Analytic Gibbs Sampling with RB and ST')
+                    disp('Analytic Gibbs Sampling with ST')
                     [samples_ana_gibbs, dist_ana_gibbs_rb, mag_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs, emp_count_ana_gibbs, emp_counts_gibbs] = analytic_gibbs_new_ST_2( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, a);
                     r_a_g = nu_samples_ana_gibbs/number_samples;
                     toc
@@ -133,56 +133,27 @@ for u=1:1:length(temp_vec)
                     end
                 end
                 
-                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                % Analytic Gibbs Sampling with LBP
-                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                if ana_gibbs_rb_lbp_st == 1
-                    tic
-                    disp('Analytic Gibbs Sampling with RB + LBP + ST')
-                    [samples_ana_gibbs_lbp, dist_ana_gibbs_lbp, mag_ana_gibbs_lbp, loglik_ana_gibbs_lbp, nu_samples_ana_gibbs_lbp, emp_count_ana_gibbs_lbp, emp_counts_gibbs_lbp] = Stretched_analytic_gibbs_new_ST( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP, a);
-                    r_a_g_lbp = nu_samples_ana_gibbs_lbp/number_samples;
-                    toc
-                    if node_marginals==1
-                        error_ana_gibbs_rb_lbp_st(q,1) = sqrt(mean(  (dist_truth - mean(dist_ana_gibbs_lbp(:,1:end),2))  .^2));
-                    end
-                    if pair_marg==1
-                        err_pw_ana_gibbs_rb_lbp_st(q,1) = sqrt(mean((sum(abs(emp_count_ana_gibbs_lbp - true_marg),2)).^2));
-                    end
-                    if act_mag==1
-                        act_mag_ana_gibbs_rb_lbp_st(q,1) = acorrtime(thin(mag_ana_gibbs_lbp', 0, r_a_g_lbp, nu_samples_ana_gibbs_lbp-1));
-                    end
-                end
                 
             end   % End for the number of examples
             
             % Node marginals
             if  plot_marginals==1
-                mean_err = [mean(error_ana_gibbs_rb_st), mean(error_ana_gibbs_rb_lbp_st)];
-                std_err =  [std(error_ana_gibbs_rb_st), std(error_ana_gibbs_rb_lbp_st)];
+                mean_err = mean(error_ana_gibbs_rb_st);
+                std_err =  std(error_ana_gibbs_rb_st);
                 fileName = [path, 'data_err_st', num2str(v), num2str(w), '.mat'];
                 mean_std = [mean_err', std_err'];
-                %save(fileName, 'mean_std')
+                save(fileName, 'mean_std')
             end
             
             % Pairwise node marginals
             if  plot_marg_pairwise ==1
-                mean_err_pw = [mean(err_pw_ana_gibbs_rb_st), mean(err_pw_ana_gibbs_rb_lbp_st)];
-                std_err_pw = [std(err_pw_ana_gibbs_rb_st), std(err_pw_ana_gibbs_rb_lbp_st)];
+                mean_err_pw = mean(err_pw_ana_gibbs_rb_st);
+                std_err_pw = std(err_pw_ana_gibbs_rb_st);
                 fileName = [path, 'data_err_pw_st', num2str(v), num2str(w), '.mat'];
                 mean_std = [mean_err_pw', std_err_pw'];
-                %save(fileName, 'mean_std')
+                save(fileName, 'mean_std')
             end
-            
-            % Plotting act for magnetization
-            if  plot_act_mag ==1
-                mean_act= [mean(act_mag_ana_gibbs_rb_st), mean(act_mag_ana_gibbs_rb_lbp_st)];
-                std_act= [std(act_mag_ana_gibbs_rb_st), std(act_mag_ana_gibbs_rb_lbp_st)];
-                fileName = [path, 'data_act_st', num2str(v), num2str(w), '.mat'];
-                mean_std = [mean_act', std_act'];
-                %save(fileName, 'mean_std')
-            end
-            
-            
+                        
         end
         
     end

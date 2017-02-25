@@ -1,4 +1,4 @@
-function [ samples, dist, mag, log_likes, i, emp_count, emperical_counts ] = analytic_gibbs_new_ST( f, number_fn_evals, clique_size, info_on_off, initial_point, a )
+function [ samples, dist, mag, log_likes, i, emp_count, emperical_counts ] = analytic_gibbs_new_ST_2( f, number_fn_evals, clique_size, info_on_off, initial_point, a )
 % Added the Rao-Blackwellized estimate of pairwise emperical correlations.
 % Here a is now a row vector of many (i,j) pairs: nodes for which pairwise error is computed.
 % f is the Ising object
