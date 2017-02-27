@@ -2,21 +2,21 @@
 % Path 
 % Path for server '/home/jalaj/Github_LBPSS/Outputs_after_NIPS/data/'
 
-addpath(genpath('/Users/Jalaj/Documents/Github - LBPSS'));
+%addpath(genpath('/Users/Jalaj/Documents/Github - LBPSS'));
 % path = '/home/jalaj/Github_LBPSS/Outputs_after_NIPS/data/run1/';
-path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_after_NIPS/data/';
+path = '/Users/Francois/Documents/LBPSS_results/';
 
 % Model:
 ising_1d = 0;
 ising_2d = 1;
 
 %Parameters
-d=81;
+d=25;
 temp_vec=[1];
 scale_vec = 0;
-scale_conn = [0.25, 0.5, 0.75, 1, 2, 3, 4, 5];
+scale_conn = [0.25];%, 0.5, 0.75, 1, 2, 3, 4, 5];
 number_samples = 1000;
-num_examples = 15;
+num_examples = 5;
 % rng(50)
 
 % Algorithms: 
@@ -118,7 +118,8 @@ for u=1:1:length(temp_vec)
                 if ana_gibbs_rb_st == 1
                     tic
                     disp('Analytic Gibbs Sampling with ST')
-                    [samples_ana_gibbs, dist_ana_gibbs_rb, mag_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs, emp_count_ana_gibbs, emp_counts_gibbs] = analytic_gibbs_new_ST_2( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, a);
+                    %[samples_ana_gibbs, dist_ana_gibbs_rb, mag_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs, emp_count_ana_gibbs, emp_counts_gibbs] = Stretched_analytic_gibbs_ST( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, dist_LBP, a);%
+                    [samples_ana_gibbs, dist_ana_gibbs_rb, mag_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs, emp_count_ana_gibbs, emp_counts_gibbs] = analytic_gibbs_new_ST_2( is1, fn_evlas_hmc, clique_size, info_on_off, initial_point, a);%
                     r_a_g = nu_samples_ana_gibbs/number_samples;
                     toc
                     if node_marginals==1
