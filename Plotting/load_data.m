@@ -5,8 +5,8 @@ for w = 1:length(scale_conn)
     path = dataPath;
     fileName = [path, 'data_', data_code ,'_', num2str(bias_ind), num2str(w), '.mat'];
     load(fileName);
-    data_out(:,:,w) = mean_std;
+    data_out(:,:,w) = data_new;
 end
-data_out
+data_out;
 end
 

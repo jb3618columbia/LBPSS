@@ -62,7 +62,7 @@ for i=2:L
     prob_vec = prob_vec - max_val;
     prob_vec = exp(prob_vec)/(sum(exp(prob_vec)));
     
-    
+    prob_vec 
     
     % Obtained the raw probability vector w (as in ST paper)
     % Sort such that w1 is the highest
@@ -102,8 +102,7 @@ for i=2:L
     end
     % prob_vec_new are the right transition probabilities
     % we get the new estimators using prob_vec_new
-    
-
+        
     if info_on_off == 1
         dist(:,i) = dist_est*prob_vec_new;   % getting the weighted average
 %         emperical_counts(:,:,i) = rb_emp_counts(count_est, prob_vec); % getting weighted average of pairwise count estimator

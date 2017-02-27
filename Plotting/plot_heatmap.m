@@ -7,7 +7,7 @@ data = load_data(bias_ind, scale_conn, data_code, dataPath);
 %plot
 if strcmp(data_code, 'err')
     %do nothing
-%     legendText(1) = [];
+    legendText(1) = [];
 else
     legendText(1) = [];
 end

@@ -1,7 +1,7 @@
 function [ ] = plot_heatmap_data(data, legendText, scale_conn, plotsPath, data_code, bias_ind, on_off)
 
-nAlg = size(data,1);
-% nAlg = size(data,1)-1;
+nAlg = size(data,1); % for err_pw
+% nAlg = size(data,1)-1; % for err to remove the result for LBP
 nStrength = size(data,3);
 
 % Manipulate the data matrix construction here to cherry pick the values
@@ -19,8 +19,8 @@ if cherry_pick == 1
 else
     heatmapMatrix = zeros(nAlg, nStrength);
     for k = 1:nStrength
-%         heatmapMatrix(:,k) = data(2:nAlg+1,1,k);
-        heatmapMatrix(:,k) = data(:,1,k);
+%         heatmapMatrix(:,k) = data(2:nAlg+1,1,k); % for err
+        heatmapMatrix(:,k) = data(:,1,k); % for err_pw
     end
 end
 
@@ -30,8 +30,8 @@ figure(1)
 colormap(autumn(50000));
 brighten(0.6);
 imagesc(heatmapMatrix);
-xlabel('Strength');
-% xlabel('Bias');
+xlabel('Strength (W)');
+% xlabel('Bias scale (c)'); 
 
 scale_conn = round(scale_conn,3);
 if on_off ==1

@@ -61,9 +61,7 @@ for i=2:L
     max_val = max(prob_vec);
     prob_vec = prob_vec - max_val;
     prob_vec = exp(prob_vec)/(sum(exp(prob_vec)));
-    
-    
-    
+            
     % Obtained the raw probability vector w (as in ST paper)
     % Sort such that w1 is the highest
     % Tip to check if coordinate system rotations are correct: notice if
@@ -79,13 +77,23 @@ for i=2:L
         v(j) = max(0, min([delta, w(ii) + w(j) - delta, w(ii), w(j)]));
     end
     v = v( mod( (1:2*d) - pos, 2*d) + 1 ) /sum(v) ; % Rotate entries back to original coordinate system and normalize
-    index = discretesample(v,1);
+
+    
+    if prob_vec(1,1) <= 10^(-5)
+        index = discretesample(prob_vec,1);
+        rb_prob_vec = prob_vec;
+    else
+        index = discretesample(v,1);
+        rb_prob_vec = v;
+    end
+    
+   
     
     if info_on_off == 1
-        dist(:,i) = dist_est*v;   % getting the weighted average
+        dist(:,i) = dist_est*rb_prob_vec;   % getting the weighted average
 %         emperical_counts(:,:,i) = rb_emp_counts(count_est, prob_vec); % getting weighted average of pairwise count estimator
-        emp_count = emp_count + rb_emp_counts(count_est, v); % adding the weighted average of pairwise count estimator
-        mag(1,i) = mag_est*v;  % getting the weighted magnetization
+        emp_count = emp_count + rb_emp_counts(count_est,rb_prob_vec); % adding the weighted average of pairwise count estimator
+        mag(1,i) = mag_est*rb_prob_vec;  % getting the weighted magnetization
     end
     
     if index == 1
