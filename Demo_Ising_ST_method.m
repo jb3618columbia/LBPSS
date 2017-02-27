@@ -123,7 +123,7 @@ for u=1:1:length(temp_vec)
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 % AAST + RB + LBP 
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                if ana_gibbs_rb_st == 1
+                if ana_gibbs_rb_lbp_st == 1
                     tic
                     disp('AAST + RB + LBP')
                     %[samples_ana_gibbs, dist_ana_gibbs_rb, mag_ana_gibbs, loglik_ana_gibbs, nu_samples_ana_gibbs, emp_count_ana_gibbs, emp_counts_gibbs] = %
