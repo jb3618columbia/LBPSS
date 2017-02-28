@@ -3,7 +3,7 @@
 % Path for server '/home/jalaj/Github_LBPSS/Outputs_after_NIPS/data/'
 
 %addpath(genpath('/Users/Jalaj/Documents/Github - LBPSS'));
-% path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_AISTATS_final/Ising_ST_data/';
+path = '/Users/Jalaj/Documents/Github - LBPSS/Outputs_AISTATS_final/Ising_ST_data/';
 % path = '/Users/Francois/Documents/LBPSS_results/';
 
 % Model:
@@ -90,6 +90,12 @@ for u=1:1:length(temp_vec)
             % Pairwise node marginals
             err_pw_ana_gibbs_st = zeros(num_examples,1);
             err_pw_ana_gibbs_rb_lbp_st = zeros(num_examples,1);
+            
+            fileName = [path, 'true_marg', num2str(v), num2str(w), '.mat'];
+            save(fileName, 'true_marg')
+            fileName = [path, 'dist_truth', num2str(v), num2str(w), '.mat'];
+            save(fileName, 'dist_truth')
+            
             
             for q=1:num_examples
                 q
