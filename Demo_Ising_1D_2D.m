@@ -124,8 +124,14 @@ for u=1:1:length(temp_vec)
                 % Reshape operation here gives the answer for [(1,1), (-1,1), (1,-1), (-1,-1)
             end
             
-            
             dist_truth = marginalsJT;
+            
+            % Saving true marginals and pairwise marginals
+            fileName = [path, 'true_marg', num2str(v), num2str(w), '.mat'];
+            save(fileName, 'true_marg')
+            fileName = [path, 'dist_truth', num2str(v), num2str(w), '.mat'];
+            save(fileName, 'dist_truth')
+            
             % Error for various samplers
             % Node marginals            
             error_hmc = zeros(num_examples,1);
