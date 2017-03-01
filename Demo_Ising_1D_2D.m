@@ -9,14 +9,14 @@ ising_1d = 0;
 ising_2d = 1;
 
 %Parameters
-d=4;
+d=81;
 temp_vec=[1];
 scale_vec = 0.2;
-scale_conn = (0.1:0.1:0.8);
+scale_conn = 0.8;
 % scale_conn = 0.8;
 
-number_samples = 200;
-num_examples = 1;
+number_samples = 1000;
+num_examples = 15;
 % rng(50)
 
 % Algorithms: 
