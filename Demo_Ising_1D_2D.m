@@ -12,7 +12,7 @@ ising_2d = 1;
 d=81;
 temp_vec=[1];
 scale_vec = 0.2;
-scale_conn = 0.8;
+scale_conn = 0.3;
 % scale_conn = 0.8;
 
 number_samples = 1000;
